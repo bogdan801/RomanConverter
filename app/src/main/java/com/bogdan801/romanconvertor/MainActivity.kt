@@ -1,4 +1,4 @@
-package com.bogdan801.romancalculator
+package com.bogdan801.romanconvertor
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,13 +10,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.bogdan801.romancalculator.ui.theme.RomanCalculatorTheme
+import com.bogdan801.romanconvertor.ui.theme.RomanCalculatorTheme
 import com.bogdan801.util_library.getCurrentDateTime
 import com.bogdan801.util_library.toFormattedTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             RomanCalculatorTheme {
                 // A surface container using the 'background' color from the theme

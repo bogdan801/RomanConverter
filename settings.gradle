@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "RomanCalculator"
+rootProject.name = "RomanConvertor"
 include ':app'

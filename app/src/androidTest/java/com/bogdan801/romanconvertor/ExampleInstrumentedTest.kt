@@ -1,4 +1,4 @@
-package com.bogdan801.romancalculator
+package com.bogdan801.romanconvertor
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

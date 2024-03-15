@@ -1,4 +1,4 @@
-package com.bogdan801.romancalculator
+package com.bogdan801.romanconvertor
 
 import org.junit.Test
 

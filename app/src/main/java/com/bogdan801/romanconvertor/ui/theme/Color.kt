@@ -1,4 +1,4 @@
-package com.bogdan801.romancalculator.ui.theme
+package com.bogdan801.romanconvertor.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
