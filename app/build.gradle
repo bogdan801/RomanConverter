@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.bogdan801.romanconvertor'
+    namespace 'com.bogdan801.romanconverter'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.bogdan801.romanconvertor"
+        applicationId "com.bogdan801.romanconverter"
         minSdk 27
         targetSdk 34
         versionCode 1
