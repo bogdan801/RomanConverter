@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.ui.theme
+package com.bogdan801.romanconverter.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

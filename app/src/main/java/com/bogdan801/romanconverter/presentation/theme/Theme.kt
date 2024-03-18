@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.ui.theme
+package com.bogdan801.romanconverter.presentation.theme
 
 import android.app.Activity
 import androidx.compose.foundation.Image
@@ -127,12 +127,11 @@ fun RomanCalculatorTheme(
                     contentDescription = "background",
                     contentScale = ContentScale.Crop
                 )
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .statusBarsPadding()
-                        .navigationBarsPadding(),
-                    contentAlignment = Alignment.Center
+                        .navigationBarsPadding()
                 ){
                     content()
                 }
