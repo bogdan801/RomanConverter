@@ -8,14 +8,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Backspace
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.outlined.Backspace
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.FlashlightOn
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,12 +65,15 @@ class MainActivity : ComponentActivity() {
             RomanCalculatorTheme {
                 val currentTheme = intSettings["theme"].collectAsState(initial = 2)
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
-                        text = "Привіт котє!!!",
+                        text = "mdcccxcvii",
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 48.sp
+                        style = MaterialTheme.typography.displayLarge
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
@@ -76,6 +91,18 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)){
+                        Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "")
+                        Icon(painterResource(id = R.drawable.ic_auto_theme), contentDescription = "")
+                        Icon(imageVector = Icons.Outlined.DarkMode, contentDescription = "")
+                        Icon(imageVector = Icons.Filled.Pause, contentDescription = "")
+                        Icon(imageVector = Icons.Outlined.FlashlightOn, contentDescription = "")
+                        Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = "")
+                        Icon(imageVector = Icons.AutoMirrored.Outlined.Backspace, contentDescription = "")
+                    }
+
                 }
             }
         }
