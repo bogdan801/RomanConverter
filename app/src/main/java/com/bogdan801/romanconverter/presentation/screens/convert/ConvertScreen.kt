@@ -25,7 +25,7 @@ fun ConvertScreen(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     Box(
-        modifier = Modifier.fillMaxSize().background(Color(0x1f000000)),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
         Text(text = screenState.someValue, fontSize = 48.sp)
