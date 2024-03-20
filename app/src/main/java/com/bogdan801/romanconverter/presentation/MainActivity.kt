@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
+
         setContent {
             RomanCalculatorTheme {
                 HomeScreen()
