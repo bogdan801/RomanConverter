@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -156,30 +157,29 @@ fun HomeScreen(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InputButton(isEnabled = true)
-                        InputButton(isEnabled = true)
-                        InputButton(isEnabled = true)
-                        InputButton(isEnabled = true)
+                        InputButton(label = "i")
+                        InputButton(label = "x")
+                        InputButton(label = "c")
+                        InputButton(label = "m")
                     }
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InputButton(isEnabled = true)
-                        InputButton(isEnabled = true)
-                        InputButton(isEnabled = true)
+                        InputButton(label = "v")
+                        InputButton(label = "l")
+                        InputButton(label = "d")
                     }
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InputButton(isEnabled = true)
-                        InputButton(isEnabled = true)
+                        InputButton(label = "9")
+                        InputButton(label = "I")
                     }
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InputButton(isEnabled = true)
+                        InputButton(isBackspace = true)
                     }
-
                 }
             }
 
