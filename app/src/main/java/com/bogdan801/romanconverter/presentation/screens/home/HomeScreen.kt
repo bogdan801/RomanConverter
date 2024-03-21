@@ -2,21 +2,25 @@ package com.bogdan801.romanconverter.presentation.screens.home
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,14 +42,23 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.drawToBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.bogdan801.romanconverter.presentation.components.InputButton
+import com.bogdan801.romanconverter.R
+import com.bogdan801.romanconverter.presentation.components.NavigationBar
+import com.bogdan801.romanconverter.presentation.components.NavigationItem
 import com.bogdan801.romanconverter.presentation.components.SmallIconButton
+import com.bogdan801.romanconverter.presentation.navigation.Navigation
+import com.bogdan801.romanconverter.presentation.navigation.Screen
+import com.bogdan801.romanconverter.presentation.screens.camera.CameraScreen
+import com.bogdan801.romanconverter.presentation.screens.convert.ConvertScreen
+import com.bogdan801.romanconverter.presentation.screens.quiz.QuizScreen
 import com.bogdan801.util_library.intSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -66,17 +79,30 @@ fun HomeScreen(
         containerColor = Color.Transparent
     ) { systemPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            /*Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .statusBarsPadding()
                     .navigationBarsPadding()
             ) {
+                var showNavBar by remember { mutableStateOf(false) }
+                val offsetY by animateDpAsState(
+                    targetValue = if(screenState.isExpanded) 0.dp else 118.dp,
+                    label = "",
+                    finishedListener = {
+                        if(!screenState.isExpanded) showNavBar = false
+                    }
+                )
+
+                LaunchedEffect(key1 = screenState.isExpanded) {
+                    if(screenState.isExpanded) showNavBar = true
+                }
+
                 var previousRoute by remember { mutableStateOf("") }
                 Navigation(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                        .fillMaxSize()
+                        .padding(bottom = 118.dp - offsetY),
                     navController = navController,
                     previousRoute = previousRoute,
                     convertScreen = {
@@ -99,90 +125,69 @@ fun HomeScreen(
                     }
                 )
 
-                Row(
-                    modifier = Modifier
-                        .height(120.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            previousRoute = navController.currentDestination?.route ?: ""
-                            if(navController.currentDestination?.route!=Screen.Convert.route){
-                                navController.navigate(Screen.Convert.route){
-                                    popUpTo(0)
-                                }
-                            }
-                        }
-                    ) {
-                        Text(text = "1")
-                    }
-                    Button(
-                        onClick = {
-                            previousRoute = navController.currentDestination?.route ?: ""
-                            if(navController.currentDestination?.route!=Screen.Quiz.route){
-                                navController.navigate(Screen.Quiz.route){
-                                    popUpTo(0)
-                                }
-                            }
-                        }
-                    ) {
-                        Text(text = "2")
-                    }
-                    Button(
-                        onClick = {
-                            previousRoute = navController.currentDestination?.route ?: ""
-                            if(navController.currentDestination?.route!=Screen.Camera.route){
-                                navController.navigate(Screen.Camera.route){
-                                    popUpTo(0)
-                                }
-                            }
-                        }
-                    ) {
-                        Text(text = "3")
-                    }
-                }
-            }*/
-
-
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        InputButton(label = "i")
-                        InputButton(label = "x")
-                        InputButton(label = "c")
-                        InputButton(label = "m")
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        InputButton(label = "v")
-                        InputButton(label = "l")
-                        InputButton(label = "d")
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        InputButton(label = "9")
-                        InputButton(label = "I")
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        InputButton(isBackspace = true)
+                if(showNavBar){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(118.dp)
+                            .align(Alignment.BottomCenter)
+                            .offset {
+                                IntOffset(x = 0, y = with(this) { offsetY.toPx() }.toInt())
+                            },
+                        contentAlignment = Alignment.Center
+                    ){
+                        val convertIcon = painterResource(id = R.drawable.ic_convert)
+                        val quizIcon = painterResource(id = R.drawable.ic_quiz)
+                        val cameraIcon = Icons.Filled.PhotoCamera
+                        NavigationBar(
+                            items = listOf(
+                                NavigationItem(
+                                    itemLabel = "Convert",
+                                    route = Screen.Convert.route,
+                                    isSelected = navController.currentDestination?.route == Screen.Convert.route,
+                                    painter = convertIcon,
+                                    onItemClick = {
+                                        previousRoute = navController.currentDestination?.route ?: ""
+                                        if(navController.currentDestination?.route != Screen.Convert.route){
+                                            navController.navigate(Screen.Convert.route){
+                                                popUpTo(0)
+                                            }
+                                        }
+                                    }
+                                ),
+                                NavigationItem(
+                                    itemLabel = "Quiz",
+                                    route = Screen.Quiz.route,
+                                    isSelected = navController.currentDestination?.route == Screen.Quiz.route,
+                                    painter = quizIcon,
+                                    onItemClick = {
+                                        previousRoute = navController.currentDestination?.route ?: ""
+                                        if(navController.currentDestination?.route != Screen.Quiz.route){
+                                            navController.navigate(Screen.Quiz.route){
+                                                popUpTo(0)
+                                            }
+                                        }
+                                    }
+                                ),
+                                NavigationItem(
+                                    itemLabel = "Camera",
+                                    route = Screen.Camera.route,
+                                    isSelected = navController.currentDestination?.route == Screen.Camera.route,
+                                    imageVector = cameraIcon,
+                                    onItemClick = {
+                                        previousRoute = navController.currentDestination?.route ?: ""
+                                        if(navController.currentDestination?.route != Screen.Camera.route){
+                                            navController.navigate(Screen.Camera.route){
+                                                popUpTo(0)
+                                            }
+                                        }
+                                    }
+                                )
+                            )
+                        )
                     }
                 }
             }
-
 
             //dark theme switch
             val currentTheme = context.intSettings["theme"].collectAsState(initial = 2)

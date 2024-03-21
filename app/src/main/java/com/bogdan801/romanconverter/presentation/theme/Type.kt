@@ -66,7 +66,7 @@ val Typography = Typography(
         fontSize = 12.sp
     ),
     labelLarge = TextStyle(
-        fontFamily = libreBodoniFontFamily,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     )

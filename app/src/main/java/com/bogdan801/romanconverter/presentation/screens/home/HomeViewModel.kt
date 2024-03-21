@@ -24,4 +24,20 @@ constructor(
             )
         }
     }
+
+    fun hideNavBar() {
+        _screenState.update {
+            it.copy(
+                isExpanded = false
+            )
+        }
+    }
+
+    fun showNavBar(){
+        _screenState.update {
+            it.copy(
+                isExpanded = true
+            )
+        }
+    }
 }

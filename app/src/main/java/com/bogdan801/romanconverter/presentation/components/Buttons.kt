@@ -3,18 +3,23 @@ package com.bogdan801.romanconverter.presentation.components
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -27,8 +32,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.bogdan801.romanconverter.presentation.theme.actionButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.theme.iconButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.theme.inputButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.util.shadowCustom
@@ -105,7 +115,7 @@ fun InputButton(
                 onClick = {
                     if (isEnabled) {
                         Toast
-                            .makeText(context, label?:"backspace", Toast.LENGTH_SHORT)
+                            .makeText(context, label ?: "backspace", Toast.LENGTH_SHORT)
                             .show()
                         onClick()
                     }
@@ -163,6 +173,47 @@ fun InputButton(
                     )
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun ActionButton(
+    modifier: Modifier = Modifier,
+    size: DpSize = DpSize(158.dp, 54.dp),
+    onClick: () -> Unit = {},
+    label: String = "",
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge
+) {
+    Surface(
+        modifier = modifier
+            .size(size)
+            .shadowCustom(
+                color = Color.Black.copy(alpha = 0.2f),
+                blurRadius = 6.dp,
+                shapeRadius = 40.dp,
+                offsetY = 4.dp
+            )
+            .clip(RoundedCornerShape(40.dp))
+            .background(brush = actionButtonGradientBrush())
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(40.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        color = Color.Transparent
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            AutoSizeText(
+                modifier = Modifier.offset(y = 1.dp).padding(horizontal = 18.dp),
+                text = label,
+                maxTextSize = 16.sp,
+                minTextSize = 12.sp,
+                style = textStyle,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
         }
     }
 }

@@ -45,8 +45,8 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = gray950,
     onSecondaryContainer = gray980,
     onTertiaryContainer = gray1000,
-    surface = gray110,
-    surfaceVariant = gray220,
+    surface = gray220,
+    surfaceVariant = gray110,
     onSurface = gold100,
     error = red,
     background = Color.White,
@@ -69,7 +69,7 @@ private val DarkColorScheme = darkColorScheme(
     onPrimaryContainer = gray130,
     onSecondaryContainer = gray230,
     onTertiaryContainer = gray250,
-    surface = gray150,
+    surface = gray180,
     surfaceVariant = gray180,
     onSurface = gold100,
     error = red,
@@ -119,6 +119,33 @@ fun inputButtonGradientBrush(size: Dp = 42.dp): Brush {
                 x = with(density) { size.toPx() / 2f },
                 y = with(density) { ((size / 2f)-2.dp).toPx() }
             )
+        )
+    }
+}
+
+@Composable
+fun actionButtonGradientBrush(): Brush {
+    val onTertiaryContainer = MaterialTheme.colorScheme.onTertiaryContainer
+    val tertiaryContainer = MaterialTheme.colorScheme.tertiaryContainer
+    return remember(onTertiaryContainer, tertiaryContainer) {
+        Brush.verticalGradient(
+            colorStops = arrayOf(
+                0f to onTertiaryContainer,
+                0.33f to onTertiaryContainer,
+                1f to tertiaryContainer
+
+            )
+        )
+    }
+}
+
+@Composable
+fun navbarGradientBrush(): Brush {
+    val surface = MaterialTheme.colorScheme.surface
+    val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
+    return remember(surface, surfaceVariant) {
+        Brush.linearGradient(
+            colors = listOf(surface, surfaceVariant)
         )
     }
 }
