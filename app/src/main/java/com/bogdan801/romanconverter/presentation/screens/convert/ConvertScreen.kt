@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.InputButton
+import com.bogdan801.romanconverter.presentation.components.InputKeyboard
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 
 @Composable
@@ -30,38 +31,6 @@ fun ConvertScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                InputButton(label = "i")
-                InputButton(label = "x")
-                InputButton(label = "c")
-                InputButton(label = "m")
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                InputButton(label = "v")
-                InputButton(label = "l")
-                InputButton(label = "d")
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                InputButton(label = "9")
-                InputButton(label = "I")
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                InputButton(isBackspace = true)
-            }
-        }
+        InputKeyboard()
     }
-
 }

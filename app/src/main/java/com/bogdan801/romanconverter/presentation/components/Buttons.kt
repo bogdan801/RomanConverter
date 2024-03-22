@@ -190,7 +190,7 @@ fun ActionButton(
         modifier = modifier
             .size(size)
             .shadowCustom(
-                color = Color.Black.copy(alpha = 0.2f),
+                color = Color.Black.copy(alpha = 0.15f),
                 blurRadius = 6.dp,
                 shapeRadius = 40.dp,
                 offsetY = 4.dp
