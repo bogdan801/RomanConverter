@@ -1,11 +1,8 @@
 package com.bogdan801.romanconverter.presentation.components
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -301,22 +298,49 @@ fun InputKeyboard(
             else key.arabic.label
 
             val isVisible = if(isRoman) key.roman.isVisible else key.arabic.isVisible
+
             val alpha by animateFloatAsState(
                 targetValue = if(isVisible) 1f else 0f,
                 label = ""
             )
+
             val keyOffset by animateIntOffsetAsState(
                 targetValue = if(isRoman) key.roman.offset else key.arabic.offset,
                 label = ""
             )
+            val context = LocalContext.current
+            var isEnabled by remember { mutableStateOf(true) }
+            LaunchedEffect(key1 = type, key2 = value, key3 = isLowercase) {
+                isEnabled = if(isRoman && (key.roman.action == KeyAction.Input)) {
+                    isRomanNumberValid(value + label)
+                }
+                else true
+
+
+                /*when {
+                    isRoman -> {
+                        if(key.roman.action == KeyAction.Input)
+                            isRomanNumberValid(value + label)
+                        else true
+                    }
+                    !isRoman -> {
+                        !(key.arabic.label == "0" && value.isBlank())
+                    }
+                    else -> true
+                }*/
+
+
+
+            }
+
             InputButton(
                 modifier = Modifier
                     .offset { keyOffset }
                     .alpha(alpha),
                 label = label,
-                isEnabled = alpha == 1f,
+                isEnabled = alpha == 1f && isEnabled,
                 isBackspace = if(isRoman) key.roman.action == KeyAction.Backspace
-                else key.arabic.action == KeyAction.Backspace,
+                              else        key.arabic.action == KeyAction.Backspace,
                 onClick = {
                     if (isRoman){
                         when(key.roman.action) {
@@ -337,6 +361,14 @@ fun InputKeyboard(
                             KeyAction.ChangeType -> onTypeChange(InputKeyboardType.Roman)
                             KeyAction.ChangeCase -> {}
                         }
+                    }
+                },
+                onLongClick = {
+                    if(
+                        (isRoman && key.roman.action == KeyAction.Backspace) ||
+                        (!isRoman && key.arabic.action == KeyAction.Backspace)
+                    ){
+                        onValueChange("")
                     }
                 }
             )

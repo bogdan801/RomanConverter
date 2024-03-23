@@ -53,7 +53,7 @@ private val LightColorScheme = lightColorScheme(
     outline = gold800,
     outlineVariant = Color.Black,
     scrim = Color.Black.copy(0.08f),
-    surfaceBright = Color.White.copy(alpha = 0.4f)
+    surfaceBright = Color.White.copy(alpha = 0.6f)
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -77,7 +77,7 @@ private val DarkColorScheme = darkColorScheme(
     outline = gold800,
     outlineVariant = gray490,
     scrim = Color.White.copy(0.16f),
-    surfaceBright = Color.Black.copy(alpha = 0.4f)
+    surfaceBright = Color.Black.copy(alpha = 0.5f)
 )
 
 @Composable

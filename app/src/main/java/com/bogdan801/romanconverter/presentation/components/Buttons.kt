@@ -1,6 +1,5 @@
 package com.bogdan801.romanconverter.presentation.components
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -9,8 +8,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
@@ -80,12 +81,14 @@ fun SmallIconButton(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InputButton(
     modifier: Modifier = Modifier,
     size: Dp = 64.dp,
     isEnabled: Boolean = true,
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
     label: String? = null,
     isBackspace: Boolean = false,
     customIcon: @Composable (() -> Unit)? = null
@@ -105,7 +108,7 @@ fun InputButton(
         targetValue = if (!isPressed.value) 4.dp else 2.dp,
         label = ""
     )
-    val context = LocalContext.current
+
     Box(
         modifier = modifier
             .size(size)
@@ -117,10 +120,15 @@ fun InputButton(
             )
             .clip(CircleShape)
             .background(inputButtonGradientBrush(size))
-            .clickable(
+            .combinedClickable(
                 onClick = {
                     if (isEnabled) {
                         onClick()
+                    }
+                },
+                onLongClick = {
+                    if (isEnabled) {
+                        onLongClick()
                     }
                 },
                 interactionSource = interactionSource,
