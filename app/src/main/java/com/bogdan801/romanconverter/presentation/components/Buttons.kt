@@ -1,8 +1,13 @@
 package com.bogdan801.romanconverter.presentation.components
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,8 +39,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -114,9 +120,6 @@ fun InputButton(
             .clickable(
                 onClick = {
                     if (isEnabled) {
-                        Toast
-                            .makeText(context, label ?: "backspace", Toast.LENGTH_SHORT)
-                            .show()
                         onClick()
                     }
                 },
@@ -137,41 +140,56 @@ fun InputButton(
                 .background(if (isEnabled) scrim.value else MaterialTheme.colorScheme.surfaceBright),
             contentAlignment = Alignment.Center
         ){
-
-            when {
-                customIcon != null -> {
-                    customIcon()
-                }
-                label != null -> {
+            if(customIcon != null){
+                customIcon()
+            }
+            AnimatedVisibility(
+                visible = label != null,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                AnimatedContent(
+                    modifier = Modifier.width(40.dp),
+                    targetState = label,
+                    label = "",
+                    transitionSpec = {
+                        fadeIn() togetherWith fadeOut()
+                    }
+                ) {animatedLabel ->
                     Text(
-                        text = label,
+                        text = animatedLabel ?: "",
                         style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.onTertiary
+                        color = MaterialTheme.colorScheme.onTertiary,
+                        textAlign = TextAlign.Center
                     )
                 }
-                isBackspace -> {
-                    val primary = MaterialTheme.colorScheme.primary
-                    val secondary = MaterialTheme.colorScheme.secondary
-                    Icon(
-                        modifier = Modifier
-                            .graphicsLayer(alpha = 0.99f)
-                            .drawWithCache {
-                                onDrawWithContent {
-                                    drawContent()
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(
-                                                primary, secondary, primary
-                                            )
-                                        ),
-                                        blendMode = BlendMode.SrcAtop
-                                    )
-                                }
-                            },
-                        imageVector = Icons.AutoMirrored.Outlined.Backspace,
-                        contentDescription = "backspace"
-                    )
-                }
+            }
+            AnimatedVisibility(
+                visible = isBackspace,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                val primary = MaterialTheme.colorScheme.primary
+                val secondary = MaterialTheme.colorScheme.secondary
+                Icon(
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            primary, secondary, primary
+                                        )
+                                    ),
+                                    blendMode = BlendMode.SrcAtop
+                                )
+                            }
+                        },
+                    imageVector = Icons.AutoMirrored.Outlined.Backspace,
+                    contentDescription = "backspace"
+                )
             }
         }
     }
@@ -207,7 +225,9 @@ fun ActionButton(
             contentAlignment = Alignment.Center
         ){
             AutoSizeText(
-                modifier = Modifier.offset(y = 1.dp).padding(horizontal = 18.dp),
+                modifier = Modifier
+                    .offset(y = 1.dp)
+                    .padding(horizontal = 18.dp),
                 text = label,
                 maxTextSize = 16.sp,
                 minTextSize = 12.sp,
