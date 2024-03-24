@@ -52,7 +52,6 @@ fun InputKeyboard(
     val density = LocalDensity.current
     var isRoman by remember { mutableStateOf(true) }
     LaunchedEffect(key1 = type) {
-        onValueChange("")
         isRoman = type == InputKeyboardType.Roman
     }
 
@@ -308,29 +307,27 @@ fun InputKeyboard(
                 targetValue = if(isRoman) key.roman.offset else key.arabic.offset,
                 label = ""
             )
-            val context = LocalContext.current
+
             var isEnabled by remember { mutableStateOf(true) }
-            LaunchedEffect(key1 = type, key2 = value, key3 = isLowercase) {
-                isEnabled = if(isRoman && (key.roman.action == KeyAction.Input)) {
-                    isRomanNumberValid(value + label)
-                }
-                else true
-
-
-                /*when {
-                    isRoman -> {
+            LaunchedEffect(key1 = type, key2 = value, key3 = label) {
+                isEnabled = when(type) {
+                    InputKeyboardType.Roman -> {
                         if(key.roman.action == KeyAction.Input)
                             isRomanNumberValid(value + label)
                         else true
                     }
-                    !isRoman -> {
-                        !(key.arabic.label == "0" && value.isBlank())
+                    InputKeyboardType.Arabic -> {
+                        when(key.arabic.action){
+                            KeyAction.Input -> {
+                                when{
+                                    value.isBlank() -> key.arabic.label != "0"
+                                    else -> (value + (label?:"")).toInt() <= 3999999
+                                }
+                            }
+                            else -> true
+                        }
                     }
-                    else -> true
-                }*/
-
-
-
+                }
             }
 
             InputButton(
@@ -348,7 +345,10 @@ fun InputKeyboard(
                             KeyAction.Backspace -> {
                                 if (value.isNotBlank()) onValueChange(value.dropLast(1))
                             }
-                            KeyAction.ChangeType -> onTypeChange(InputKeyboardType.Arabic)
+                            KeyAction.ChangeType -> {
+                                onValueChange("")
+                                onTypeChange(InputKeyboardType.Arabic)
+                            }
                             KeyAction.ChangeCase -> isLowercase = !isLowercase
                         }
                     }
@@ -358,7 +358,10 @@ fun InputKeyboard(
                             KeyAction.Backspace -> {
                                 if (value.isNotBlank()) onValueChange(value.dropLast(1))
                             }
-                            KeyAction.ChangeType -> onTypeChange(InputKeyboardType.Roman)
+                            KeyAction.ChangeType -> {
+                                onValueChange("")
+                                onTypeChange(InputKeyboardType.Roman)
+                            }
                             KeyAction.ChangeCase -> {}
                         }
                     }
