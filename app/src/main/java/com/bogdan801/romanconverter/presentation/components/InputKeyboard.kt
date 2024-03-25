@@ -1,6 +1,5 @@
 package com.bogdan801.romanconverter.presentation.components
 
-import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.layout.Box
@@ -8,19 +7,16 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.bogdan801.romanconverter.data.util.isRomanNumberValid
-
 
 private enum class KeyAction{
     Input, Backspace, ChangeType, ChangeCase
@@ -44,17 +40,24 @@ enum class InputKeyboardType{
 @Composable
 fun InputKeyboard(
     modifier: Modifier = Modifier,
-    value: String = "",
-    onValueChange: (newValue: String) -> Unit,
+    romanValue: String = "",
+    onRomanValueChange: (newValue: String) -> Unit,
+    arabicValue: String = "",
+    onArabicValueChange: (newValue: String) -> Unit,
     type: InputKeyboardType = InputKeyboardType.Roman,
-    onTypeChange: (newType: InputKeyboardType) -> Unit
+    onTypeChange: (newType: InputKeyboardType) -> Unit,
+    onClear: () -> Unit
 ) {
-    val density = LocalDensity.current
     var isRoman by remember { mutableStateOf(true) }
     LaunchedEffect(key1 = type) {
         isRoman = type == InputKeyboardType.Roman
     }
 
+    val value = if(type == InputKeyboardType.Roman) romanValue else arabicValue
+
+    var isLowercase by remember { mutableStateOf(true) }
+
+    val density = LocalDensity.current
     val keys = remember {
         listOf(
             InputKey(
@@ -278,7 +281,6 @@ fun InputKeyboard(
         )
     }
 
-    var isLowercase by remember { mutableStateOf(true) }
     Box(
         modifier = modifier
             .size(304.dp, 280.dp)
@@ -297,7 +299,6 @@ fun InputKeyboard(
             else key.arabic.label
 
             val isVisible = if(isRoman) key.roman.isVisible else key.arabic.isVisible
-
             val alpha by animateFloatAsState(
                 targetValue = if(isVisible) 1f else 0f,
                 label = ""
@@ -321,7 +322,7 @@ fun InputKeyboard(
                             KeyAction.Input -> {
                                 when{
                                     value.isBlank() -> key.arabic.label != "0"
-                                    else -> (value + (label?:"")).toInt() <= 3999999
+                                    else -> (value + (key.arabic.label?:"")).toInt() <= 3999999
                                 }
                             }
                             else -> true
@@ -341,12 +342,11 @@ fun InputKeyboard(
                 onClick = {
                     if (isRoman){
                         when(key.roman.action) {
-                            KeyAction.Input -> onValueChange(value + label)
+                            KeyAction.Input -> onRomanValueChange(value + label)
                             KeyAction.Backspace -> {
-                                if (value.isNotBlank()) onValueChange(value.dropLast(1))
+                                if (value.isNotBlank()) onRomanValueChange(value.dropLast(1))
                             }
                             KeyAction.ChangeType -> {
-                                onValueChange("")
                                 onTypeChange(InputKeyboardType.Arabic)
                             }
                             KeyAction.ChangeCase -> isLowercase = !isLowercase
@@ -354,12 +354,11 @@ fun InputKeyboard(
                     }
                     else {
                         when(key.arabic.action){
-                            KeyAction.Input -> onValueChange(value + label)
+                            KeyAction.Input -> onArabicValueChange(value + label)
                             KeyAction.Backspace -> {
-                                if (value.isNotBlank()) onValueChange(value.dropLast(1))
+                                if (value.isNotBlank()) onArabicValueChange(value.dropLast(1))
                             }
                             KeyAction.ChangeType -> {
-                                onValueChange("")
                                 onTypeChange(InputKeyboardType.Roman)
                             }
                             KeyAction.ChangeCase -> {}
@@ -371,7 +370,7 @@ fun InputKeyboard(
                         (isRoman && key.roman.action == KeyAction.Backspace) ||
                         (!isRoman && key.arabic.action == KeyAction.Backspace)
                     ){
-                        onValueChange("")
+                        onClear()
                     }
                 }
             )
