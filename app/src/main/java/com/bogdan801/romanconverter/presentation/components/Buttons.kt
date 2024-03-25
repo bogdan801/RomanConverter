@@ -208,9 +208,9 @@ fun InputButton(
 fun ActionButton(
     modifier: Modifier = Modifier,
     size: DpSize = DpSize(158.dp, 54.dp),
-    onClick: () -> Unit = {},
     label: String = "",
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier

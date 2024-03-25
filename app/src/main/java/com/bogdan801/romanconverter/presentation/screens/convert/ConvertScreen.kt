@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
 import com.bogdan801.romanconverter.data.util.convertRomanToArabic
+import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.InputKeyboard
 import com.bogdan801.romanconverter.presentation.components.InputKeyboardType
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
@@ -66,7 +67,7 @@ fun ConvertScreen(
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(48.dp))
+
             InputKeyboard(
                 romanValue = screenState.romanValue,
                 onRomanValueChange = {

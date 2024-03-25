@@ -21,14 +21,12 @@ import com.bogdan801.romanconverter.data.util.isRomanNumberValid
 private enum class KeyAction{
     Input, Backspace, ChangeType, ChangeCase
 }
-
 private data class KeyProperty(
     val label: String?,
     val offset: IntOffset = IntOffset.Zero,
     val isVisible: Boolean = true,
     val action: KeyAction = KeyAction.Input
 )
-
 private data class InputKey(
     val roman: KeyProperty,
     val arabic: KeyProperty
@@ -36,7 +34,6 @@ private data class InputKey(
 enum class InputKeyboardType{
     Roman, Arabic
 }
-
 @Composable
 fun InputKeyboard(
     modifier: Modifier = Modifier,
@@ -45,7 +42,8 @@ fun InputKeyboard(
     arabicValue: String = "",
     onArabicValueChange: (newValue: String) -> Unit,
     type: InputKeyboardType = InputKeyboardType.Roman,
-    onTypeChange: (newType: InputKeyboardType) -> Unit,
+    onTypeChange: (newType: InputKeyboardType) -> Unit = {},
+    isQuizInput: Boolean = false,
     onClear: () -> Unit
 ) {
     var isRoman by remember { mutableStateOf(true) }
@@ -59,231 +57,435 @@ fun InputKeyboard(
 
     val density = LocalDensity.current
     val keys = remember {
-        listOf(
-            InputKey(
-                roman = KeyProperty(
-                    label = "i",
-                    offset = IntOffset(
-                        x = with(density) {0.dp.toPx().toInt()},
-                        y = with(density) {8.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "7",
-                    offset = IntOffset(
-                        x = with(density) {40.dp.toPx().toInt()},
-                        y = 0,
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "x",
-                    offset = IntOffset(
-                        x = with(density) {80.dp.toPx().toInt()},
-                        y = with(density) {8.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "8",
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = 0,
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "m",
-                    offset = IntOffset(
-                        x = with(density) {240.dp.toPx().toInt()},
-                        y = with(density) {8.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = null,
-                    isVisible = false,
-                    offset = IntOffset(
-                        x = with(density) {200.dp.toPx().toInt()},
-                        y = 0,
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "c",
-                    offset = IntOffset(
-                        x = with(density) {160.dp.toPx().toInt()},
-                        y = with(density) {8.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "9",
-                    offset = IntOffset(
-                        x = with(density) {200.dp.toPx().toInt()},
-                        y = 0,
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "v",
-                    offset = IntOffset(
-                        x = with(density) {40.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "4",
-                    offset = IntOffset(
-                        x = with(density) {40.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "2",
-                    isVisible = false,
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "2",
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {160.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "l",
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "5",
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "d",
-                    offset = IntOffset(
-                        x = with(density) {200.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "6",
-                    offset = IntOffset(
-                        x = with(density) {200.dp.toPx().toInt()},
-                        y = with(density) {80.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "I",
-                    offset = IntOffset(
-                        x = with(density) {80.dp.toPx().toInt()},
-                        y = with(density) {152.dp.toPx().toInt()},
+        if(!isQuizInput){
+            listOf(
+                InputKey(
+                    roman = KeyProperty(
+                        label = "i",
+                        offset = IntOffset(
+                            x = with(density) {0.dp.toPx().toInt()},
+                            y = with(density) {8.dp.toPx().toInt()},
+                        )
                     ),
-                    action = KeyAction.ChangeCase
-                ),
-                arabic = KeyProperty(
-                    label = "1",
-                    offset = IntOffset(
-                        x = with(density) {40.dp.toPx().toInt()},
-                        y = with(density) {160.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "9",
-                    action = KeyAction.ChangeType,
-                    offset = IntOffset(
-                        x = with(density) {160.dp.toPx().toInt()},
-                        y = with(density) {152.dp.toPx().toInt()},
+                    arabic = KeyProperty(
+                        label = "7",
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = 0,
+                        )
                     )
                 ),
-                arabic = KeyProperty(
-                    label = "3",
-                    offset = IntOffset(
-                        x = with(density) {200.dp.toPx().toInt()},
-                        y = with(density) {160.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = "x",
-                    isVisible = false,
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {224.dp.toPx().toInt()},
-                    )
-                ),
-                arabic = KeyProperty(
-                    label = "x",
-                    action = KeyAction.ChangeType,
-                    offset = IntOffset(
-                        x = with(density) {40.dp.toPx().toInt()},
-                        y = with(density) {240.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = null,
-                    action = KeyAction.Backspace,
-                    isVisible = false,
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {240.dp.toPx().toInt()},
+                InputKey(
+                    roman = KeyProperty(
+                        label = "x",
+                        offset = IntOffset(
+                            x = with(density) {80.dp.toPx().toInt()},
+                            y = with(density) {8.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "8",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = 0,
+                        )
                     )
                 ),
-                arabic = KeyProperty(
-                    label = null,
-                    action = KeyAction.Backspace,
-                    offset = IntOffset(
-                        x = with(density) {200.dp.toPx().toInt()},
-                        y = with(density) {240.dp.toPx().toInt()},
-                    )
-                )
-            ),
-            InputKey(
-                roman = KeyProperty(
-                    label = null,
-                    action = KeyAction.Backspace,
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {224.dp.toPx().toInt()},
+                InputKey(
+                    roman = KeyProperty(
+                        label = "m",
+                        offset = IntOffset(
+                            x = with(density) {240.dp.toPx().toInt()},
+                            y = with(density) {8.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = null,
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = 0,
+                        )
                     )
                 ),
-                arabic = KeyProperty(
-                    label = "0",
-                    offset = IntOffset(
-                        x = with(density) {120.dp.toPx().toInt()},
-                        y = with(density) {240.dp.toPx().toInt()},
+                InputKey(
+                    roman = KeyProperty(
+                        label = "c",
+                        offset = IntOffset(
+                            x = with(density) {160.dp.toPx().toInt()},
+                            y = with(density) {8.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "9",
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = 0,
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "v",
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "4",
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "2",
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "2",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {160.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "l",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "5",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "d",
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "6",
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {80.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "I",
+                        offset = IntOffset(
+                            x = with(density) {80.dp.toPx().toInt()},
+                            y = with(density) {152.dp.toPx().toInt()},
+                        ),
+                        action = KeyAction.ChangeCase
+                    ),
+                    arabic = KeyProperty(
+                        label = "1",
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {160.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "9",
+                        action = KeyAction.ChangeType,
+                        offset = IntOffset(
+                            x = with(density) {160.dp.toPx().toInt()},
+                            y = with(density) {152.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "3",
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {160.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "x",
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {224.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "x",
+                        action = KeyAction.ChangeType,
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {240.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = null,
+                        action = KeyAction.Backspace,
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {240.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = null,
+                        action = KeyAction.Backspace,
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {240.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = null,
+                        action = KeyAction.Backspace,
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {224.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "0",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {240.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+            )
+        }
+        else {
+            listOf(
+                InputKey(
+                    roman = KeyProperty(
+                        label = "i",
+                        offset = IntOffset(
+                            x = with(density) {0.dp.toPx().toInt()},
+                            y = with(density) {48.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "7",
+                        offset = IntOffset(
+                            x = with(density) {36.dp.toPx().toInt()},
+                            y = with(density) {6.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "x",
+                        offset = IntOffset(
+                            x = with(density) {80.dp.toPx().toInt()},
+                            y = with(density) {48.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "8",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {6.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "m",
+                        offset = IntOffset(
+                            x = with(density) {240.dp.toPx().toInt()},
+                            y = with(density) {48.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = null,
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {204.dp.toPx().toInt()},
+                            y = with(density) {6.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "c",
+                        offset = IntOffset(
+                            x = with(density) {160.dp.toPx().toInt()},
+                            y = with(density) {48.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "9",
+                        offset = IntOffset(
+                            x = with(density) {204.dp.toPx().toInt()},
+                            y = with(density) {6.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "1",
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "1",
+                        offset = IntOffset(
+                            x = with(density) {36.dp.toPx().toInt()},
+                            y = with(density) {158.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "2",
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "2",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {158.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "3",
+                        isVisible = false,
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "3",
+                        offset = IntOffset(
+                            x = with(density) {204.dp.toPx().toInt()},
+                            y = with(density) {158.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "v",
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "4",
+                        offset = IntOffset(
+                            x = with(density) {36.dp.toPx().toInt()},
+                            y = with(density) {82.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "l",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "5",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {82.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "d",
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "6",
+                        offset = IntOffset(
+                            x = with(density) {204.dp.toPx().toInt()},
+                            y = with(density) {82.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "I",
+                        action = KeyAction.ChangeCase,
+                        offset = IntOffset(
+                            x = with(density) {80.dp.toPx().toInt()},
+                            y = with(density) {192.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "0",
+                        offset = IntOffset(
+                            x = with(density) {78.dp.toPx().toInt()},
+                            y = with(density) {234.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = null,
+                        action = KeyAction.Backspace,
+                        offset = IntOffset(
+                            x = with(density) {160.dp.toPx().toInt()},
+                            y = with(density) {192.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = null,
+                        action = KeyAction.Backspace,
+                        offset = IntOffset(
+                            x = with(density) {162.dp.toPx().toInt()},
+                            y = with(density) {234.dp.toPx().toInt()},
+                        )
                     )
                 )
-            ),
-        )
+            )
+        }
     }
 
     Box(
-        modifier = modifier
-            .size(304.dp, 280.dp)
+        modifier = modifier.size(304.dp, 304.dp)
     ){
         keys.forEach { key ->
             val label = if(isRoman) {
@@ -376,39 +578,4 @@ fun InputKeyboard(
             )
         }
     }
-    
-    
-    
-   /* Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            InputButton(label = "i")
-            InputButton(label = "x")
-            InputButton(label = "c")
-            InputButton(label = "m")
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            InputButton(label = "v")
-            InputButton(label = "l")
-            InputButton(label = "d")
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            InputButton(label = "9")
-            InputButton(label = "I")
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            InputButton(isBackspace = true)
-        }
-    }*/
 }
