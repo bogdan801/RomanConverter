@@ -87,7 +87,6 @@ fun ConvertScreen(
                     viewModel.setRomanValue(convertArabicToRoman(it))
                 },
                 type = screenState.type,
-                isQuizInput = true,
                 onTypeChange = {
                     viewModel.setKeyboardType(it)
                 },

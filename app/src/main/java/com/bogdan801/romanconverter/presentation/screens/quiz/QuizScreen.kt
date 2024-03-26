@@ -34,6 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.CounterCell
+import com.bogdan801.romanconverter.presentation.components.ValueCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import kotlin.random.Random
 
@@ -54,32 +55,18 @@ fun QuizScreen(
 
 
         var value by remember { mutableIntStateOf(0) }
-        val gg = value
+        var prevValue by remember { mutableIntStateOf(0) }
         ActionButton {
-            value+=Random.nextInt(20, 50)
+            prevValue = value
+            value+=Random.nextInt(0, 500)
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        val digit1 = gg.toString()[gg.toString().lastIndex].toString()
-        val digit2 = if(gg.toString().length > 1) gg.toString()[gg.toString().lastIndex-1].toString() else "0"
-        val digit3 = if(gg.toString().length > 2) gg.toString()[gg.toString().lastIndex-2].toString() else "0"
-
-
-        Row {
-            CounterCell(
-                modifier = Modifier.size(20.dp, 30.dp),
-                value = digit3
-            )
-            CounterCell(
-                modifier = Modifier.size(20.dp, 30.dp),
-                value = digit2
-            )
-            CounterCell(
-                modifier = Modifier.size(20.dp, 30.dp),
-                value = digit1
-            )
-
-        }
-        Text(text = gg.toString(), style = MaterialTheme.typography.displayLarge)
+        Spacer(modifier = Modifier.height(48.dp))
+        ValueCounter(
+            modifier = Modifier.size(100.dp, 30.dp),
+            value = value,
+            prevValue = prevValue
+        )
+        //Text(text = gg.toString(), style = MaterialTheme.typography.displayLarge)
         /*Row(
             modifier = Modifier
                 .height(30.dp)
