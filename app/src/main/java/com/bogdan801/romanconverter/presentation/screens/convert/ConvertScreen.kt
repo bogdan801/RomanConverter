@@ -68,6 +68,13 @@ fun ConvertScreen(
                 color = MaterialTheme.colorScheme.primary
             )
 
+            Spacer(modifier = Modifier.height(48.dp))
+            ActionButton{
+                viewModel.setKeyboardType(if(screenState.type == InputKeyboardType.Roman) InputKeyboardType.Arabic else InputKeyboardType.Roman)
+            }
+            Spacer(modifier = Modifier.height(48.dp))
+
+
             InputKeyboard(
                 romanValue = screenState.romanValue,
                 onRomanValueChange = {
@@ -80,6 +87,7 @@ fun ConvertScreen(
                     viewModel.setRomanValue(convertArabicToRoman(it))
                 },
                 type = screenState.type,
+                isQuizInput = true,
                 onTypeChange = {
                     viewModel.setKeyboardType(it)
                 },

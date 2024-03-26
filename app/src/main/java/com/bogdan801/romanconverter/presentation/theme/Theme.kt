@@ -151,6 +151,24 @@ fun navbarGradientBrush(): Brush {
 }
 
 @Composable
+fun counterGradientBrush(): Brush {
+    val tertiaryContainer = MaterialTheme.colorScheme.tertiaryContainer
+    val onSecondaryContainer = MaterialTheme.colorScheme.onSecondaryContainer
+    val onTertiaryContainer = MaterialTheme.colorScheme.onTertiaryContainer
+    return remember(tertiaryContainer, onSecondaryContainer, onTertiaryContainer) {
+        Brush.verticalGradient(
+            colorStops = arrayOf(
+                0f to tertiaryContainer,
+                0.25f to onSecondaryContainer,
+                0.5f to onTertiaryContainer,
+                0.75f to onSecondaryContainer,
+                1f to tertiaryContainer
+            )
+        )
+    }
+}
+
+@Composable
 fun RomanCalculatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit

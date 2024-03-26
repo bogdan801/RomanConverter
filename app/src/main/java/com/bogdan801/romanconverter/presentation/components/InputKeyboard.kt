@@ -70,7 +70,7 @@ fun InputKeyboard(
                     arabic = KeyProperty(
                         label = "7",
                         offset = IntOffset(
-                            x = with(density) {40.dp.toPx().toInt()},
+                            x = with(density) {32.dp.toPx().toInt()},
                             y = 0,
                         )
                     )
@@ -119,7 +119,7 @@ fun InputKeyboard(
                     arabic = KeyProperty(
                         label = "9",
                         offset = IntOffset(
-                            x = with(density) {200.dp.toPx().toInt()},
+                            x = with(density) {208.dp.toPx().toInt()},
                             y = 0,
                         )
                     )
@@ -135,7 +135,7 @@ fun InputKeyboard(
                     arabic = KeyProperty(
                         label = "4",
                         offset = IntOffset(
-                            x = with(density) {40.dp.toPx().toInt()},
+                            x = with(density) {32.dp.toPx().toInt()},
                             y = with(density) {80.dp.toPx().toInt()},
                         )
                     )
@@ -184,7 +184,7 @@ fun InputKeyboard(
                     arabic = KeyProperty(
                         label = "6",
                         offset = IntOffset(
-                            x = with(density) {200.dp.toPx().toInt()},
+                            x = with(density) {208.dp.toPx().toInt()},
                             y = with(density) {80.dp.toPx().toInt()},
                         )
                     )
@@ -201,7 +201,7 @@ fun InputKeyboard(
                     arabic = KeyProperty(
                         label = "1",
                         offset = IntOffset(
-                            x = with(density) {40.dp.toPx().toInt()},
+                            x = with(density) {32.dp.toPx().toInt()},
                             y = with(density) {160.dp.toPx().toInt()},
                         )
                     )
@@ -218,7 +218,7 @@ fun InputKeyboard(
                     arabic = KeyProperty(
                         label = "3",
                         offset = IntOffset(
-                            x = with(density) {200.dp.toPx().toInt()},
+                            x = with(density) {208.dp.toPx().toInt()},
                             y = with(density) {160.dp.toPx().toInt()},
                         )
                     )
@@ -236,7 +236,7 @@ fun InputKeyboard(
                         label = "x",
                         action = KeyAction.ChangeType,
                         offset = IntOffset(
-                            x = with(density) {40.dp.toPx().toInt()},
+                            x = with(density) {32.dp.toPx().toInt()},
                             y = with(density) {240.dp.toPx().toInt()},
                         )
                     )
@@ -255,7 +255,7 @@ fun InputKeyboard(
                         label = null,
                         action = KeyAction.Backspace,
                         offset = IntOffset(
-                            x = with(density) {200.dp.toPx().toInt()},
+                            x = with(density) {208.dp.toPx().toInt()},
                             y = with(density) {240.dp.toPx().toInt()},
                         )
                     )
@@ -315,23 +315,6 @@ fun InputKeyboard(
                 ),
                 InputKey(
                     roman = KeyProperty(
-                        label = "m",
-                        offset = IntOffset(
-                            x = with(density) {240.dp.toPx().toInt()},
-                            y = with(density) {48.dp.toPx().toInt()},
-                        )
-                    ),
-                    arabic = KeyProperty(
-                        label = null,
-                        isVisible = false,
-                        offset = IntOffset(
-                            x = with(density) {204.dp.toPx().toInt()},
-                            y = with(density) {6.dp.toPx().toInt()},
-                        )
-                    )
-                ),
-                InputKey(
-                    roman = KeyProperty(
                         label = "c",
                         offset = IntOffset(
                             x = with(density) {160.dp.toPx().toInt()},
@@ -348,58 +331,8 @@ fun InputKeyboard(
                 ),
                 InputKey(
                     roman = KeyProperty(
-                        label = "1",
+                        label = "4",
                         isVisible = false,
-                        offset = IntOffset(
-                            x = with(density) {40.dp.toPx().toInt()},
-                            y = with(density) {120.dp.toPx().toInt()},
-                        )
-                    ),
-                    arabic = KeyProperty(
-                        label = "1",
-                        offset = IntOffset(
-                            x = with(density) {36.dp.toPx().toInt()},
-                            y = with(density) {158.dp.toPx().toInt()},
-                        )
-                    )
-                ),
-                InputKey(
-                    roman = KeyProperty(
-                        label = "2",
-                        isVisible = false,
-                        offset = IntOffset(
-                            x = with(density) {120.dp.toPx().toInt()},
-                            y = with(density) {120.dp.toPx().toInt()},
-                        )
-                    ),
-                    arabic = KeyProperty(
-                        label = "2",
-                        offset = IntOffset(
-                            x = with(density) {120.dp.toPx().toInt()},
-                            y = with(density) {158.dp.toPx().toInt()},
-                        )
-                    )
-                ),
-                InputKey(
-                    roman = KeyProperty(
-                        label = "3",
-                        isVisible = false,
-                        offset = IntOffset(
-                            x = with(density) {200.dp.toPx().toInt()},
-                            y = with(density) {120.dp.toPx().toInt()},
-                        )
-                    ),
-                    arabic = KeyProperty(
-                        label = "3",
-                        offset = IntOffset(
-                            x = with(density) {204.dp.toPx().toInt()},
-                            y = with(density) {158.dp.toPx().toInt()},
-                        )
-                    )
-                ),
-                InputKey(
-                    roman = KeyProperty(
-                        label = "v",
                         offset = IntOffset(
                             x = with(density) {40.dp.toPx().toInt()},
                             y = with(density) {120.dp.toPx().toInt()},
@@ -415,7 +348,8 @@ fun InputKeyboard(
                 ),
                 InputKey(
                     roman = KeyProperty(
-                        label = "l",
+                        label = "5",
+                        isVisible = false,
                         offset = IntOffset(
                             x = with(density) {120.dp.toPx().toInt()},
                             y = with(density) {120.dp.toPx().toInt()},
@@ -431,10 +365,10 @@ fun InputKeyboard(
                 ),
                 InputKey(
                     roman = KeyProperty(
-                        label = "d",
+                        label = "m",
                         offset = IntOffset(
-                            x = with(density) {200.dp.toPx().toInt()},
-                            y = with(density) {120.dp.toPx().toInt()},
+                            x = with(density) {240.dp.toPx().toInt()},
+                            y = with(density) {48.dp.toPx().toInt()},
                         )
                     ),
                     arabic = KeyProperty(
@@ -442,6 +376,54 @@ fun InputKeyboard(
                         offset = IntOffset(
                             x = with(density) {204.dp.toPx().toInt()},
                             y = with(density) {82.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "v",
+                        offset = IntOffset(
+                            x = with(density) {40.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "1",
+                        offset = IntOffset(
+                            x = with(density) {36.dp.toPx().toInt()},
+                            y = with(density) {158.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "l",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "2",
+                        offset = IntOffset(
+                            x = with(density) {120.dp.toPx().toInt()},
+                            y = with(density) {158.dp.toPx().toInt()},
+                        )
+                    )
+                ),
+                InputKey(
+                    roman = KeyProperty(
+                        label = "d",
+                        offset = IntOffset(
+                            x = with(density) {200.dp.toPx().toInt()},
+                            y = with(density) {120.dp.toPx().toInt()},
+                        )
+                    ),
+                    arabic = KeyProperty(
+                        label = "3",
+                        offset = IntOffset(
+                            x = with(density) {204.dp.toPx().toInt()},
+                            y = with(density) {158.dp.toPx().toInt()},
                         )
                     )
                 ),
