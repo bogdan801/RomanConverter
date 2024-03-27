@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,8 +35,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.CounterCell
+import com.bogdan801.romanconverter.presentation.components.TimeCounter
 import com.bogdan801.romanconverter.presentation.components.ValueCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
@@ -54,34 +57,56 @@ fun QuizScreen(
     ){
 
 
-        var value by remember { mutableIntStateOf(0) }
-        var prevValue by remember { mutableIntStateOf(0) }
-        ActionButton {
-            prevValue = value
-            value+=Random.nextInt(0, 500)
-        }
-        Spacer(modifier = Modifier.height(48.dp))
-        ValueCounter(
-            modifier = Modifier.size(100.dp, 30.dp),
-            value = value,
-            prevValue = prevValue
-        )
-        //Text(text = gg.toString(), style = MaterialTheme.typography.displayLarge)
-        /*Row(
-            modifier = Modifier
-                .height(30.dp)
-                .width(100.dp)
-                .border(width = 1.dp, color = MaterialTheme.colorScheme.onTertiary)
-        ) {
-            repeat(5){
-                CounterCell(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f),
-                    value = gg.toString()
-                )
+        var value by remember { mutableIntStateOf(20) }
+        var valueCounter by remember { mutableIntStateOf(20) }
+        var valueCounterPrev by remember { mutableIntStateOf(20) }
+        var started by remember { mutableStateOf(false) }
+        LaunchedEffect(key1 = started) {
+            if(started){
+                while(value > 0){
+                    delay(1000)
+                    value--
+                }
+                if(value == 0) started = false
             }
-        }*/
+        }
+        ActionButton(
+            label = "+10",
+            onClick = {
+                value += 10
+                valueCounterPrev = valueCounter
+                valueCounter += Random.nextInt(0, 30)
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ActionButton(
+            label = "-10",
+            onClick = {
+                value -= 10
+            }
+        )
+        Spacer(modifier = Modifier.height(48.dp))
+        ActionButton(
+            label = if(!started) "Start" else "Stop",
+            onClick = {
+                started = !started
+            }
+        )
+        Spacer(modifier = Modifier.height(48.dp))
+        Row {
+            ValueCounter(
+                modifier = Modifier.size(100.dp, 30.dp),
+                value = valueCounter,
+                prevValue = valueCounterPrev
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            TimeCounter(
+                modifier = Modifier.size(100.dp, 30.dp),
+                value = value
+            )
+        }
 
         /*ActionButton(
             label = "Move",

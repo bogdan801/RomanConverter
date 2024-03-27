@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.bogdan801.romanconverter.data.util.convertSecondsToTimeString
 import com.bogdan801.romanconverter.presentation.theme.counterGradientBrush
 
 @Composable
@@ -89,38 +91,90 @@ fun ValueCounter(
     prevValue: Int = 0
 ) {
     val stringValue = value.toString()
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(modifier = modifier
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onTertiary
-            )
-        ) {
-            for (i in 0 until digitCount){
-                val displayI = i - (digitCount - stringValue.length)
-                val prevI = i - (digitCount - prevValue.toString().length)
-                val prevDigit = if(prevI < 0) "0" else prevValue.toString()[prevI].toString()
-                val displayDigit = if(displayI < 0) "0" else stringValue[displayI].toString()
-                val targetValue = if(prevDigit > displayDigit) displayDigit.toFloat() + 10f
-                                  else displayDigit.toFloat()
-                val animatable = remember { Animatable(prevDigit.toFloat()) }
-                LaunchedEffect(key1 = targetValue) {
-                    animatable.animateTo(
-                        targetValue = targetValue,
-                        animationSpec = tween(
-                            durationMillis = 800,
-                            easing = LinearEasing
-                        )
+    Row(modifier = modifier
+        .border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onTertiary
+        )
+    ) {
+        for (i in 0 until digitCount){
+            val displayI = i - (digitCount - stringValue.length)
+            val prevI = i - (digitCount - prevValue.toString().length)
+            val prevDigit = if(prevI < 0) "0" else prevValue.toString()[prevI].toString()
+            val displayDigit = if(displayI < 0) "0" else stringValue[displayI].toString()
+            val targetValue = if(prevDigit > displayDigit) displayDigit.toFloat() + 10f
+            else displayDigit.toFloat()
+            val animatable = remember { Animatable(prevDigit.toFloat()) }
+            LaunchedEffect(key1 = targetValue) {
+                animatable.animateTo(
+                    targetValue = targetValue,
+                    animationSpec = tween(
+                        durationMillis = 800,
+                        easing = LinearEasing
                     )
-                    animatable.snapTo(displayDigit.toFloat())
-                }
-                CounterCell(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f),
-                    value = (animatable.value.toInt() % 10).toString()
                 )
+                animatable.snapTo(displayDigit.toFloat())
             }
+            CounterCell(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                value = (animatable.value.toInt() % 10).toString(),
+                rollUp = false
+            )
         }
+    }
+}
+
+@Composable
+fun TimeCounter(
+    modifier: Modifier = Modifier,
+    value: Int
+) {
+    val stringValue = convertSecondsToTimeString(value)
+    Row(modifier = modifier
+        .background(counterGradientBrush())
+        .border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onTertiary
+        )
+    ) {
+        val cellColor = if(value in 1..9) MaterialTheme.colorScheme.error
+                        else MaterialTheme.colorScheme.onTertiary
+        CounterCell(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            value = stringValue[0].toString(),
+            textColor = cellColor
+        )
+        CounterCell(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            value = stringValue[1].toString(),
+            textColor = cellColor
+        )
+        Text(
+            modifier = Modifier.width(12.dp).offset(y = 1.dp),
+            text = ":",
+            textAlign = TextAlign.Center,
+            color = cellColor,
+            style = MaterialTheme.typography.titleLarge
+        )
+        CounterCell(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            value = stringValue[3].toString(),
+            textColor = cellColor
+        )
+        CounterCell(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            value = stringValue[4].toString(),
+            textColor = cellColor
+        )
     }
 }
