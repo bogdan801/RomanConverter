@@ -94,7 +94,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$viewmodel_version"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
 
-
     //icons
     implementation "androidx.compose.material:material-icons-extended"
 }

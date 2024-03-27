@@ -169,6 +169,20 @@ fun counterGradientBrush(): Brush {
 }
 
 @Composable
+fun dialogBoxGradientBrush(): Brush {
+    val onTertiaryContainer = MaterialTheme.colorScheme.onTertiaryContainer
+    val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
+    return remember(onPrimaryContainer, onTertiaryContainer) {
+        Brush.verticalGradient(
+            colors = listOf(
+                onTertiaryContainer,
+                onPrimaryContainer
+            )
+        )
+    }
+}
+
+@Composable
 fun RomanCalculatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
