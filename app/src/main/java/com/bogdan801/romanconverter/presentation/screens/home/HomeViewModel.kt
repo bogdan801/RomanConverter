@@ -17,26 +17,18 @@ constructor(
     private val _screenState = MutableStateFlow(HomeScreenState())
     val screenState = _screenState.asStateFlow()
 
-    fun setNewValue(newValue: String){
+    fun showNavBar(value: Boolean){
         _screenState.update {
             it.copy(
-                someValue = newValue
+                isExpanded = value
             )
         }
     }
 
-    fun hideNavBar() {
+    fun blurBackground(value: Boolean){
         _screenState.update {
             it.copy(
-                isExpanded = false
-            )
-        }
-    }
-
-    fun showNavBar(){
-        _screenState.update {
-            it.copy(
-                isExpanded = true
+                shouldBlur = value
             )
         }
     }

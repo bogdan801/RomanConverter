@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +37,9 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -51,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bogdan801.romanconverter.R
+import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.NavigationBar
 import com.bogdan801.romanconverter.presentation.components.NavigationItem
 import com.bogdan801.romanconverter.presentation.components.SmallIconButton
@@ -60,6 +64,7 @@ import com.bogdan801.romanconverter.presentation.screens.camera.CameraScreen
 import com.bogdan801.romanconverter.presentation.screens.convert.ConvertScreen
 import com.bogdan801.romanconverter.presentation.screens.quiz.QuizScreen
 import com.bogdan801.util_library.intSettings
+import com.skydoves.cloudy.Cloudy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
@@ -275,6 +280,25 @@ fun HomeScreen(
                     }
                 )
             }
+
+
+            var showBlur by remember { mutableStateOf(false) }
+            LaunchedEffect(key1 = screenState.shouldBlur) {
+                showBlur = screenState.shouldBlur
+            }
+            if(screenState.shouldBlur){
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.35f))
+                ){
+                    if(showBlur){
+                        Cloudy(radius = 25) {
+                            Box(modifier = Modifier.fillMaxSize())
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

@@ -29,7 +29,7 @@ fun BaseDialogBox(
             ),
             onDismissRequest = onDismiss
         ) {
-            (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0.35f)
+            (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0.0f)
             Box(
                 modifier = modifier
                     .clip(RoundedCornerShape(16.dp))
@@ -40,4 +40,11 @@ fun BaseDialogBox(
             }
         }
     }
+}
+
+@Composable
+fun PauseDialogBox(
+    modifier: Modifier
+) {
+
 }

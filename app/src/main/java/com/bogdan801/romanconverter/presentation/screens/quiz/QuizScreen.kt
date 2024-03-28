@@ -26,10 +26,8 @@ import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.BaseDialogBox
 import com.bogdan801.romanconverter.presentation.components.TimeCounter
-import com.bogdan801.romanconverter.presentation.components.ValueCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 @Composable
 fun QuizScreen(
@@ -65,6 +63,7 @@ fun QuizScreen(
                 onClick = {
                     value += 10
                     show = !show
+                    homeViewModel.blurBackground(true)
                 }
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -93,6 +92,7 @@ fun QuizScreen(
             show = show,
             onDismiss = {
                 show = false
+                homeViewModel.blurBackground(false)
             }
         ){
             Text(text = "текст", style = MaterialTheme.typography.displaySmall, color = MaterialTheme.colorScheme.onTertiary)
