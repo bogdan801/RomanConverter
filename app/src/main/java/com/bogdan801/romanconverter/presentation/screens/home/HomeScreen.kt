@@ -281,24 +281,12 @@ fun HomeScreen(
                 )
             }
 
-
-            var showBlur by remember { mutableStateOf(false) }
-            LaunchedEffect(key1 = screenState.shouldBlur) {
-                showBlur = screenState.shouldBlur
-            }
+            //blur when needed
             if(screenState.shouldBlur){
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.35f))
-                ){
-                    if(showBlur){
-                        Cloudy(radius = 25) {
-                            Box(modifier = Modifier.fillMaxSize())
-                        }
-                    }
+                Cloudy(radius = 25) {
+                    Box(modifier = Modifier.fillMaxSize())
                 }
             }
-
         }
     }
 }

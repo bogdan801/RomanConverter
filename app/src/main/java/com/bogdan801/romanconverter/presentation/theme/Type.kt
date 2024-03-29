@@ -38,7 +38,7 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = libreBodoniFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 24.sp
+        fontSize = 28.sp
     ),
     titleMedium = TextStyle(
         fontFamily = libreBodoniFontFamily,

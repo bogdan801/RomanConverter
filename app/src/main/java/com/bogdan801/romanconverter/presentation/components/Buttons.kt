@@ -43,6 +43,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bogdan801.romanconverter.presentation.theme.actionButtonGradientBrush
@@ -210,38 +211,57 @@ fun ActionButton(
     size: DpSize = DpSize(158.dp, 54.dp),
     label: String = "",
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    useAutoSizeLabel: Boolean = true,
+    maxTextSize: TextUnit = textStyle.fontSize,
+    minTextSize: TextUnit = 12.sp,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+    shadowColor: Color = Color.Black.copy(alpha = 0.15f),
+    shadowBlurRadius: Dp = 6.dp,
+    shadowYOffset: Dp = 4.dp,
     onClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
             .size(size)
             .shadowCustom(
-                color = Color.Black.copy(alpha = 0.15f),
-                blurRadius = 6.dp,
+                color = shadowColor,
+                blurRadius = shadowBlurRadius,
                 shapeRadius = 40.dp,
-                offsetY = 4.dp
+                offsetY = shadowYOffset
             )
             .clip(RoundedCornerShape(40.dp))
             .background(brush = actionButtonGradientBrush())
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(40.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, borderColor),
         color = Color.Transparent
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
-            AutoSizeText(
-                modifier = Modifier
-                    .offset(y = 1.dp)
-                    .padding(horizontal = 18.dp),
-                text = label,
-                maxTextSize = 16.sp,
-                minTextSize = 12.sp,
-                style = textStyle,
-                color = MaterialTheme.colorScheme.onTertiary
-            )
+            if(useAutoSizeLabel){
+                AutoSizeText(
+                    modifier = Modifier
+                        .offset(y = 1.dp)
+                        .padding(horizontal = 18.dp),
+                    text = label,
+                    maxTextSize = maxTextSize,
+                    minTextSize = minTextSize,
+                    style = textStyle,
+                    color = MaterialTheme.colorScheme.onTertiary
+                )
+            }
+            else {
+                Text(
+                    modifier = Modifier
+                        .offset(y = 1.dp)
+                        .padding(horizontal = 18.dp),
+                    text = label,
+                    style = textStyle,
+                    color = MaterialTheme.colorScheme.onTertiary
+                )
+            }
         }
     }
 }

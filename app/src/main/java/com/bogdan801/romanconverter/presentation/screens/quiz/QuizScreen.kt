@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.ActionButton
-import com.bogdan801.romanconverter.presentation.components.BaseDialogBox
+import com.bogdan801.romanconverter.presentation.components.PauseDialogBox
 import com.bogdan801.romanconverter.presentation.components.TimeCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import kotlinx.coroutines.delay
@@ -63,7 +61,6 @@ fun QuizScreen(
                 onClick = {
                     value += 10
                     show = !show
-                    homeViewModel.blurBackground(true)
                 }
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -87,16 +84,19 @@ fun QuizScreen(
             modifier = Modifier.size(100.dp, 30.dp),
             value = value
         )
-        BaseDialogBox(
-            modifier = Modifier.size(400.dp, 300.dp),
+
+        PauseDialogBox(
+            modifier = Modifier,
             show = show,
+            onVisibilityChanged = { isVisible ->
+                homeViewModel.blurBackground(isVisible)
+            },
             onDismiss = {
                 show = false
-                homeViewModel.blurBackground(false)
-            }
-        ){
-            Text(text = "текст", style = MaterialTheme.typography.displaySmall, color = MaterialTheme.colorScheme.onTertiary)
-        }
+            },
+            onContinueClick = {},
+            onHomeClick = {}
+        )
 
 
 

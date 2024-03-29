@@ -51,7 +51,7 @@ private val LightColorScheme = lightColorScheme(
     error = red,
     background = Color.White,
     outline = gold800,
-    outlineVariant = Color.Black,
+    outlineVariant = gray850,
     scrim = Color.Black.copy(0.08f),
     surfaceBright = Color.White.copy(alpha = 0.6f)
 )
