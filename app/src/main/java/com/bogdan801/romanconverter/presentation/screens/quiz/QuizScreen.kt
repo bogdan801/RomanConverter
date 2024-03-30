@@ -55,26 +55,34 @@ fun QuizScreen(
                 if(value == 0) started = false
             }
         }
+
+        ActionButton(
+            label = "OPEN",
+            onClick = {
+                show = !show
+            }
+        )
+        Spacer(modifier = Modifier.height(48.dp))
+
         Row {
             ActionButton(
                 label = "+10",
                 onClick = {
                     value += 10
-                    show = !show
                 }
             )
             Spacer(modifier = Modifier.width(8.dp))
             ActionButton(
                 label = "-10",
                 onClick = {
-                    value -= 10
+                    if(value-10 >= 0) value -= 10
                 }
             )
         }
 
         Spacer(modifier = Modifier.height(48.dp))
         ActionButton(
-            label = if(!started) "Start" else "Stop",
+            label = if(!started) "START" else "STOP",
             onClick = {
                 started = !started
             }
@@ -83,6 +91,13 @@ fun QuizScreen(
         TimeCounter(
             modifier = Modifier.size(100.dp, 30.dp),
             value = value
+        )
+        Spacer(modifier = Modifier.height(48.dp))
+        ActionButton(
+            label = if(homeScreenState.isNavBarExpanded) "HIDE" else "SHOW",
+            onClick = {
+                homeViewModel.showNavBar(!homeScreenState.isNavBarExpanded)
+            }
         )
 
         PauseDialogBox(
@@ -94,19 +109,24 @@ fun QuizScreen(
             onDismiss = {
                 show = false
             },
-            onContinueClick = {},
             onHomeClick = {}
         )
-
-
-
-
-        /*ActionButton(
-            label = "Move",
-            onClick = {
-                if(homeScreenState.isExpanded) homeViewModel.hideNavBar()
-                else homeViewModel.showNavBar()
-            }
+        /*QuizOverDialogBox(
+            modifier = Modifier,
+            show = show,
+            onVisibilityChanged = { isVisible ->
+                homeViewModel.blurBackground(isVisible)
+            },
+            onDismiss = {
+                show = false
+            },
+            score = 1639,
+            count = 25,
+            onHomeClick = {}
         )*/
+
+
+
+
     }
 }

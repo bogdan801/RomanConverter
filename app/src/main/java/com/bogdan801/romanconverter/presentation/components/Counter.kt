@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.bogdan801.romanconverter.data.util.convertSecondsToTimeString
 import com.bogdan801.romanconverter.presentation.theme.counterGradientBrush
@@ -38,6 +39,7 @@ fun CounterCell(
     borderColor: Color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f),
     textColor: Color = MaterialTheme.colorScheme.onTertiary,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    fontSize: TextUnit = textStyle.fontSize,
     rollUp: Boolean = true
 ) {
     AnimatedContent(
@@ -76,6 +78,7 @@ fun CounterCell(
                 text = animatedValue,
                 color = textColor,
                 style = textStyle,
+                fontSize = fontSize,
                 textAlign = TextAlign.Center
             )
         }
@@ -87,7 +90,8 @@ fun ValueCounter(
     modifier: Modifier,
     digitCount: Int = 5,
     value: Int = 0,
-    prevValue: Int = 0
+    prevValue: Int = 0,
+    fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize
 ) {
     val stringValue = value.toString()
     Row(modifier = modifier
@@ -118,8 +122,9 @@ fun ValueCounter(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
-                value = (animatable.value.toInt() % 10).toString(),
-                rollUp = false
+                value = if(digitCount>1)(animatable.value.toInt() % 10).toString() else value.toString(),
+                rollUp = false,
+                fontSize = fontSize
             )
         }
     }
@@ -128,7 +133,8 @@ fun ValueCounter(
 @Composable
 fun TimeCounter(
     modifier: Modifier = Modifier,
-    value: Int
+    value: Int,
+    fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize
 ) {
     val stringValue = convertSecondsToTimeString(value)
     Row(modifier = modifier
@@ -145,17 +151,19 @@ fun TimeCounter(
                 .fillMaxHeight()
                 .weight(1f),
             value = stringValue[0].toString(),
-            textColor = cellColor
+            textColor = cellColor,
+            fontSize = fontSize
         )
         CounterCell(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f),
             value = stringValue[1].toString(),
-            textColor = cellColor
+            textColor = cellColor,
+            fontSize = fontSize
         )
         Text(
-            modifier = Modifier.width(12.dp).offset(y = 1.dp),
+            modifier = Modifier.width(12.dp).offset(y = (-1).dp),
             text = ":",
             textAlign = TextAlign.Center,
             color = cellColor,
@@ -166,14 +174,16 @@ fun TimeCounter(
                 .fillMaxHeight()
                 .weight(1f),
             value = stringValue[3].toString(),
-            textColor = cellColor
+            textColor = cellColor,
+            fontSize = fontSize
         )
         CounterCell(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f),
             value = stringValue[4].toString(),
-            textColor = cellColor
+            textColor = cellColor,
+            fontSize = fontSize
         )
     }
 }

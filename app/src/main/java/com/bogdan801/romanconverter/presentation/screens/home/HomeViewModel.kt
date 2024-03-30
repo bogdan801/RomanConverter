@@ -20,7 +20,7 @@ constructor(
     fun showNavBar(value: Boolean){
         _screenState.update {
             it.copy(
-                isExpanded = value
+                isNavBarExpanded = value
             )
         }
     }

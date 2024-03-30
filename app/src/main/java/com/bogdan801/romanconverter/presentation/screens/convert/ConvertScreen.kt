@@ -69,11 +69,6 @@ fun ConvertScreen(
             )
 
             Spacer(modifier = Modifier.height(48.dp))
-            ActionButton{
-                viewModel.setKeyboardType(if(screenState.type == InputKeyboardType.Roman) InputKeyboardType.Arabic else InputKeyboardType.Roman)
-            }
-            Spacer(modifier = Modifier.height(48.dp))
-
 
             InputKeyboard(
                 romanValue = screenState.romanValue,
