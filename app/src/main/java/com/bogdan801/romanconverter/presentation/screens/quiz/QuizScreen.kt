@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.PauseDialogBox
+import com.bogdan801.romanconverter.presentation.components.QuizOverDialogBox
 import com.bogdan801.romanconverter.presentation.components.TimeCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import kotlinx.coroutines.delay
@@ -41,18 +42,20 @@ fun QuizScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
-
-
-        var value by remember { mutableIntStateOf(20) }
+        var value by remember { mutableIntStateOf(10) }
         var started by remember { mutableStateOf(false) }
         var show by remember { mutableStateOf(false) }
+        var showLoseDialog by remember { mutableStateOf(false) }
         LaunchedEffect(key1 = started) {
             if(started){
                 while(value > 0){
                     delay(1000)
                     value--
                 }
-                if(value == 0) started = false
+                if(value == 0) {
+                    started = false
+                    showLoseDialog = true
+                }
             }
         }
 
@@ -66,16 +69,16 @@ fun QuizScreen(
 
         Row {
             ActionButton(
-                label = "+10",
+                label = "+5",
                 onClick = {
-                    value += 10
+                    value += 5
                 }
             )
             Spacer(modifier = Modifier.width(8.dp))
             ActionButton(
-                label = "-10",
+                label = "-5",
                 onClick = {
-                    if(value-10 >= 0) value -= 10
+                    if(value-5 >= 0) value -= 5
                 }
             )
         }
@@ -111,22 +114,18 @@ fun QuizScreen(
             },
             onHomeClick = {}
         )
-        /*QuizOverDialogBox(
+        QuizOverDialogBox(
             modifier = Modifier,
-            show = show,
+            show = showLoseDialog,
             onVisibilityChanged = { isVisible ->
                 homeViewModel.blurBackground(isVisible)
             },
             onDismiss = {
-                show = false
+                showLoseDialog = false
             },
             score = 1639,
-            count = 25,
+            count = 10,
             onHomeClick = {}
-        )*/
-
-
-
-
+        )
     }
 }

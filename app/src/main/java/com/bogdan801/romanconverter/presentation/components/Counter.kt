@@ -2,7 +2,12 @@ package com.bogdan801.romanconverter.presentation.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -19,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +46,8 @@ fun CounterCell(
     textColor: Color = MaterialTheme.colorScheme.onTertiary,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     fontSize: TextUnit = textStyle.fontSize,
-    rollUp: Boolean = true
+    rollUp: Boolean = true,
+    animationDuration: Int = 300
 ) {
     AnimatedContent(
         modifier = modifier
@@ -50,19 +57,19 @@ fun CounterCell(
         transitionSpec = {
             if(rollUp){
                 slideInVertically(
-                    animationSpec = tween(easing = LinearEasing),
+                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
                     initialOffsetY = { it }
                 ) togetherWith slideOutVertically(
-                    animationSpec = tween(easing = LinearEasing),
+                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
                     targetOffsetY = { -it }
                 )
             }
             else {
                 slideInVertically(
-                    animationSpec = tween(easing = LinearEasing),
+                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
                     initialOffsetY = { -it }
                 ) togetherWith slideOutVertically(
-                    animationSpec = tween(easing = LinearEasing),
+                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
                     targetOffsetY = { it }
                 )
             }
@@ -100,32 +107,62 @@ fun ValueCounter(
             color = MaterialTheme.colorScheme.onTertiary
         )
     ) {
-        for (i in 0 until digitCount){
-            val displayI = i - (digitCount - stringValue.length)
-            val prevI = i - (digitCount - prevValue.toString().length)
-            val prevDigit = if(prevI < 0) "0" else prevValue.toString()[prevI].toString()
-            val displayDigit = if(displayI < 0) "0" else stringValue[displayI].toString()
-            val targetValue = if(prevDigit > displayDigit) displayDigit.toFloat() + 10f
-            else displayDigit.toFloat()
-            val animatable = remember { Animatable(prevDigit.toFloat()) }
-            LaunchedEffect(key1 = targetValue) {
+        if(digitCount == 1){
+            val animatable = remember { Animatable(prevValue.toFloat()) }
+            LaunchedEffect(key1 = value) {
                 animatable.animateTo(
-                    targetValue = targetValue,
+                    targetValue = value.toFloat(),
                     animationSpec = tween(
                         durationMillis = 800,
-                        easing = LinearEasing
+                        easing = if(value>15) CubicBezierEasing(0.0f, 0.8f, 0.3f, 1.0f)
+                                 else LinearEasing
                     )
                 )
-                animatable.snapTo(displayDigit.toFloat())
             }
             CounterCell(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
-                value = if(digitCount>1)(animatable.value.toInt() % 10).toString() else value.toString(),
+                value = animatable.value.toInt().toString(),
                 rollUp = false,
-                fontSize = fontSize
+                fontSize = fontSize,
+                animationDuration = when(value){
+                    in 0..10 -> 300
+                    in 11..20 -> 200
+                    in 21..40 -> 100
+                    in 41..60 -> 50
+                    else -> 20
+                }
             )
+        }
+        else{
+            for (i in 0 until digitCount){
+                val displayI = i - (digitCount - stringValue.length)
+                val prevI = i - (digitCount - prevValue.toString().length)
+                val prevDigit = if(prevI < 0) "0" else prevValue.toString()[prevI].toString()
+                val displayDigit = if(displayI < 0) "0" else stringValue[displayI].toString()
+                val targetValue = if(prevDigit > displayDigit) displayDigit.toFloat() + 10f
+                else displayDigit.toFloat()
+                val animatable = remember { Animatable(prevDigit.toFloat()) }
+                LaunchedEffect(key1 = targetValue) {
+                    animatable.animateTo(
+                        targetValue = targetValue,
+                        animationSpec = tween(
+                            durationMillis = 800,
+                            easing = LinearEasing
+                        )
+                    )
+                    animatable.snapTo(displayDigit.toFloat())
+                }
+                CounterCell(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                    value = (animatable.value.toInt() % 10).toString(),
+                    rollUp = false,
+                    fontSize = fontSize
+                )
+            }
         }
     }
 }
