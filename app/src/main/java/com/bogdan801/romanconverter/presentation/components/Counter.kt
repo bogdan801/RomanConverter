@@ -3,11 +3,7 @@ package com.bogdan801.romanconverter.presentation.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -24,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,8 +41,7 @@ fun CounterCell(
     textColor: Color = MaterialTheme.colorScheme.onTertiary,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     fontSize: TextUnit = textStyle.fontSize,
-    rollUp: Boolean = true,
-    animationDuration: Int = 300
+    rollUp: Boolean = true
 ) {
     AnimatedContent(
         modifier = modifier
@@ -57,19 +51,19 @@ fun CounterCell(
         transitionSpec = {
             if(rollUp){
                 slideInVertically(
-                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
+                    animationSpec = tween(easing = LinearEasing),
                     initialOffsetY = { it }
                 ) togetherWith slideOutVertically(
-                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
+                    animationSpec = tween(easing = LinearEasing),
                     targetOffsetY = { -it }
                 )
             }
             else {
                 slideInVertically(
-                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
+                    animationSpec = tween(easing = LinearEasing),
                     initialOffsetY = { -it }
                 ) togetherWith slideOutVertically(
-                    animationSpec = tween(easing = LinearEasing, durationMillis = animationDuration),
+                    animationSpec = tween(easing = LinearEasing),
                     targetOffsetY = { it }
                 )
             }
@@ -125,14 +119,7 @@ fun ValueCounter(
                     .weight(1f),
                 value = animatable.value.toInt().toString(),
                 rollUp = false,
-                fontSize = fontSize,
-                animationDuration = when(value){
-                    in 0..10 -> 300
-                    in 11..20 -> 200
-                    in 21..40 -> 100
-                    in 41..60 -> 50
-                    else -> 20
-                }
+                fontSize = fontSize
             )
         }
         else{

@@ -42,7 +42,7 @@ fun QuizScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
-        var value by remember { mutableIntStateOf(10) }
+        var value by remember { mutableIntStateOf(0) }
         var started by remember { mutableStateOf(false) }
         var show by remember { mutableStateOf(false) }
         var showLoseDialog by remember { mutableStateOf(false) }
@@ -124,7 +124,7 @@ fun QuizScreen(
                 showLoseDialog = false
             },
             score = 1639,
-            count = 10,
+            count = 23,
             onHomeClick = {}
         )
     }

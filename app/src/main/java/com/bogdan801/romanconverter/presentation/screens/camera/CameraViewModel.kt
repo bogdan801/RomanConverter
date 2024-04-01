@@ -20,9 +20,8 @@ constructor(
     fun setNewValue(newValue: String){
         _screenState.update {
             it.copy(
-                someValue = newValue
+                recognizedText = newValue
             )
         }
     }
-
 }
