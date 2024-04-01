@@ -17,7 +17,7 @@ constructor(
     private val _screenState = MutableStateFlow(CameraScreenState())
     val screenState = _screenState.asStateFlow()
 
-    fun setNewValue(newValue: String){
+    fun setNewAnalyzedValue(newValue: String){
         _screenState.update {
             it.copy(
                 recognizedText = newValue
