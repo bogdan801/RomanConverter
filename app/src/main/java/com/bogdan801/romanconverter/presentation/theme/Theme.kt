@@ -171,6 +171,21 @@ fun counterGradientBrush(): Brush {
 @Composable
 fun dialogBoxGradientBrush(): Brush {
     val onTertiaryContainer = MaterialTheme.colorScheme.onTertiaryContainer
+    val tertiaryContainer = MaterialTheme.colorScheme.tertiaryContainer
+    return remember(tertiaryContainer, onTertiaryContainer) {
+        Brush.verticalGradient(
+            colorStops = arrayOf(
+                0f to onTertiaryContainer,
+                0.4f to onTertiaryContainer,
+                1f to tertiaryContainer
+            )
+        )
+    }
+}
+
+@Composable
+fun displayGradientBrush(): Brush {
+    val onTertiaryContainer = MaterialTheme.colorScheme.onTertiaryContainer
     val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
     return remember(onPrimaryContainer, onTertiaryContainer) {
         Brush.verticalGradient(

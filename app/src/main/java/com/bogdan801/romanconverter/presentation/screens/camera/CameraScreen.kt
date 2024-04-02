@@ -8,7 +8,9 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
@@ -34,18 +37,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.view.drawToBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.bogdan801.romanconverter.presentation.components.AutoSizeText
 import com.bogdan801.romanconverter.presentation.components.CameraTextRecognizer
+import com.bogdan801.romanconverter.presentation.components.RecognizedTextDisplay
 import com.bogdan801.romanconverter.presentation.components.SmallIconButton
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.util.TextRecognitionAnalyzer
@@ -116,30 +124,48 @@ fun CameraScreen(
                 )
             }
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CameraTextRecognizer(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 72.dp, bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            AutoSizeText(
+                text = "Point the camera at the\nRoman numerals",
+                maxLines = 2,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onTertiary,
+                maxTextSize = 26.sp,
+                minTextSize = MaterialTheme.typography.titleMedium.fontSize,
+                textAlign = TextAlign.Center
+            )
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
-                controller = controller,
-                cameraPermissionState = cameraPermissionState,
-                onTextRecognized = { analyzedText ->
-                    viewModel.setNewAnalyzedValue(analyzedText)
-                }
-            )
-            Spacer(modifier = Modifier.height(60.dp))
-            Box(
-                modifier = Modifier
-                    .size(344.dp, 162.dp)
-                    .background(MaterialTheme.colorScheme.background), 
-                contentAlignment = Alignment.Center
+                    .weight(1f)
+                    .padding(vertical = 16.dp),
+                contentAlignment = Alignment.TopCenter
             ){
-                Text(
-                    text = screenState.recognizedText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onTertiary
+                val width = maxWidth
+                val height = maxHeight
+                val previewWidth = if(width < height) width - 64.dp else height * (59f/64f)
+                CameraTextRecognizer(
+                    modifier = Modifier
+                        .width(previewWidth),
+                    controller = controller,
+                    cameraPermissionState = cameraPermissionState,
+                    onTextRecognized = { analyzedText ->
+                        viewModel.setNewAnalyzedValue(analyzedText)
+                    }
                 )
             }
+            RecognizedTextDisplay(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                recognizedText = screenState.recognizedText
+            )
         }
     }
 }
