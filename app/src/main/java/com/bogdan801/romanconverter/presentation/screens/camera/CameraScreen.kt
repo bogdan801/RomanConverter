@@ -1,43 +1,61 @@
 package com.bogdan801.romanconverter.presentation.screens.camera
 
+import android.Manifest
+import android.content.Context
+import android.hardware.camera2.CameraManager
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashlightOff
+import androidx.compose.material.icons.filled.FlashlightOn
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.FlashlightOff
+import androidx.compose.material.icons.outlined.FlashlightOn
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.view.drawToBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.bogdan801.romanconverter.presentation.components.CameraPreview
+import com.bogdan801.romanconverter.presentation.components.CameraTextRecognizer
+import com.bogdan801.romanconverter.presentation.components.SmallIconButton
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
-import com.bogdan801.romanconverter.presentation.util.OvalShape
 import com.bogdan801.romanconverter.presentation.util.TextRecognitionAnalyzer
+import com.bogdan801.util_library.intSettings
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.sqrt
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -48,75 +66,67 @@ fun CameraScreen(
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
     val cameraPermissionState = rememberPermissionState(
-        android.Manifest.permission.CAMERA
+        Manifest.permission.CAMERA
     )
 
-    LaunchedEffect(key1 = cameraPermissionState.status.isGranted) {
-        if(!cameraPermissionState.status.isGranted) {
-            cameraPermissionState.launchPermissionRequest()
+    val controller = remember {
+        LifecycleCameraController(context).apply {
+            setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
         }
     }
+
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
+        if(cameraPermissionState.status.isGranted){
+            SmallIconButton(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(12.dp),
+                onClick = {
+                    val newState = !screenState.isFlashlightOn
+                    controller.enableTorch(newState)
+                    viewModel.setFlashlightState(newState)
+                }
+            ){
+                val primary = MaterialTheme.colorScheme.primary
+                val secondary = MaterialTheme.colorScheme.secondary
+                Icon(
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            primary, secondary, primary
+                                        )
+                                    ),
+                                    blendMode = BlendMode.SrcAtop
+                                )
+                            }
+                        },
+                    imageVector = if(!screenState.isFlashlightOn) Icons.Outlined.FlashlightOn
+                    else Icons.Outlined.FlashlightOff,
+                    contentDescription = "Flashlight Switch",
+                )
+            }
+        }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
+            CameraTextRecognizer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(64.dp)
-                    .aspectRatio(23f / 28f)
-                    .clip(OvalShape)
-                    .background(MaterialTheme.colorScheme.onTertiary),
-                contentAlignment = Alignment.Center
-            ){
-                if(cameraPermissionState.status.isGranted){
-                    val analyzer = remember {
-                        TextRecognitionAnalyzer(
-                            onDetectedTextUpdated = { analyzedText ->
-                                viewModel.setNewAnalyzedValue(analyzedText)
-                            }
-                        )
-                    }
-
-                    val controller = remember {
-                        LifecycleCameraController(context).apply {
-                            setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
-                            setImageAnalysisAnalyzer(
-                                ContextCompat.getMainExecutor(context),
-                                analyzer
-                            )
-                        }
-                    }
-
-                    CameraPreview(
-                        modifier = Modifier.fillMaxSize(),
-                        controller = controller
-                    )
+                    .padding(32.dp),
+                controller = controller,
+                cameraPermissionState = cameraPermissionState,
+                onTextRecognized = { analyzedText ->
+                    viewModel.setNewAnalyzedValue(analyzedText)
                 }
-                else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable {
-                                cameraPermissionState.launchPermissionRequest()
-                            },
-                        contentAlignment = Alignment.Center
-                    ){
-                        Text(
-                            text = "Camera permission is not granted.\n Click to grant permission",
-                            color = MaterialTheme.colorScheme.background,
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily.Default,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                }
-            }
+            )
             Spacer(modifier = Modifier.height(60.dp))
             Box(
                 modifier = Modifier

@@ -24,4 +24,12 @@ constructor(
             )
         }
     }
+
+    fun setFlashlightState(state: Boolean){
+        _screenState.update {
+            it.copy(
+                isFlashlightOn = state
+            )
+        }
+    }
 }

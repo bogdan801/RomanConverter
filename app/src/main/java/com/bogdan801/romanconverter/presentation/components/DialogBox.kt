@@ -183,7 +183,8 @@ fun QuizOverDialogBox(
                     modifier = Modifier
                         .rotate(180f),
                     painter = painterResource(id = R.drawable.ornament_counter),
-                    contentDescription =""
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 Spacer(modifier = Modifier.height(1.dp))
                 ValueCounter(
@@ -193,7 +194,8 @@ fun QuizOverDialogBox(
                 Spacer(modifier = Modifier.height(1.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.ornament_counter),
-                    contentDescription =""
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
@@ -214,7 +216,8 @@ fun QuizOverDialogBox(
                     modifier = Modifier
                         .rotate(180f),
                     painter = painterResource(id = R.drawable.ornament_counter),
-                    contentDescription =""
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 Spacer(modifier = Modifier.height(1.dp))
                 ValueCounter(
@@ -226,7 +229,8 @@ fun QuizOverDialogBox(
                 Spacer(modifier = Modifier.height(1.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.ornament_counter),
-                    contentDescription =""
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
