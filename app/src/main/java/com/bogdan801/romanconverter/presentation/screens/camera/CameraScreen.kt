@@ -164,7 +164,7 @@ fun CameraScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
-                recognizedText = screenState.recognizedText
+                recognizedText = screenState.recognizedText //"REGE CAROLO III ANNO MDCCLXXVIII"
             )
         }
     }

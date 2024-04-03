@@ -79,7 +79,6 @@ fun CameraTextRecognizer(
                     )
                 }
 
-
                 CameraPreview(
                     modifier = Modifier.fillMaxSize(),
                     controller = controller
