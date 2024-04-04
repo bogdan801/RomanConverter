@@ -1,7 +1,5 @@
 package com.bogdan801.romanconverter.presentation.components
 
-import android.Manifest
-import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +33,6 @@ import com.bogdan801.romanconverter.presentation.util.TextRecognitionAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

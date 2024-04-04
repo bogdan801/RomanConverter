@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -46,7 +45,6 @@ import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.data.util.convertRomanToArabic
 import com.bogdan801.romanconverter.data.util.isRomanNumberValid
 import com.bogdan801.romanconverter.presentation.theme.displayGradientBrush
-import com.bogdan801.romanconverter.presentation.theme.iconButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.util.shadowCustom
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -79,7 +77,6 @@ fun RecognizedTextDisplay(
             }
         }
     }
-
 
     BoxWithConstraints(
         modifier = modifier

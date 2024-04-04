@@ -121,10 +121,7 @@ fun HomeScreen(
                         )
                     },
                     cameraScreen = {
-                        CameraScreen(
-                            navController = navController,
-                            homeViewModel = viewModel
-                        )
+                        CameraScreen()
                     }
                 )
 
