@@ -238,6 +238,7 @@ fun RomanCalculatorTheme(
             ){
                 //background texture
                 Image(
+                    modifier = Modifier.fillMaxSize(),
                     painter = painterResource(
                         id = when(currentTheme.value){
                             0 -> R.drawable.white_texture
