@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.PauseDialogBox
 import com.bogdan801.romanconverter.presentation.components.QuizOverDialogBox
+import com.bogdan801.romanconverter.presentation.components.QuizTypeSelector
 import com.bogdan801.romanconverter.presentation.components.TimeCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import kotlinx.coroutines.delay
@@ -42,7 +43,11 @@ fun QuizScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
-        var value by remember { mutableIntStateOf(0) }
+        QuizTypeSelector(
+            modifier = Modifier.size(150.dp, 136.dp),
+            isSelected = true
+        )
+        /*var value by remember { mutableIntStateOf(0) }
         var started by remember { mutableStateOf(false) }
         var show by remember { mutableStateOf(false) }
         var showLoseDialog by remember { mutableStateOf(false) }
@@ -126,6 +131,6 @@ fun QuizScreen(
             score = 1639,
             count = 23,
             onHomeClick = {}
-        )
+        )*/
     }
 }
