@@ -2,6 +2,7 @@ package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import androidx.lifecycle.ViewModel
 import com.bogdan801.romanconverter.domain.repository.Repository
+import com.bogdan801.romanconverter.presentation.components.QuizType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,10 +18,10 @@ constructor(
     private val _screenState = MutableStateFlow(QuizScreenState())
     val screenState = _screenState.asStateFlow()
 
-    fun setNewValue(newValue: String){
+    fun setType(newValue: QuizType){
         _screenState.update {
             it.copy(
-                someValue = newValue
+                selectedType = newValue
             )
         }
     }

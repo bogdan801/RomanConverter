@@ -201,7 +201,7 @@ fun ConvertDisplay(
             modifier = Modifier
                 .size(width, height = width * (25f / 328f) * 1.5f)
                 .align(Alignment.BottomCenter),
-            painter = painterResource(id = R.drawable.ornamentmain_display_bottom),
+            painter = painterResource(id = R.drawable.ornament_main_display_bottom),
             contentDescription = "",
             tint = MaterialTheme.colorScheme.onTertiary
         )
