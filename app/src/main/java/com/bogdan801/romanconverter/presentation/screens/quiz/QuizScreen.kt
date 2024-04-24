@@ -2,33 +2,28 @@ package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,13 +32,10 @@ import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
-import com.bogdan801.romanconverter.presentation.components.PauseDialogBox
-import com.bogdan801.romanconverter.presentation.components.QuizOverDialogBox
+import com.bogdan801.romanconverter.presentation.components.LeaderboardItemRow
 import com.bogdan801.romanconverter.presentation.components.QuizType
 import com.bogdan801.romanconverter.presentation.components.QuizTypeSelector
-import com.bogdan801.romanconverter.presentation.components.TimeCounter
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun QuizScreen(
@@ -111,7 +103,9 @@ fun QuizScreen(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
+            val width = maxWidth
             val height = maxHeight
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -124,7 +118,90 @@ fun QuizScreen(
                     contentDescription = "Leaderboard",
                     tint = MaterialTheme.colorScheme.onTertiary
                 )
+                Spacer(modifier = Modifier.height(2.dp))
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()){
+                    val itemHeight = if(maxHeight > 336.dp) 48.dp else 36.dp
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 26.dp)
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.33f)
+                            )
+                    ){
+                        LeaderboardItemRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(itemHeight)
+                            ,//.offset(y = (-1).dp),
+                            position = 1
+                        )
+                        LeaderboardItemRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(itemHeight)
+                            ,//.offset(y = (-2).dp),
+                            position = 2
+                        )
+                        LeaderboardItemRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(itemHeight)
+                            ,//.offset(y = (-3).dp),
+                            position = 3
+                        )
+                        LeaderboardItemRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(itemHeight)
+                            ,//.offset(y = (-4).dp),
+                            position = 4
+                        )
+                        LeaderboardItemRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(itemHeight)
+                            ,//.offset(y = (-5).dp),
+                            position = 5
+                        )
+                        LeaderboardItemRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(itemHeight)
+                                ,//.offset(y = (-6).dp),
+                            position = 6
+                        )
 
+                    }
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(horizontal = 12.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(22f)
+                            .offset(y = -((width - 24.dp)/48f)),
+                        painter = painterResource(
+                            id = R.drawable.ornament_leaderbard_list
+                        ),
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onTertiary
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(horizontal = 12.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(22f)
+                            .offset(y = (width - 24.dp)/48f),
+                        painter = painterResource(
+                            id = R.drawable.ornament_leaderbard_list
+                        ),
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onTertiary
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(12.dp))

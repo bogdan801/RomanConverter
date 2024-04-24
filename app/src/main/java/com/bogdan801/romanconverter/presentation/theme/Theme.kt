@@ -213,6 +213,20 @@ fun quizSelectorGradientBrush(): Brush {
 }
 
 @Composable
+fun leaderboardItemGradientBrush(): Brush {
+    val onTertiaryContainer = MaterialTheme.colorScheme.onTertiaryContainer
+    val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
+    return remember(onTertiaryContainer, onPrimaryContainer) {
+        Brush.verticalGradient(
+            colors = listOf(
+                onTertiaryContainer,
+                onPrimaryContainer
+            )
+        )
+    }
+}
+
+@Composable
 fun RomanCalculatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
