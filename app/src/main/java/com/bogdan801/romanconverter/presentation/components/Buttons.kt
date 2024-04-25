@@ -205,6 +205,7 @@ fun InputButton(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ActionButton(
     modifier: Modifier = Modifier,
@@ -218,6 +219,7 @@ fun ActionButton(
     shadowColor: Color = Color.Black.copy(alpha = 0.15f),
     shadowBlurRadius: Dp = 6.dp,
     shadowYOffset: Dp = 4.dp,
+    onLongClick: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     Surface(
@@ -231,7 +233,10 @@ fun ActionButton(
             )
             .clip(RoundedCornerShape(40.dp))
             .background(brush = actionButtonGradientBrush())
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onLongClick = onLongClick,
+                onClick = onClick
+            ),
         shape = RoundedCornerShape(40.dp),
         border = BorderStroke(1.dp, borderColor),
         color = Color.Transparent

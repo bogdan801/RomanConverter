@@ -9,5 +9,5 @@ data class QuizScreenState(
     val romanLeaderboard: List<LeaderboardItem> = listOf(),
     val arabicLeaderboard: List<LeaderboardItem> = listOf(),
     val bothLeaderboard: List<LeaderboardItem> = listOf(),
-    val lastDeletedItem: LeaderboardItem = LeaderboardItem()
+    val lastDeletedItems: List<LeaderboardItem> = listOf()
 )

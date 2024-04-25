@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.bogdan801.romanconverter.domain.model.LeaderboardItem
@@ -73,14 +74,24 @@ fun LeaderboardItemRow(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
+                modifier = Modifier.weight(0.6f),
                 text = "$position. ${data.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.US))}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onTertiary
             )
             Text(
-                text = "${data.count}           ${data.score}",
+                modifier = Modifier.weight(0.2f),
+                text = "${data.count}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onTertiary
+                color = MaterialTheme.colorScheme.onTertiary,
+                textAlign = TextAlign.End
+            )
+            Text(
+                modifier = Modifier.weight(0.2f),
+                text = "${data.score}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiary,
+                textAlign = TextAlign.End
             )
         }
 

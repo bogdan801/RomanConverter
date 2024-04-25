@@ -1,5 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -33,8 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +55,7 @@ import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
+import com.bogdan801.romanconverter.presentation.components.DeleteConfirmDialogBox
 import com.bogdan801.romanconverter.presentation.components.LeaderboardItemRow
 import com.bogdan801.romanconverter.presentation.components.QuizTypeSelector
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
@@ -86,7 +90,7 @@ fun QuizScreen(
                             data.visuals.actionLabel?.let {
                                 TextButton(
                                     onClick = {
-                                        viewModel.restoreRecord()
+                                        viewModel.restoreRecords()
                                         snackbarHostState.currentSnackbarData?.dismiss()
                                     }
                                 ) {
@@ -113,8 +117,10 @@ fun QuizScreen(
         },
         containerColor = Color.Transparent
     ) { defaultPadding ->
-
-        AnimatedContent(targetState = screenState.isQuizStarted, label = "") { isQuizStarted ->
+        AnimatedContent(
+            targetState = screenState.isQuizStarted,
+            label = ""
+        ) { isQuizStarted ->
             if(!isQuizStarted){
                 Column(
                     modifier = Modifier
@@ -146,6 +152,7 @@ fun QuizScreen(
                             isSelected = screenState.selectedType == QuizType.GuessRoman,
                             onSelected = {
                                 viewModel.setType(QuizType.GuessRoman)
+                                snackbarHostState.currentSnackbarData?.dismiss()
                             }
                         )
                         QuizTypeSelector(
@@ -155,6 +162,7 @@ fun QuizScreen(
                             isSelected = screenState.selectedType == QuizType.GuessArabic,
                             onSelected = {
                                 viewModel.setType(QuizType.GuessArabic)
+                                snackbarHostState.currentSnackbarData?.dismiss()
                             }
                         )
                     }
@@ -166,9 +174,9 @@ fun QuizScreen(
                         isSelected = screenState.selectedType == QuizType.GuessBoth,
                         onSelected = {
                             viewModel.setType(QuizType.GuessBoth)
+                            snackbarHostState.currentSnackbarData?.dismiss()
                         }
                     )
-
                     BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -176,7 +184,7 @@ fun QuizScreen(
                     ) {
                         val width = maxWidth
                         val height = maxHeight
-
+                        var showDeleteDialogBox by remember { mutableStateOf(false) }
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -185,7 +193,9 @@ fun QuizScreen(
                                 modifier = Modifier
                                     .padding(top = 12.dp)
                                     .height(height * 0.25f),
-                                painter = painterResource(id = R.drawable.ornament_leaderboard_titlebox),
+                                painter = painterResource(
+                                    id = R.drawable.ornament_leaderboard_titlebox
+                                ),
                                 contentDescription = "Leaderboard",
                                 tint = MaterialTheme.colorScheme.onTertiary
                             )
@@ -193,28 +203,28 @@ fun QuizScreen(
                             BoxWithConstraints(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.33f)
-                                    )
+
                             ) {
                                 val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
                                 AnimatedContent(
                                     targetState = screenState.selectedType,
                                     label = "",
                                     transitionSpec = {
-                                        slideInVertically(initialOffsetY = { -it/*2*it*/ }) togetherWith
-                                                slideOutVertically(targetOffsetY = { it/*-it*/ })
+                                        slideInVertically(initialOffsetY = { -it }) togetherWith
+                                                slideOutVertically(targetOffsetY = { it })
                                     }
                                 ) { type ->
                                     LazyColumn(
                                         modifier = Modifier
                                             .padding(horizontal = 26.dp)
                                             .fillMaxSize()
+                                            .background(MaterialTheme.colorScheme.background)
                                             .border(
-                                                1.dp,
-                                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.33f)
+                                                width = 1.dp,
+                                                color = MaterialTheme
+                                                    .colorScheme
+                                                    .outlineVariant
+                                                    .copy(alpha = 0.33f)
                                             )
                                     ) {
                                         itemsIndexed(
@@ -236,7 +246,6 @@ fun QuizScreen(
                                                 data = item,
                                                 onDeleteClick = {
                                                     viewModel.deleteRecord(item)
-
                                                     scope.launch {
                                                         snackbarHostState.currentSnackbarData?.dismiss()
                                                         snackbarHostState.showSnackbar(
@@ -247,13 +256,11 @@ fun QuizScreen(
                                                     }
                                                 },
                                                 onDeleteAllClick = {
-                                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                                    viewModel.clearLeaderboard()
+                                                    showDeleteDialogBox = true
                                                 }
                                             )
                                         }
                                     }
-
                                 }
                                 Icon(
                                     modifier = Modifier
@@ -283,6 +290,27 @@ fun QuizScreen(
                                 )
                             }
                         }
+                        DeleteConfirmDialogBox (
+                            show = showDeleteDialogBox,
+                            onVisibilityChanged = {
+                                homeViewModel.blurBackground(it)
+                            },
+                            onCancelClick = {
+                                showDeleteDialogBox = false
+                            },
+                            onConfirmClick = {
+                                viewModel.clearLeaderboard()
+                                showDeleteDialogBox = false
+                                scope.launch {
+                                    snackbarHostState.currentSnackbarData?.dismiss()
+                                    snackbarHostState.showSnackbar(
+                                        message = "All records have been deleted",
+                                        actionLabel = "RESTORE",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                        )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     ActionButton(
@@ -294,7 +322,7 @@ fun QuizScreen(
                             viewModel.saveRecord(
                                 LeaderboardItem(
                                     id = Random.nextInt(0, 100000),
-                                    date = LocalDate.now().minusDays(Random.nextLong(0, 50)),
+                                    date = LocalDate.now().minusDays(Random.nextLong(0, 365)),
                                     score = score,
                                     count = score / 800
                                 )

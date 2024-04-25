@@ -68,27 +68,37 @@ constructor(
             repository.saveRecord(leaderboardItem, _screenState.value.selectedType)
         }
     }
-
-    fun restoreRecord() {
-        saveRecord(_screenState.value.lastDeletedItem)
+    fun restoreRecords(){
+        viewModelScope.launch {
+            _screenState.value.lastDeletedItems.forEach{
+                repository.saveRecord(it, _screenState.value.selectedType)
+            }
+        }
     }
 
-    private fun setLastDeletedItem(item: LeaderboardItem){
+    private fun setLastDeletedRecords(items: List<LeaderboardItem>){
         _screenState.update {
             it.copy(
-                lastDeletedItem = item
+                lastDeletedItems = items
             )
         }
     }
 
     fun deleteRecord(leaderboardItem: LeaderboardItem){
-        setLastDeletedItem(leaderboardItem)
+        setLastDeletedRecords(listOf(leaderboardItem))
         viewModelScope.launch {
             repository.deleteRecord(leaderboardItem.id, _screenState.value.selectedType)
         }
     }
 
     fun clearLeaderboard(){
+        setLastDeletedRecords(
+            when(_screenState.value.selectedType){
+                QuizType.GuessRoman -> _screenState.value.romanLeaderboard
+                QuizType.GuessArabic -> _screenState.value.arabicLeaderboard
+                QuizType.GuessBoth -> _screenState.value.bothLeaderboard
+            }
+        )
         viewModelScope.launch {
             repository.clearLeaderboardOfAType(_screenState.value.selectedType)
         }

@@ -1,5 +1,6 @@
 package com.bogdan801.romanconverter.presentation.components
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -259,6 +261,72 @@ fun QuizOverDialogBox(
                 borderColor = MaterialTheme.colorScheme.outlineVariant,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
                 onClick = onHomeClick
+            )
+        }
+    }
+}
+
+@Composable
+fun DeleteConfirmDialogBox(
+    modifier: Modifier = Modifier,
+    show: Boolean = false,
+    onVisibilityChanged: (Boolean) -> Unit = {},
+    onCancelClick: () -> Unit = {},
+    onConfirmClick: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    LaunchedEffect(key1 = show) {
+        onVisibilityChanged(show)
+    }
+    BaseDialogBox(
+        modifier = modifier.size(300.dp, 232.dp),
+        show = show,
+        onDismiss = onCancelClick,
+        usePlatformDefaultWidth = true
+    ){
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "DELETE?",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onTertiary
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        Icon(
+            painter = painterResource(id = R.drawable.ornament_dialog_box),
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onTertiary
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .weight(1f),
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Are you sure you want to delete all the records?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiary,
+                textAlign = TextAlign.Center
+            )
+        }
+        Row(modifier = Modifier.padding(bottom = 24.dp)) {
+            ActionButton(
+                size = DpSize(110.dp, 38.dp),
+                label = "CANCEL",
+                textStyle = MaterialTheme.typography.bodyMedium,
+                borderColor = MaterialTheme.colorScheme.outlineVariant,
+                shadowColor = Color.Black.copy(alpha = 0.07f),
+                onClick = onCancelClick
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            ActionButton(
+                size = DpSize(110.dp, 38.dp),
+                label = "CONFIRM",
+                textStyle = MaterialTheme.typography.bodyMedium,
+                shadowColor = Color.Black.copy(alpha = 0.07f),
+                onClick = onConfirmClick
             )
         }
     }
