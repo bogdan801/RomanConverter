@@ -30,17 +30,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.presentation.theme.gray670
 import com.bogdan801.romanconverter.presentation.theme.gray850
 import com.bogdan801.romanconverter.presentation.theme.libreBodoniFontFamily
 import com.bogdan801.romanconverter.presentation.theme.quizSelectorGradientBrush
 import com.bogdan801.romanconverter.presentation.util.shadowCustom
-
-enum class QuizType {
-    GuessRoman,
-    GuessArabic,
-    GuessBoth
-}
 
 @Composable
 fun QuizTypeSelector(

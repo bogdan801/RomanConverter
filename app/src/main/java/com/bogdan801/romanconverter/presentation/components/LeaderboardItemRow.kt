@@ -37,7 +37,8 @@ fun LeaderboardItemRow(
     modifier: Modifier = Modifier,
     position: Int = 1,
     data: LeaderboardItem = LeaderboardItem(),
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onDeleteAllClick: () -> Unit = {}
 ) {
     var showDropDown by remember { mutableStateOf(false) }
     var longClickOffset by remember { mutableStateOf(DpOffset.Zero) }
@@ -94,13 +95,25 @@ fun LeaderboardItemRow(
         ) {
             DropdownMenuItem(
                 text = {
-                    Text("Delete item")
+                    Text("Delete record")
                 },
                 colors = MenuDefaults.itemColors(
                     textColor = MaterialTheme.colorScheme.onTertiary
                 ),
                 onClick = {
                     onDeleteClick()
+                    showDropDown = false
+                }
+            )
+            DropdownMenuItem(
+                text = {
+                    Text("Delete all records")
+                },
+                colors = MenuDefaults.itemColors(
+                    textColor = MaterialTheme.colorScheme.onTertiary
+                ),
+                onClick = {
+                    onDeleteAllClick()
                     showDropDown = false
                 }
             )
