@@ -19,17 +19,23 @@ class RepositoryImpl(
         when(type){
             QuizType.GuessRoman -> {
                 roman.update {
-                    it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
+                    var output = it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
+                    if(output.size > 20) output = output.subList(0, 20)
+                    output
                 }
             }
             QuizType.GuessArabic -> {
                 arabic.update {
-                    it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
+                    var output = it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
+                    if(output.size > 20) output = output.subList(0, 20)
+                    output
                 }
             }
             QuizType.GuessBoth -> {
                 both.update {
-                    it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
+                    var output = it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
+                    if(output.size > 20) output = output.subList(0, 20)
+                    output
                 }
             }
         }

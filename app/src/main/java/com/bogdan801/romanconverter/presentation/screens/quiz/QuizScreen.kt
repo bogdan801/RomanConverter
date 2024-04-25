@@ -203,7 +203,14 @@ fun QuizScreen(
                             BoxWithConstraints(
                                 modifier = Modifier
                                     .fillMaxSize()
-
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme
+                                            .colorScheme
+                                            .outlineVariant
+                                            .copy(alpha = 0.33f)
+                                    )
                             ) {
                                 val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
                                 AnimatedContent(
@@ -218,7 +225,6 @@ fun QuizScreen(
                                         modifier = Modifier
                                             .padding(horizontal = 26.dp)
                                             .fillMaxSize()
-                                            .background(MaterialTheme.colorScheme.background)
                                             .border(
                                                 width = 1.dp,
                                                 color = MaterialTheme
@@ -258,6 +264,22 @@ fun QuizScreen(
                                                 onDeleteAllClick = {
                                                     showDeleteDialogBox = true
                                                 }
+                                            )
+                                        }
+                                    }
+                                    val isListEmpty = when (type) {
+                                        QuizType.GuessRoman -> screenState.romanLeaderboard.isEmpty()
+                                        QuizType.GuessArabic -> screenState.arabicLeaderboard.isEmpty()
+                                        QuizType.GuessBoth -> screenState.bothLeaderboard.isEmpty()
+                                    }
+                                    if(isListEmpty){
+                                        Box(modifier = Modifier.fillMaxSize()){
+                                            Text(
+                                                modifier = Modifier.align(Alignment.Center),
+                                                text = "The list is empty",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                textAlign = TextAlign.Center,
+                                                color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
                                             )
                                         }
                                     }
