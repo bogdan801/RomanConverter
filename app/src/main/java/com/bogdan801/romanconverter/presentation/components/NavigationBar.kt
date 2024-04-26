@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -125,7 +126,8 @@ fun NavigationBar(
                         text = item.itemLabel,
                         style = MaterialTheme.typography.labelLarge,
                         color = if(item.isSelected) MaterialTheme.colorScheme.onSurface
-                                else MaterialTheme.colorScheme.primaryContainer
+                                else MaterialTheme.colorScheme.primaryContainer,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

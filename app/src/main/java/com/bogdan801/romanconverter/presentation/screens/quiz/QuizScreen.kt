@@ -1,6 +1,5 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -34,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ import com.bogdan801.romanconverter.presentation.components.AutoSizeText
 import com.bogdan801.romanconverter.presentation.components.DeleteConfirmDialogBox
 import com.bogdan801.romanconverter.presentation.components.LeaderboardItemRow
 import com.bogdan801.romanconverter.presentation.components.QuizTypeSelector
+import com.bogdan801.romanconverter.presentation.components.QuizTypeSelectorCard
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -122,9 +124,14 @@ fun QuizScreen(
             label = ""
         ) { isQuizStarted ->
             if(!isQuizStarted){
+                var weightOfSelector by remember { mutableFloatStateOf(0.8f) }
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .onGloballyPositioned {
+                            val screenAspectRatio = it.size.width.toFloat()/it.size.height
+                            weightOfSelector = if(screenAspectRatio > 0.55f) 0.35f else 0.8f
+                        }
                         .padding(defaultPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -139,13 +146,26 @@ fun QuizScreen(
                         minTextSize = MaterialTheme.typography.titleMedium.fontSize,
                         textAlign = TextAlign.Center
                     )
-                    Row(
+
+                    QuizTypeSelector(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 24.dp, end = 24.dp, top = 16.dp)
+                            .weight(weightOfSelector),
+                        selectedType = screenState.selectedType,
+                        onTypeSelected = { type ->
+                            viewModel.setType(type)
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                        }
+                    )
+
+                    /*Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp, vertical = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        QuizTypeSelector(
+                        QuizTypeSelectorCard(
                             modifier = Modifier.weight(1f),
                             aspectRatio = 11f / 9f,
                             type = QuizType.GuessRoman,
@@ -155,7 +175,7 @@ fun QuizScreen(
                                 snackbarHostState.currentSnackbarData?.dismiss()
                             }
                         )
-                        QuizTypeSelector(
+                        QuizTypeSelectorCard(
                             modifier = Modifier.weight(1f),
                             aspectRatio = 11f / 9f,
                             type = QuizType.GuessArabic,
@@ -166,7 +186,7 @@ fun QuizScreen(
                             }
                         )
                     }
-                    QuizTypeSelector(
+                    QuizTypeSelectorCard(
                         modifier = Modifier
                             .padding(horizontal = 24.dp),
                         aspectRatio = 39f / 9,
@@ -176,7 +196,7 @@ fun QuizScreen(
                             viewModel.setType(QuizType.GuessBoth)
                             snackbarHostState.currentSnackbarData?.dismiss()
                         }
-                    )
+                    )*/
                     BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -201,16 +221,7 @@ fun QuizScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             BoxWithConstraints(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme
-                                            .colorScheme
-                                            .outlineVariant
-                                            .copy(alpha = 0.33f)
-                                    )
+                                modifier = Modifier.fillMaxSize()
                             ) {
                                 val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
                                 AnimatedContent(
@@ -225,6 +236,7 @@ fun QuizScreen(
                                         modifier = Modifier
                                             .padding(horizontal = 26.dp)
                                             .fillMaxSize()
+                                            .background(MaterialTheme.colorScheme.background)
                                             .border(
                                                 width = 1.dp,
                                                 color = MaterialTheme
