@@ -44,7 +44,7 @@ fun InputKeyboard(
     type: InputKeyboardType = InputKeyboardType.Roman,
     onTypeChange: (newType: InputKeyboardType) -> Unit = {},
     isQuizInput: Boolean = false,
-    onClear: () -> Unit
+    onClear: () -> Unit = {}
 ) {
     var isRoman by remember { mutableStateOf(true) }
     LaunchedEffect(key1 = type) {

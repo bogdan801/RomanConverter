@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.camera.components
 
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.bogdan801.romanconverter.R
+import com.bogdan801.romanconverter.presentation.screens.camera.components.CameraPreview
 import com.bogdan801.romanconverter.presentation.theme.gray110
 import com.bogdan801.romanconverter.presentation.util.OvalShape
 import com.bogdan801.romanconverter.presentation.util.TextRecognitionAnalyzer

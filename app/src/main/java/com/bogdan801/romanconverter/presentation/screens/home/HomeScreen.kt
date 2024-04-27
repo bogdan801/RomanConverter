@@ -53,8 +53,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bogdan801.romanconverter.R
-import com.bogdan801.romanconverter.presentation.components.NavigationBar
-import com.bogdan801.romanconverter.presentation.components.NavigationItem
+import com.bogdan801.romanconverter.presentation.screens.home.components.NavigationBar
+import com.bogdan801.romanconverter.presentation.screens.home.components.NavigationItem
 import com.bogdan801.romanconverter.presentation.components.SmallIconButton
 import com.bogdan801.romanconverter.presentation.navigation.Navigation
 import com.bogdan801.romanconverter.presentation.navigation.Screen

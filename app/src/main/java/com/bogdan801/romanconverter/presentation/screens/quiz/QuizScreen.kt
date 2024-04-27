@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +21,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.outlined.FlashlightOff
+import androidx.compose.material.icons.outlined.FlashlightOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,7 +45,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -56,11 +65,15 @@ import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
-import com.bogdan801.romanconverter.presentation.components.DeleteConfirmDialogBox
-import com.bogdan801.romanconverter.presentation.components.LeaderboardItemRow
-import com.bogdan801.romanconverter.presentation.components.QuizTypeSelector
-import com.bogdan801.romanconverter.presentation.components.QuizTypeSelectorCard
+import com.bogdan801.romanconverter.presentation.components.InputKeyboard
+import com.bogdan801.romanconverter.presentation.components.InputKeyboardType
+import com.bogdan801.romanconverter.presentation.components.SmallIconButton
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.DeleteConfirmDialogBox
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardItemRow
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizTypeSelector
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizDisplay
+import com.bogdan801.util_library.intSettings
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.random.Random
@@ -129,8 +142,8 @@ fun QuizScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .onGloballyPositioned {
-                            val screenAspectRatio = it.size.width.toFloat()/it.size.height
-                            weightOfSelector = if(screenAspectRatio > 0.55f) 0.35f else 0.8f
+                            val screenAspectRatio = it.size.width.toFloat() / it.size.height
+                            weightOfSelector = if (screenAspectRatio > 0.55f) 0.35f else 0.8f
                         }
                         .padding(defaultPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -142,11 +155,10 @@ fun QuizScreen(
                         maxLines = 1,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onTertiary,
-                        maxTextSize = 24.sp,
+                        maxTextSize = 22.sp,
                         minTextSize = MaterialTheme.typography.titleMedium.fontSize,
                         textAlign = TextAlign.Center
                     )
-
                     QuizTypeSelector(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -158,45 +170,6 @@ fun QuizScreen(
                             snackbarHostState.currentSnackbarData?.dismiss()
                         }
                     )
-
-                    /*Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        QuizTypeSelectorCard(
-                            modifier = Modifier.weight(1f),
-                            aspectRatio = 11f / 9f,
-                            type = QuizType.GuessRoman,
-                            isSelected = screenState.selectedType == QuizType.GuessRoman,
-                            onSelected = {
-                                viewModel.setType(QuizType.GuessRoman)
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                            }
-                        )
-                        QuizTypeSelectorCard(
-                            modifier = Modifier.weight(1f),
-                            aspectRatio = 11f / 9f,
-                            type = QuizType.GuessArabic,
-                            isSelected = screenState.selectedType == QuizType.GuessArabic,
-                            onSelected = {
-                                viewModel.setType(QuizType.GuessArabic)
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                            }
-                        )
-                    }
-                    QuizTypeSelectorCard(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp),
-                        aspectRatio = 39f / 9,
-                        type = QuizType.GuessBoth,
-                        isSelected = screenState.selectedType == QuizType.GuessBoth,
-                        onSelected = {
-                            viewModel.setType(QuizType.GuessBoth)
-                            snackbarHostState.currentSnackbarData?.dismiss()
-                        }
-                    )*/
                     BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -350,9 +323,9 @@ fun QuizScreen(
                     ActionButton(
                         label = "START THE QUIZ",
                         onClick = {
-                            //viewModel.startQuiz(true, homeViewModel)
+                            viewModel.startQuiz(true, homeViewModel)
 
-                            val score = Random.nextInt(10000, 25000)
+                            /*val score = Random.nextInt(10000, 25000)
                             viewModel.saveRecord(
                                 LeaderboardItem(
                                     id = Random.nextInt(0, 100000),
@@ -360,7 +333,7 @@ fun QuizScreen(
                                     score = score,
                                     count = score / 800
                                 )
-                            )
+                            )*/
                             /*scope.launch {
                                 snackbarHostState.currentSnackbarData?.dismiss()
                                 snackbarHostState.showSnackbar(message = "Quiz has started", duration = SnackbarDuration.Short)
@@ -374,16 +347,110 @@ fun QuizScreen(
                 BackHandler {
                     viewModel.startQuiz(false, homeViewModel)
                 }
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Gray),
+                Box(
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ){
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Типу екран гри\nУяви типу це вже зроблено\nгииииииииииии", color = Color.White, textAlign = TextAlign.Center)
-                        Spacer(modifier = Modifier.height(32.dp))
-                        ActionButton(label = "GO BACK") {
-                            viewModel.startQuiz(false, homeViewModel)
+                    val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = 1)
+                    SmallIconButton(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(12.dp),
+                        onClick = {
+                            scope.launch {
+                                if(soundOn != 1) context.intSettings.set("sound_on", 1)
+                                else context.intSettings.set("sound_on", 0)
+                            }
+                        }
+                    ){
+                        val primary = MaterialTheme.colorScheme.primary
+                        val secondary = MaterialTheme.colorScheme.secondary
+                        Icon(
+                            modifier = Modifier
+                                .graphicsLayer(alpha = 0.99f)
+                                .drawWithCache {
+                                    onDrawWithContent {
+                                        drawContent()
+                                        drawRect(
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    primary, secondary, primary
+                                                )
+                                            ),
+                                            blendMode = BlendMode.SrcAtop
+                                        )
+                                    }
+                                },
+                            imageVector = if(soundOn != 0) Icons.AutoMirrored.Default.VolumeOff
+                                          else Icons.AutoMirrored.Default.VolumeUp,
+                            contentDescription = "Sound On Switch",
+                        )
+                    }
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Spacer(modifier = Modifier.height(56.dp))
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                            contentAlignment = Alignment.Center
+                        ){
+                            val titleType = when(screenState.currentQuizType){
+                                QuizType.GuessRoman -> "Roman"
+                                QuizType.GuessArabic -> "Arabic"
+                                QuizType.GuessBoth -> ""
+                            }
+                            AutoSizeText(
+                                modifier = Modifier.padding(horizontal = 72.dp),
+                                text = "Type the number using $titleType numerals",
+                                maxLines = 2,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiary,
+                                maxTextSize = 22.sp,
+                                minTextSize = MaterialTheme.typography.titleMedium.fontSize,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        QuizDisplay(
+                            modifier = Modifier.fillMaxWidth(),
+                            numberToGuess = screenState.currentValueToGuess,
+                            inputValue = screenState.currentInputValue,
+                            currentType = screenState.currentQuizType,
+                            count = screenState.currentCount,
+                            time = screenState.currentTime,
+                            score = screenState.currentScore,
+                            onSuccess = {
+                                viewModel.successfulGuess()
+                            }
+                        )
+
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(3f),
+                            contentAlignment = Alignment.Center
+                        ){
+                            InputKeyboard(
+                                romanValue = screenState.currentInputValue,
+                                arabicValue = screenState.currentInputValue,
+                                onRomanValueChange = {
+                                    viewModel.setInputValue(it)
+                                },
+                                onArabicValueChange = {
+                                    viewModel.setInputValue(it)
+                                },
+                                type = when(screenState.currentQuizType){
+                                    QuizType.GuessRoman -> InputKeyboardType.Arabic
+                                    QuizType.GuessArabic -> InputKeyboardType.Roman
+                                    else -> InputKeyboardType.Roman
+                                },
+                                onClear = {
+                                    viewModel.setInputValue("")
+                                },
+                                isQuizInput = true
+                            )
                         }
                     }
                 }

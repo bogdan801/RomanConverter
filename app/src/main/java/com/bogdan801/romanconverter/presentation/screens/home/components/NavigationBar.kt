@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

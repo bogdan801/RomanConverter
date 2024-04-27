@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.convert.components
 
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bogdan801.romanconverter.R
+import com.bogdan801.romanconverter.presentation.components.AutoSizeText
+import com.bogdan801.romanconverter.presentation.components.InputKeyboardType
 import com.bogdan801.romanconverter.presentation.theme.libreRomanFontFamily
 
 @OptIn(ExperimentalFoundationApi::class)

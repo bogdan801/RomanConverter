@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.camera.components
 
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView

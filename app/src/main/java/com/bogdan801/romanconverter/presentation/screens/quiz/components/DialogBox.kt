@@ -1,6 +1,5 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.quiz.components
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +38,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.bogdan801.romanconverter.R
+import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.theme.dialogBoxGradientBrush
 
 @Composable

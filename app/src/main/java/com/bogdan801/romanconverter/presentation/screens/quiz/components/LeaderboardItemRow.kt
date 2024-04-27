@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.quiz.components
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background

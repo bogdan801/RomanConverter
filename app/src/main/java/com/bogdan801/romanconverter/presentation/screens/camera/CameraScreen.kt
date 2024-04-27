@@ -17,11 +17,8 @@ import androidx.compose.material.icons.outlined.FlashlightOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -36,14 +33,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
-import com.bogdan801.romanconverter.presentation.components.CameraTextRecognizer
-import com.bogdan801.romanconverter.presentation.components.RecognizedTextDisplay
+import com.bogdan801.romanconverter.presentation.screens.camera.components.CameraTextRecognizer
+import com.bogdan801.romanconverter.presentation.screens.camera.components.RecognizedTextDisplay
 import com.bogdan801.romanconverter.presentation.components.SmallIconButton
 import com.bogdan801.romanconverter.presentation.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.bogdan801.romanconverter.presentation.components
+package com.bogdan801.romanconverter.presentation.screens.camera.components
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.data.util.convertRomanToArabic
 import com.bogdan801.romanconverter.data.util.isRomanNumberValid
+import com.bogdan801.romanconverter.presentation.components.AutoSizeText
 import com.bogdan801.romanconverter.presentation.theme.displayGradientBrush
 import com.bogdan801.romanconverter.presentation.util.shadowCustom
 
