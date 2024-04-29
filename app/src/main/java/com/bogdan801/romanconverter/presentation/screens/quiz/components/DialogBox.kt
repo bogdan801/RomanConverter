@@ -85,7 +85,7 @@ fun BaseDialogBox(
 
 @Composable
 fun PauseDialogBox(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     show: Boolean = false,
     onVisibilityChanged: (Boolean) -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -139,14 +139,14 @@ fun PauseDialogBox(
 
 @Composable
 fun QuizOverDialogBox(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     show: Boolean = false,
     onVisibilityChanged: (Boolean) -> Unit = {},
     onDismiss: () -> Unit = {},
     score: Int = 0,
     count: Int = 0,
-    onTryAgainClick: () -> Unit = { onDismiss() },
-    onHomeClick: () -> Unit = {}
+    onTryAgainClick: () -> Unit = {},
+    onHomeClick: () -> Unit = {onDismiss()}
 ) {
     LaunchedEffect(key1 = show) {
         onVisibilityChanged(show)

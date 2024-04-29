@@ -44,6 +44,7 @@ fun InputKeyboard(
     type: InputKeyboardType = InputKeyboardType.Roman,
     onTypeChange: (newType: InputKeyboardType) -> Unit = {},
     isQuizInput: Boolean = false,
+    isActive: Boolean = true,
     onClear: () -> Unit = {}
 ) {
     var isRoman by remember { mutableStateOf(true) }
@@ -520,7 +521,7 @@ fun InputKeyboard(
                     .offset { keyOffset }
                     .alpha(alpha),
                 label = label,
-                isEnabled = alpha == 1f && isEnabled,
+                isEnabled = alpha == 1f && isEnabled && isActive,
                 isBackspace = if(isRoman) key.roman.action == KeyAction.Backspace
                               else        key.arabic.action == KeyAction.Backspace,
                 onClick = {

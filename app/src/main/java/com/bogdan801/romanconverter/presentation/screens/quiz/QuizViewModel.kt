@@ -1,5 +1,7 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -73,7 +76,7 @@ constructor(
         }
     }
 
-    fun setTime(value: Int){
+    fun setGameTimer(value: Int){
         _screenState.update {
             it.copy(
                 currentTime = value
@@ -81,7 +84,15 @@ constructor(
         }
     }
 
-    private fun incrementTime(valueToAdd: Int){
+    fun decrementGameTimer(){
+        _screenState.update {
+            it.copy(
+                currentTime = _screenState.value.currentTime - 1
+            )
+        }
+    }
+
+    private fun incrementGameTimer(valueToAdd: Int){
         _screenState.update {
             it.copy(
                 currentTime = _screenState.value.currentTime + valueToAdd
@@ -130,7 +141,7 @@ constructor(
         }
     }
 
-    fun saveRecord(leaderboardItem: LeaderboardItem){
+    private fun saveRecord(leaderboardItem: LeaderboardItem){
         viewModelScope.launch {
             repository.saveRecord(leaderboardItem, _screenState.value.selectedType)
         }
@@ -172,16 +183,26 @@ constructor(
     }
 
     //quiz logic
-    fun startQuiz(newValue: Boolean, homeViewModel: HomeViewModel) {
+    fun startQuiz(homeViewModel: HomeViewModel) {
         _screenState.update {
             it.copy(
-                isQuizStarted = newValue
+                isQuizStarted = true
             )
         }
-        homeViewModel.showNavBar(!newValue)
+        homeViewModel.showNavBar(false)
 
-        if(newValue) setupTheQuiz()
+        setupTheQuiz()
     }
+
+    fun stopQuiz(homeViewModel: HomeViewModel) {
+        _screenState.update {
+            it.copy(
+                isQuizStarted = false
+            )
+        }
+        homeViewModel.showNavBar(true)
+    }
+
 
     private fun nextValueToGuess(): String {
         val type = _screenState.value.currentQuizType
@@ -197,7 +218,8 @@ constructor(
         }
     }
 
-    private fun setupTheQuiz(){
+    private var time: Int = _screenState.value.currentTime
+    fun setupTheQuiz(){
         _screenState.update {
             it.copy(
                 currentQuizType = when(_screenState.value.selectedType){
@@ -209,17 +231,24 @@ constructor(
                     }
                 },
                 currentCount = 0,
+                currentScore = 0,
                 currentTime = 60,
                 currentInputValue = ""
             )
         }
         setValueToGuess(nextValueToGuess())
+        time = _screenState.value.currentTime
     }
+    fun successfulGuess(context: Context) {
+        val newTime = _screenState.value.currentTime
+        val deltaTime = time - newTime
 
-    fun successfulGuess() {
         incrementCurrentCount()
-        incrementTime(10)
-        incrementScore(100)
+
+        val toIncrement = (2000f / (deltaTime + 10)).toInt()
+        Toast.makeText(context, "Вгадано за $deltaTime секунд. +$toIncrement", Toast.LENGTH_SHORT).show()
+        incrementScore(toIncrement)
+        incrementGameTimer(10)
         if(_screenState.value.selectedType == QuizType.GuessBoth) {
             setCurrentQuizType(
                 if (Random.nextInt(2) == 1) QuizType.GuessRoman
@@ -228,10 +257,17 @@ constructor(
         }
         setValueToGuess(nextValueToGuess())
         setInputValue("")
+        time = newTime
     }
 
-    fun gameOver() {
-
+    fun quizOver() {
+        saveRecord(
+            LeaderboardItem(
+                id = Random.nextInt(100000, 999999),
+                count = _screenState.value.currentCount,
+                score = _screenState.value.currentScore
+            )
+        )
     }
 
     init {

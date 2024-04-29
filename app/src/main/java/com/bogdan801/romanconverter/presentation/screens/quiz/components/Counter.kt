@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.bogdan801.romanconverter.data.util.convertSecondsToTimeString
+import com.bogdan801.romanconverter.presentation.util.secondsToTimeString
 import com.bogdan801.romanconverter.presentation.theme.counterGradientBrush
 
 @Composable
@@ -160,7 +160,7 @@ fun TimeCounter(
     value: Int,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize
 ) {
-    val stringValue = convertSecondsToTimeString(value)
+    val stringValue = value.secondsToTimeString()
     Row(modifier = modifier
         .background(counterGradientBrush())
         .border(
