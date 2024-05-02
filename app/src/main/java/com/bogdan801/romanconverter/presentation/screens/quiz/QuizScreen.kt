@@ -1,6 +1,5 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -487,7 +486,7 @@ fun QuizScreen(
                             suspend fun onSuccess() {
                                 showSuccessfulGuessIcon = true
                                 delay(1000)
-                                viewModel.successfulGuess(context)
+                                viewModel.successfulGuess()
                                 showSuccessfulGuessIcon = false
                             }
 
@@ -513,6 +512,7 @@ fun QuizScreen(
                             count = screenState.currentCount,
                             time = screenState.currentTime,
                             score = screenState.currentScore,
+                            hideNumber = isPaused,
                             showSuccessfulGuessIcon = showSuccessfulGuessIcon
                         )
 

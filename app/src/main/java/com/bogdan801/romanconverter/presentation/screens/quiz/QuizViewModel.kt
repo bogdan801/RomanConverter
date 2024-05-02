@@ -1,7 +1,5 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
@@ -9,14 +7,15 @@ import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
+import com.bogdan801.util_library.mapRange
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalTime
 import javax.inject.Inject
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 @HiltViewModel
 class QuizViewModel
@@ -80,14 +79,6 @@ constructor(
         _screenState.update {
             it.copy(
                 currentTime = value
-            )
-        }
-    }
-
-    fun decrementGameTimer(){
-        _screenState.update {
-            it.copy(
-                currentTime = _screenState.value.currentTime - 1
             )
         }
     }
@@ -205,14 +196,35 @@ constructor(
 
 
     private fun nextValueToGuess(): String {
+        if(_screenState.value.selectedType == QuizType.GuessBoth) {
+            setCurrentQuizType(
+                if (Random.nextInt(2) == 1) QuizType.GuessRoman
+                else QuizType.GuessArabic
+            )
+        }
         val type = _screenState.value.currentQuizType
-        //val count = _screenState.value.currentCount
+        val count = _screenState.value.currentCount
+
+        val numberRange = when(count){
+            in 0..4   -> 1..39
+            in 5..9   -> 40..89
+            in 10..14 -> 90..399
+            in 15..19 -> 400..899
+            in 20..24 -> 900..3999
+            in 25..29 -> 4000..8999
+            in 30..34 -> 9000..39999
+            in 35..39 -> 40000..89999
+            in 40..44 -> 90000..399999
+            in 45..49 -> 400000..899999
+            else            -> 900000..3999999
+        }
+
         return when(type){
             QuizType.GuessRoman -> {
-                convertArabicToRoman(Random.nextInt(0, 3999).toString())
+                convertArabicToRoman(Random.nextInt(numberRange).toString())
             }
             QuizType.GuessArabic -> {
-                Random.nextInt(0, 3999).toString()
+                Random.nextInt(numberRange).toString()
             }
             QuizType.GuessBoth -> throw Exception("Current type can not be Both")
         }
@@ -239,25 +251,79 @@ constructor(
         setValueToGuess(nextValueToGuess())
         time = _screenState.value.currentTime
     }
-    fun successfulGuess(context: Context) {
+
+    fun successfulGuess() {
         val newTime = _screenState.value.currentTime
         val deltaTime = time - newTime
 
-        incrementCurrentCount()
-
-        val toIncrement = (2000f / (deltaTime + 10)).toInt()
-        Toast.makeText(context, "Вгадано за $deltaTime секунд. +$toIncrement", Toast.LENGTH_SHORT).show()
-        incrementScore(toIncrement)
-        incrementGameTimer(10)
-        if(_screenState.value.selectedType == QuizType.GuessBoth) {
-            setCurrentQuizType(
-                if (Random.nextInt(2) == 1) QuizType.GuessRoman
-                else QuizType.GuessArabic
-            )
+        val timeToAdd: Int
+        val minScore: Int
+        val maxScore: Int
+        when(_screenState.value.currentCount){
+            in 0..4 -> {
+                timeToAdd = 10
+                minScore = 25
+                maxScore = 50
+            }
+            in 5..9 -> {
+                timeToAdd = 10
+                minScore = 50
+                maxScore = 100
+            }
+            in 10..14 -> {
+                timeToAdd = 10
+                minScore = 75
+                maxScore = 150
+            }
+            in 15..19 -> {
+                timeToAdd = 10
+                minScore = 100
+                maxScore = 200
+            }
+            in 20..24 -> {
+                timeToAdd = 15
+                minScore = 125
+                maxScore = 250
+            }
+            in 25..29 -> {
+                timeToAdd = 15
+                minScore = 150
+                maxScore = 300
+            }
+            in 30..34 -> {
+                timeToAdd = 15
+                minScore = 175
+                maxScore = 350
+            }
+            in 35..39 -> {
+                timeToAdd = 15
+                minScore = 200
+                maxScore = 400
+            }
+            in 40..44 -> {
+                timeToAdd = 20
+                minScore = 225
+                maxScore = 450
+            }
+            in 45..49 -> {
+                timeToAdd = 20
+                minScore = 250
+                maxScore = 500
+            }
+            else -> {
+                timeToAdd = 20
+                minScore = 275
+                maxScore = 550
+            }
         }
+
+        incrementGameTimer(timeToAdd)
+        incrementScore(mapRange(deltaTime, 0..timeToAdd, minScore..maxScore))
+        incrementCurrentCount()
         setValueToGuess(nextValueToGuess())
         setInputValue("")
-        time = newTime
+
+        time = _screenState.value.currentTime
     }
 
     fun quizOver() {
@@ -287,5 +353,4 @@ constructor(
             }
         }
     }
-
 }

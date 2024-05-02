@@ -1,6 +1,9 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -9,14 +12,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -35,6 +41,7 @@ fun QuizDisplay(
     count: Int = 0,
     time: Int = 60,
     score: Int = 0,
+    hideNumber: Boolean = false,
     showSuccessfulGuessIcon: Boolean = false
 ) {
     BoxWithConstraints(
@@ -78,6 +85,12 @@ fun QuizDisplay(
             }
             else {
                 Text(
+                    modifier = Modifier.then(
+                        if(hideNumber) Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.onTertiary)
+                        else Modifier
+                    ),
                     text = numberToGuess,
                     color = MaterialTheme.colorScheme.onTertiary,
                     style = MaterialTheme.typography.displayMedium
