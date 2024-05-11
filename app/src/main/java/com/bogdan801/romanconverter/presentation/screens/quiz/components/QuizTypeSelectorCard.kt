@@ -58,7 +58,7 @@ fun QuizTypeSelectorCard(
                 offsetY = 4.dp
             ),
         color = Color.Transparent,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(if(!isSmall) 16.dp else 8.dp),
         border = BorderStroke(
             width = 1.dp,
             color = if(isSelected) MaterialTheme.colorScheme.outline

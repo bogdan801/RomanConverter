@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bogdan801.romanconverter.presentation.util.secondsToTimeString
 import com.bogdan801.romanconverter.presentation.theme.counterGradientBrush
 
@@ -156,8 +158,8 @@ fun ValueCounter(
 
 @Composable
 fun TimeCounter(
-    modifier: Modifier = Modifier,
-    value: Int,
+    modifier: Modifier,
+    value: Int = 0,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize
 ) {
     val stringValue = value.secondsToTimeString()
@@ -166,7 +168,8 @@ fun TimeCounter(
         .border(
             width = 1.dp,
             color = MaterialTheme.colorScheme.onTertiary
-        )
+        ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         val cellColor = if(value in 1..9) MaterialTheme.colorScheme.error
                         else MaterialTheme.colorScheme.onTertiary

@@ -452,7 +452,6 @@ fun QuizScreen(
                             )
                         }
 
-
                         var isKeyboardActive by rememberSaveable { mutableStateOf(true) }
                         var showSuccessfulGuessIcon by rememberSaveable { mutableStateOf(false) }
                         //start timer

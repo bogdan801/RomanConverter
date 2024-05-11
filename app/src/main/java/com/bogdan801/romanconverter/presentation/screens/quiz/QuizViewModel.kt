@@ -7,6 +7,7 @@ import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
+import com.bogdan801.romanconverter.presentation.util.mapRange
 import com.bogdan801.util_library.mapRange
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -205,17 +206,18 @@ constructor(
         val type = _screenState.value.currentQuizType
         val count = _screenState.value.currentCount
 
+        val step = _screenState.value.levelStep
         val numberRange = when(count){
-            in 0..4   -> 1..39
-            in 5..9   -> 40..89
-            in 10..14 -> 90..399
-            in 15..19 -> 400..899
-            in 20..24 -> 900..3999
-            in 25..29 -> 4000..8999
-            in 30..34 -> 9000..39999
-            in 35..39 -> 40000..89999
-            in 40..44 -> 90000..399999
-            in 45..49 -> 400000..899999
+            in 0        until step * 1 -> 1..39
+            in step * 1 until step * 2 -> 40..89
+            in step * 2 until step * 3 -> 90..399
+            in step * 3 until step * 4 -> 400..899
+            in step * 4 until step * 5 -> 900..3999
+            in step * 5 until step * 6 -> 4000..8999
+            in step * 6 until step * 7 -> 9000..39999
+            in step * 7 until step * 8 -> 40000..89999
+            in step * 8 until step * 9 -> 90000..399999
+            in step * 9 until step * 10 -> 400000..899999
             else            -> 900000..3999999
         }
 
@@ -259,53 +261,54 @@ constructor(
         val timeToAdd: Int
         val minScore: Int
         val maxScore: Int
+        val step = _screenState.value.levelStep
         when(_screenState.value.currentCount){
-            in 0..4 -> {
-                timeToAdd = 10
+            in  0       until step * 1 -> {
+                timeToAdd = 0
                 minScore = 25
                 maxScore = 50
             }
-            in 5..9 -> {
-                timeToAdd = 10
+            in step * 1 until step * 2 -> {
+                timeToAdd = 5
                 minScore = 50
                 maxScore = 100
             }
-            in 10..14 -> {
+            in step * 2 until step * 3 -> {
                 timeToAdd = 10
                 minScore = 75
                 maxScore = 150
             }
-            in 15..19 -> {
+            in step * 3 until step * 4 -> {
                 timeToAdd = 10
                 minScore = 100
                 maxScore = 200
             }
-            in 20..24 -> {
-                timeToAdd = 15
+            in step * 4 until step * 5 -> {
+                timeToAdd = 10
                 minScore = 125
                 maxScore = 250
             }
-            in 25..29 -> {
+            in step * 5 until step * 6 -> {
                 timeToAdd = 15
                 minScore = 150
                 maxScore = 300
             }
-            in 30..34 -> {
+            in step * 6 until step * 7 -> {
                 timeToAdd = 15
                 minScore = 175
                 maxScore = 350
             }
-            in 35..39 -> {
+            in step * 7 until step * 8 -> {
                 timeToAdd = 15
                 minScore = 200
                 maxScore = 400
             }
-            in 40..44 -> {
+            in step * 8 until step * 9 -> {
                 timeToAdd = 20
                 minScore = 225
                 maxScore = 450
             }
-            in 45..49 -> {
+            in step * 9 until step * 10 -> {
                 timeToAdd = 20
                 minScore = 250
                 maxScore = 500
@@ -316,9 +319,11 @@ constructor(
                 maxScore = 550
             }
         }
+        val scoreToAdd = if(deltaTime > timeToAdd) minScore
+                         else mapRange(deltaTime, 0, timeToAdd, maxScore, minScore)
 
         incrementGameTimer(timeToAdd)
-        incrementScore(mapRange(deltaTime, 0..timeToAdd, minScore..maxScore))
+        incrementScore(scoreToAdd)
         incrementCurrentCount()
         setValueToGuess(nextValueToGuess())
         setInputValue("")

@@ -16,5 +16,6 @@ data class QuizScreenState(
     val currentInputValue: String = "",
     val currentCount: Int = 0,
     val currentTime: Int = 60,
-    val currentScore: Int = 0
+    val currentScore: Int = 0,
+    val levelStep: Int = 3
 )
