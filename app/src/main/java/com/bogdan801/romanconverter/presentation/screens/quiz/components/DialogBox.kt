@@ -1,5 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz.components
 
+import android.media.MediaPlayer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +40,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.theme.dialogBoxGradientBrush
+import com.bogdan801.util_library.intSettings
 
 @Composable
 fun BaseDialogBox(
@@ -148,8 +153,12 @@ fun QuizOverDialogBox(
     onTryAgainClick: () -> Unit = {},
     onHomeClick: () -> Unit = {onDismiss()}
 ) {
+    val context = LocalContext.current
+    val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = 1)
+    val mediaPlayer = remember { MediaPlayer.create(context, R.raw.sfx_quiz_over) }
     LaunchedEffect(key1 = show) {
         onVisibilityChanged(show)
+        if(show && soundOn != 0) mediaPlayer.start()
     }
     BaseDialogBox(
         modifier = modifier.size(300.dp, 322.dp),

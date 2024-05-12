@@ -91,7 +91,8 @@ fun QuizDisplay(
                             .width(counterRowWidth / 3f)
                             .align(Alignment.Center),
                         value = count,
-                        digitCount = 1
+                        digitCount = 1,
+                        rollUp = true
                     )
                     ValueCounter(
                         modifier = Modifier
@@ -99,7 +100,8 @@ fun QuizDisplay(
                             .width(counterRowWidth / 3f + 2.dp)
                             .align(Alignment.CenterStart),
                         value = score,
-                        digitCount = 5
+                        digitCount = 5,
+                        rollUp = true
                     )
                     TimeCounter(
                         modifier = Modifier
@@ -257,84 +259,5 @@ fun QuizDisplay(
                 }
             }
         }
-
-
-
-
-
-
-        /*Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if(startTimer != 0) {
-                AnimatedContent(targetState = startTimer, label = "") { value ->
-                    Text(
-                        text = value.toString(),
-                        color = MaterialTheme.colorScheme.onTertiary,
-                        style = MaterialTheme.typography.displayMedium
-                    )
-                }
-            }
-            else if(showSuccessfulGuessIcon){
-                Icon(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .graphicsLayer(alpha = 0.99f)
-                        .drawWithCache {
-                            onDrawWithContent {
-                                drawContent()
-                                drawRect(
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            green100, green200, green100
-                                        )
-                                    ),
-                                    blendMode = BlendMode.SrcAtop
-                                )
-                            }
-                        },
-                    imageVector = Icons.Default.CheckCircleOutline,
-                    contentDescription = "Guessed successfully"
-                )
-            }
-            else {
-                Text(
-                    modifier = Modifier.then(
-                        if(hideNumber) Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.onTertiary)
-                        else Modifier
-                    ),
-                    text = numberToGuess,
-                    color = MaterialTheme.colorScheme.onTertiary,
-                    style = MaterialTheme.typography.displayMedium
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = inputValue,
-                    color = MaterialTheme.colorScheme.onTertiary,
-                    style = MaterialTheme.typography.displaySmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                    Text(
-                        text = score.toString(),
-                        color = MaterialTheme.colorScheme.onTertiary,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                    Text(
-                        text = count.toString(),
-                        color = MaterialTheme.colorScheme.onTertiary,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                    Text(
-                        text = time.secondsToTimeString(),
-                        color = MaterialTheme.colorScheme.onTertiary,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
-            }
-        }*/
     }
 }

@@ -8,7 +8,6 @@ import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.util.mapRange
-import com.bogdan801.util_library.mapRange
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -326,7 +325,6 @@ constructor(
         incrementScore(scoreToAdd)
         incrementCurrentCount()
         setValueToGuess(nextValueToGuess())
-        setInputValue("")
 
         time = _screenState.value.currentTime
     }

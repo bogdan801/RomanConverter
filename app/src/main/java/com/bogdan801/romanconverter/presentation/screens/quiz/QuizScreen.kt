@@ -1,5 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
+import android.media.MediaPlayer
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -93,7 +94,7 @@ fun QuizScreen(
     val homeScreenState by homeViewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = 1)
+    val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = null)
 
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
@@ -150,7 +151,7 @@ fun QuizScreen(
                                 .padding(12.dp),
                             onClick = {
                                 scope.launch {
-                                    if(soundOn != 1) context.intSettings.set("sound_on", 1)
+                                    if(soundOn == 0) context.intSettings.set("sound_on", 1)
                                     else context.intSettings.set("sound_on", 0)
                                 }
                             }
@@ -173,7 +174,7 @@ fun QuizScreen(
                                             )
                                         }
                                     },
-                                imageVector = if(soundOn != 0) Icons.AutoMirrored.Default.VolumeOff
+                                imageVector = if(soundOn == null || soundOn == 1) Icons.AutoMirrored.Default.VolumeOff
                                 else Icons.AutoMirrored.Default.VolumeUp,
                                 contentDescription = "Sound On Switch",
                             )
@@ -481,11 +482,14 @@ fun QuizScreen(
                             }
                         }
                         //check if guess successful
+                        val mediaPlayer = remember { MediaPlayer.create(context, R.raw.sfx_quiz_correct) }
                         LaunchedEffect(key1 = screenState.currentInputValue) {
                             suspend fun onSuccess() {
                                 showSuccessfulGuessIcon = true
-                                delay(1000)
+                                if(soundOn != 0) mediaPlayer.start()
                                 viewModel.successfulGuess()
+                                delay(1500)
+                                viewModel.setInputValue("")
                                 showSuccessfulGuessIcon = false
                             }
 
@@ -511,7 +515,7 @@ fun QuizScreen(
                             count = screenState.currentCount,
                             time = screenState.currentTime,
                             score = screenState.currentScore,
-                            hideNumber = isPaused,
+                            hideNumber = isPaused && !showSuccessfulGuessIcon,
                             showSuccessfulGuessIcon = showSuccessfulGuessIcon
                         )
 

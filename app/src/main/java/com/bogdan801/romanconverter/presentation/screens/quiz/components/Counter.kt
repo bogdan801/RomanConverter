@@ -21,10 +21,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -94,6 +99,7 @@ fun ValueCounter(
     digitCount: Int = 5,
     value: Int = 0,
     prevValue: Int = 0,
+    rollUp: Boolean = false,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize
 ) {
     val stringValue = value.toString()
@@ -120,7 +126,7 @@ fun ValueCounter(
                     .fillMaxHeight()
                     .weight(1f),
                 value = animatable.value.toInt().toString(),
-                rollUp = false,
+                rollUp = rollUp,
                 fontSize = fontSize
             )
         }
@@ -148,7 +154,7 @@ fun ValueCounter(
                         .fillMaxHeight()
                         .weight(1f),
                     value = (animatable.value.toInt() % 10).toString(),
-                    rollUp = false,
+                    rollUp = rollUp,
                     fontSize = fontSize
                 )
             }
@@ -160,15 +166,22 @@ fun ValueCounter(
 fun TimeCounter(
     modifier: Modifier,
     value: Int = 0,
+    rollUp: Boolean = true,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize
 ) {
     val stringValue = value.secondsToTimeString()
-    Row(modifier = modifier
-        .background(counterGradientBrush())
-        .border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.onTertiary
-        ),
+    val density = LocalDensity.current
+    var width by remember { mutableStateOf(0.dp) }
+    Row(
+        modifier = modifier
+            .background(counterGradientBrush())
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
+            .onGloballyPositioned {
+                width = with(density) { it.size.width.toDp() }
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         val cellColor = if(value in 1..9) MaterialTheme.colorScheme.error
@@ -179,7 +192,8 @@ fun TimeCounter(
                 .weight(1f),
             value = stringValue[0].toString(),
             textColor = cellColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            rollUp = rollUp
         )
         CounterCell(
             modifier = Modifier
@@ -187,10 +201,13 @@ fun TimeCounter(
                 .weight(1f),
             value = stringValue[1].toString(),
             textColor = cellColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            rollUp = rollUp
         )
         Text(
-            modifier = Modifier.width(12.dp).offset(y = (-1).dp),
+            modifier = Modifier
+                .width(width / 5f)
+                .offset(y = (-1).dp),
             text = ":",
             textAlign = TextAlign.Center,
             color = cellColor,
@@ -202,7 +219,8 @@ fun TimeCounter(
                 .weight(1f),
             value = stringValue[3].toString(),
             textColor = cellColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            rollUp = rollUp
         )
         CounterCell(
             modifier = Modifier
@@ -210,7 +228,8 @@ fun TimeCounter(
                 .weight(1f),
             value = stringValue[4].toString(),
             textColor = cellColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            rollUp = rollUp
         )
     }
 }
