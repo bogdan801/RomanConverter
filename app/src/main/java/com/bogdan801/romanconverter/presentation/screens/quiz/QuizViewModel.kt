@@ -59,14 +59,6 @@ constructor(
         }
     }
 
-    private fun setCount(value: Int){
-        _screenState.update {
-            it.copy(
-                currentCount = value
-            )
-        }
-    }
-
     private fun incrementCurrentCount(){
         _screenState.update {
             it.copy(
@@ -87,14 +79,6 @@ constructor(
         _screenState.update {
             it.copy(
                 currentTime = _screenState.value.currentTime + valueToAdd
-            )
-        }
-    }
-
-    private fun setScore(value: Int){
-        _screenState.update {
-            it.copy(
-                currentScore = value
             )
         }
     }

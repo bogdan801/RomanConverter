@@ -4,6 +4,7 @@ plugins {
 
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'io.realm.kotlin'
 }
 
 android {
@@ -112,4 +113,7 @@ dependencies {
 
     //permission
     implementation "com.google.accompanist:accompanist-permissions:0.35.0-alpha"
+
+    //realm
+    implementation "io.realm.kotlin:library-base:1.11.0"
 }

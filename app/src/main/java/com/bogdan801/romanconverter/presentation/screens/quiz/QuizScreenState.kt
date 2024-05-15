@@ -2,7 +2,6 @@ package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
-import kotlin.random.Random
 
 data class QuizScreenState(
     val selectedType: QuizType = QuizType.GuessRoman,

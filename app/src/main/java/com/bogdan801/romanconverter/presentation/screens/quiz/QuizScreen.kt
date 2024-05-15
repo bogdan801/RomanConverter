@@ -91,7 +91,6 @@ fun QuizScreen(
     homeViewModel: HomeViewModel
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val homeScreenState by homeViewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = null)
@@ -174,7 +173,9 @@ fun QuizScreen(
                                             )
                                         }
                                     },
-                                imageVector = if(soundOn == null || soundOn == 1) Icons.AutoMirrored.Default.VolumeOff
+                                imageVector = if(soundOn == null || soundOn == 1) {
+                                    Icons.AutoMirrored.Default.VolumeOff
+                                }
                                 else Icons.AutoMirrored.Default.VolumeUp,
                                 contentDescription = "Sound On Switch",
                             )
@@ -367,20 +368,6 @@ fun QuizScreen(
                             label = "START THE QUIZ",
                             onClick = {
                                 viewModel.startQuiz(homeViewModel)
-
-                                /*val score = Random.nextInt(10000, 25000)
-                                viewModel.saveRecord(
-                                    LeaderboardItem(
-                                        id = Random.nextInt(0, 100000),
-                                        date = LocalDate.now().minusDays(Random.nextLong(0, 365)),
-                                        score = score,
-                                        count = score / 800
-                                    )
-                                )*/
-                                /*scope.launch {
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    snackbarHostState.showSnackbar(message = "Quiz has started", duration = SnackbarDuration.Short)
-                                }*/
                             }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -506,7 +493,6 @@ fun QuizScreen(
                             }
                         }
 
-
                         QuizDisplay(
                             modifier = Modifier.fillMaxWidth(),
                             startTimer = startTimer,
@@ -528,10 +514,14 @@ fun QuizScreen(
                                 romanValue = screenState.currentInputValue,
                                 arabicValue = screenState.currentInputValue,
                                 onRomanValueChange = {
-                                    viewModel.setInputValue(it)
+                                    if(screenState.currentQuizType == QuizType.GuessArabic){
+                                        viewModel.setInputValue(it)
+                                    }
                                 },
                                 onArabicValueChange = {
-                                    viewModel.setInputValue(it)
+                                    if(screenState.currentQuizType == QuizType.GuessRoman){
+                                        viewModel.setInputValue(it)
+                                    }
                                 },
                                 type = when(screenState.currentQuizType){
                                     QuizType.GuessRoman -> InputKeyboardType.Arabic
@@ -574,7 +564,6 @@ fun QuizScreen(
                             count = screenState.currentCount
                         )
                     }
-
                 }
                 BackHandler {
                     viewModel.stopQuiz(homeViewModel)

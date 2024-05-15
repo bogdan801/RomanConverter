@@ -1,102 +1,86 @@
 package com.bogdan801.romanconverter.data.repository
 
+import com.bogdan801.romanconverter.data.local_db.realm.objects.Record
+import com.bogdan801.romanconverter.data.local_db.realm.objects.toRecordRealmObject
 import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
+import io.realm.kotlin.Realm
+import io.realm.kotlin.UpdatePolicy
+import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import org.mongodb.kbson.ObjectId
 
 class RepositoryImpl(
-    //private val dao: Dao
+    private val realm: Realm
 ) : Repository {
-    private val roman = MutableStateFlow(listOf<LeaderboardItem>())
-    private val arabic = MutableStateFlow(listOf<LeaderboardItem>())
-    private val both = MutableStateFlow(listOf<LeaderboardItem>())
-
     override suspend fun saveRecord(item: LeaderboardItem, type: QuizType) {
-        when(type){
-            QuizType.GuessRoman -> {
-                roman.update {
-                    var output = it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
-                    if(output.size > 20) output = output.subList(0, 20)
-                    output
-                }
-            }
-            QuizType.GuessArabic -> {
-                arabic.update {
-                    var output = it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
-                    if(output.size > 20) output = output.subList(0, 20)
-                    output
-                }
-            }
-            QuizType.GuessBoth -> {
-                both.update {
-                    var output = it.toMutableList().apply { add(item) }.sortedByDescending { item -> item.score }
-                    if(output.size > 20) output = output.subList(0, 20)
-                    output
-                }
-            }
+        realm.write {
+            this.copyToRealm(item.toRecordRealmObject(type.ordinal), updatePolicy = UpdatePolicy.ALL)
         }
-
     }
 
     override fun getRomanLeaderboardFlow(): Flow<List<LeaderboardItem>> {
-        return roman
+        return realm.query<Record>(query = "quizType == ${QuizType.GuessRoman.ordinal}")
+            .asFlow()
+            .map { results ->
+                results.list.toList().map { it.toLeaderboardItem() }.sortedByDescending { it.score }
+            }
     }
 
     override fun getArabicLeaderboardFlow(): Flow<List<LeaderboardItem>> {
-        return arabic
+        return realm.query<Record>(query = "quizType == ${QuizType.GuessArabic.ordinal}")
+            .asFlow()
+            .map { results ->
+                results.list.toList().map { it.toLeaderboardItem() }.sortedByDescending { it.score }
+            }
     }
 
     override fun getBothLeaderboardFlow(): Flow<List<LeaderboardItem>> {
-        return both
+        return realm.query<Record>(query = "quizType == ${QuizType.GuessBoth.ordinal}")
+            .asFlow()
+            .map { results ->
+                results.list.toList().map { it.toLeaderboardItem() }.sortedByDescending { it.score }
+            }
     }
 
     override suspend fun deleteRecord(id: Int, quizType: QuizType) {
-        when(quizType){
-            QuizType.GuessRoman -> {
-                roman.value.indexOfFirst { it.id == id }.let { i ->
-                    if(i != -1) {
-                        roman.update {
-                            it.toMutableList().apply { removeAt(i) }
+        realm.query<Record>()
+            .find()
+            .asFlow()
+            .collect { results ->
+                results.list
+                    .filter {
+                        it._id.timestamp == id
+                    }
+                    .forEach{ record ->
+                        realm.write {
+                            findLatest(record)?.let { lastRecord ->
+                                delete(lastRecord)
+                            }
                         }
                     }
-                }
             }
-            QuizType.GuessArabic -> {
-                arabic.value.indexOfFirst { it.id == id }.let { i ->
-                    if(i != -1) {
-                        arabic.update {
-                            it.toMutableList().apply { removeAt(i) }
-                        }
-                    }
-                }
-            }
-            QuizType.GuessBoth -> {
-                both.value.indexOfFirst { it.id == id }.let { i ->
-                    if(i != -1) {
-                        both.update {
-                            it.toMutableList().apply { removeAt(i) }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     override suspend fun clearLeaderboardOfAType(quizType: QuizType) {
-        when(quizType){
-            QuizType.GuessRoman -> {
-                roman.update { listOf() }
+        realm.query<Record>("quizType == $0", quizType.ordinal)
+            .find()
+            .asFlow()
+            .collect { results ->
+                results.list
+                    .forEach{ record ->
+                        realm.write {
+                            findLatest(record)?.let { lastRecord ->
+                                delete(lastRecord)
+                            }
+                        }
+                    }
             }
-            QuizType.GuessArabic -> {
-                arabic.update { listOf() }
-            }
-            QuizType.GuessBoth -> {
-                both.update { listOf() }
-            }
-        }
     }
 }
