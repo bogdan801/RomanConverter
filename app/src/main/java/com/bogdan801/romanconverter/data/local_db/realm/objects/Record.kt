@@ -17,7 +17,7 @@ class Record: RealmObject {
     var score: Int = 0
 
     fun toLeaderboardItem(): LeaderboardItem = LeaderboardItem(
-        id = _id.timestamp,
+        id = _id.hashCode(),
         date = LocalDate.of(year, month, day),
         count = count,
         score = score

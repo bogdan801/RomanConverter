@@ -9,6 +9,7 @@ import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.util.mapRange
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -43,7 +44,7 @@ constructor(
         }
     }
 
-    private fun setValueToGuess(value: String){
+    fun setValueToGuess(value: String){
         _screenState.update {
             it.copy(
                 currentValueToGuess = value
@@ -116,6 +117,12 @@ constructor(
         }
     }
 
+    private fun updateLastRecord(leaderboardItem: LeaderboardItem){
+        viewModelScope.launch {
+            repository.updateLastRecord(leaderboardItem)
+        }
+    }
+
     private fun saveRecord(leaderboardItem: LeaderboardItem){
         viewModelScope.launch {
             repository.saveRecord(leaderboardItem, _screenState.value.selectedType)
@@ -179,7 +186,8 @@ constructor(
     }
 
 
-    private fun nextValueToGuess(): String {
+    fun nextValueToGuess(): String {
+        setInputValue("")
         if(_screenState.value.selectedType == QuizType.GuessBoth) {
             setCurrentQuizType(
                 if (Random.nextInt(2) == 1) QuizType.GuessRoman
@@ -234,6 +242,7 @@ constructor(
             )
         }
         setValueToGuess(nextValueToGuess())
+        saveRecord(LeaderboardItem(count = 0, score = 0))
         time = _screenState.value.currentTime
     }
 
@@ -308,15 +317,19 @@ constructor(
         incrementGameTimer(timeToAdd)
         incrementScore(scoreToAdd)
         incrementCurrentCount()
-        setValueToGuess(nextValueToGuess())
+        updateLastRecord(
+            LeaderboardItem(
+                count = _screenState.value.currentCount,
+                score = _screenState.value.currentScore
+            )
+        )
 
         time = _screenState.value.currentTime
     }
 
     fun quizOver() {
-        saveRecord(
+        updateLastRecord(
             LeaderboardItem(
-                id = Random.nextInt(100000, 999999),
                 count = _screenState.value.currentCount,
                 score = _screenState.value.currentScore
             )

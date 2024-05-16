@@ -507,7 +507,7 @@ fun InputKeyboard(
                             KeyAction.Input -> {
                                 when{
                                     value.isBlank() -> key.arabic.label != "0"
-                                    else -> (value + (key.arabic.label?:"")).toInt() <= 3999999
+                                    else -> (arabicValue + (key.arabic.label?:"")).toInt() <= 3999999
                                 }
                             }
                             else -> true

@@ -1,6 +1,7 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -9,6 +10,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -36,6 +38,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -60,11 +63,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
 import com.bogdan801.romanconverter.data.util.convertRomanToArabic
+import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
@@ -79,6 +84,7 @@ import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.PauseDialogBox
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizDisplay
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizOverDialogBox
+import com.bogdan801.romanconverter.presentation.screens.quiz.util.ComposableLifecycle
 import com.bogdan801.util_library.intSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -476,7 +482,7 @@ fun QuizScreen(
                                 if(soundOn != 0) mediaPlayer.start()
                                 viewModel.successfulGuess()
                                 delay(1500)
-                                viewModel.setInputValue("")
+                                viewModel.setValueToGuess(viewModel.nextValueToGuess())
                                 showSuccessfulGuessIcon = false
                             }
 
@@ -514,14 +520,10 @@ fun QuizScreen(
                                 romanValue = screenState.currentInputValue,
                                 arabicValue = screenState.currentInputValue,
                                 onRomanValueChange = {
-                                    if(screenState.currentQuizType == QuizType.GuessArabic){
-                                        viewModel.setInputValue(it)
-                                    }
+                                    viewModel.setInputValue(it)
                                 },
                                 onArabicValueChange = {
-                                    if(screenState.currentQuizType == QuizType.GuessRoman){
-                                        viewModel.setInputValue(it)
-                                    }
+                                    viewModel.setInputValue(it)
                                 },
                                 type = when(screenState.currentQuizType){
                                     QuizType.GuessRoman -> InputKeyboardType.Arabic
@@ -568,6 +570,17 @@ fun QuizScreen(
                 BackHandler {
                     viewModel.stopQuiz(homeViewModel)
                 }
+                /*ComposableLifecycle { _, event ->
+                    when (event) {
+                        Lifecycle.Event.ON_DESTROY -> {
+                            scope.launch {
+                                viewModel.quizOver()
+                            }
+                            Toast.makeText(context, "О ні, мене закрилиииии. Я помщусяяяяяя!!!", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
+                }*/
             }
         }
     }

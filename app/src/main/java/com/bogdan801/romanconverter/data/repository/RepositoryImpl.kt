@@ -8,6 +8,7 @@ import com.bogdan801.romanconverter.domain.repository.Repository
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.query.Sort
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -22,6 +23,27 @@ class RepositoryImpl(
     override suspend fun saveRecord(item: LeaderboardItem, type: QuizType) {
         realm.write {
             this.copyToRealm(item.toRecordRealmObject(type.ordinal), updatePolicy = UpdatePolicy.ALL)
+        }
+    }
+
+    override suspend fun updateLastRecord(item: LeaderboardItem) {
+        realm.write {
+            val lastRecord = this.query<Record>().sort("_id", Sort.DESCENDING).first().find()
+
+            lastRecord?.let { record ->
+                val newRecord = record.apply {
+                    count = 0 + item.count
+                    score = 0 + item.score
+                    day = 0 + item.date.dayOfMonth
+                    month = 0 + item.date.monthValue
+                    year = 0 + item.date.year
+                }
+                copyToRealm(
+                    newRecord,
+                    updatePolicy = UpdatePolicy.ALL
+                )
+                println(newRecord)
+            }
         }
     }
 
@@ -56,7 +78,7 @@ class RepositoryImpl(
             .collect { results ->
                 results.list
                     .filter {
-                        it._id.timestamp == id
+                        it._id.hashCode() == id
                     }
                     .forEach{ record ->
                         realm.write {
