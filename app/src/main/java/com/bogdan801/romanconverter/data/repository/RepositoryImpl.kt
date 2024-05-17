@@ -22,8 +22,17 @@ class RepositoryImpl(
 ) : Repository {
     override suspend fun saveRecord(item: LeaderboardItem, type: QuizType) {
         realm.write {
-            this.copyToRealm(item.toRecordRealmObject(type.ordinal), updatePolicy = UpdatePolicy.ALL)
+            copyToRealm(item.toRecordRealmObject(type.ordinal), updatePolicy = UpdatePolicy.ALL)
         }
+    }
+
+    override suspend fun saveRecords(items: List<LeaderboardItem>, type: QuizType) {
+        realm.write {
+            items.forEach { item ->
+                copyToRealm(item.toRecordRealmObject(type.ordinal))
+            }
+        }
+
     }
 
     override suspend fun updateLastRecord(item: LeaderboardItem) {
@@ -72,37 +81,20 @@ class RepositoryImpl(
     }
 
     override suspend fun deleteRecord(id: Int, quizType: QuizType) {
-        realm.query<Record>()
-            .find()
-            .asFlow()
-            .collect { results ->
-                results.list
-                    .filter {
-                        it._id.hashCode() == id
+        realm.write {
+            query<Record>()
+                .find()
+                .forEach { record ->
+                    if(record._id.hashCode() == id){
+                        delete(record)
                     }
-                    .forEach{ record ->
-                        realm.write {
-                            findLatest(record)?.let { lastRecord ->
-                                delete(lastRecord)
-                            }
-                        }
-                    }
-            }
+                }
+        }
     }
 
     override suspend fun clearLeaderboardOfAType(quizType: QuizType) {
-        realm.query<Record>("quizType == $0", quizType.ordinal)
-            .find()
-            .asFlow()
-            .collect { results ->
-                results.list
-                    .forEach{ record ->
-                        realm.write {
-                            findLatest(record)?.let { lastRecord ->
-                                delete(lastRecord)
-                            }
-                        }
-                    }
-            }
+        realm.write {
+            delete(query<Record>("quizType == $0", quizType.ordinal).find())
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import android.media.MediaPlayer
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -10,7 +9,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -38,7 +36,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -63,13 +60,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
 import com.bogdan801.romanconverter.data.util.convertRomanToArabic
-import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
@@ -77,14 +72,13 @@ import com.bogdan801.romanconverter.presentation.components.InputKeyboard
 import com.bogdan801.romanconverter.presentation.components.InputKeyboardType
 import com.bogdan801.romanconverter.presentation.components.SmallIconButton
 import com.bogdan801.romanconverter.presentation.navigation.Screen
+import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.DeleteConfirmDialogBox
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardItemRow
-import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizTypeSelector
-import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.PauseDialogBox
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizDisplay
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizOverDialogBox
-import com.bogdan801.romanconverter.presentation.screens.quiz.util.ComposableLifecycle
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizTypeSelector
 import com.bogdan801.util_library.intSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -99,12 +93,14 @@ fun QuizScreen(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    //sound on setting
     val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = null)
 
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = {
+            //snack bar for restoring deleted items
             SnackbarHost(
                 hostState = snackbarHostState,
                 snackbar = { data ->
@@ -147,8 +143,10 @@ fun QuizScreen(
             targetState = screenState.isQuizStarted,
             label = ""
         ) { isQuizStarted ->
+            //leaderboard screen
             if(!isQuizStarted){
                 Box(modifier = Modifier.fillMaxSize()){
+                    //sound control button
                     if(navController.currentDestination?.route == Screen.Quiz.route) {
                         SmallIconButton(
                             modifier = Modifier
@@ -199,6 +197,7 @@ fun QuizScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(54.dp))
+
                         AutoSizeText(
                             modifier = Modifier.padding(horizontal = 72.dp),
                             text = "Choose the quiz type",
@@ -209,6 +208,7 @@ fun QuizScreen(
                             minTextSize = MaterialTheme.typography.titleMedium.fontSize,
                             textAlign = TextAlign.Center
                         )
+
                         QuizTypeSelector(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -220,6 +220,7 @@ fun QuizScreen(
                                 snackbarHostState.currentSnackbarData?.dismiss()
                             }
                         )
+                        //leaderboard panel
                         BoxWithConstraints(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -232,6 +233,7 @@ fun QuizScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
+                                //leaderboard title
                                 Icon(
                                     modifier = Modifier
                                         .padding(top = 12.dp)
@@ -243,6 +245,7 @@ fun QuizScreen(
                                     tint = MaterialTheme.colorScheme.onTertiary
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
+                                //leaderboard list
                                 BoxWithConstraints(
                                     modifier = Modifier.fillMaxSize()
                                 ) {
@@ -379,8 +382,12 @@ fun QuizScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
-
+                //checking if leaderboard list is longer than the limit, if so - deleting last values
+                LaunchedEffect(key1 = screenState.isQuizStarted, key2 = screenState.selectedType) {
+                    if (!screenState.isQuizStarted) viewModel.limitRecordsList()
+                }
             }
+            //quiz screen
             else {
                 var isPaused by rememberSaveable { mutableStateOf(false) }
                 var isQuizOver by rememberSaveable { mutableStateOf(false) }
@@ -388,6 +395,7 @@ fun QuizScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ){
+                    //pause button
                     SmallIconButton(
                         modifier = Modifier
                             .align(Alignment.TopStart)
@@ -424,6 +432,7 @@ fun QuizScreen(
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         Spacer(modifier = Modifier.height(56.dp))
+                        //quiz title
                         Box(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f),
@@ -446,6 +455,7 @@ fun QuizScreen(
                             )
                         }
 
+                        //quiz logic
                         var isKeyboardActive by rememberSaveable { mutableStateOf(true) }
                         var showSuccessfulGuessIcon by rememberSaveable { mutableStateOf(false) }
                         //start timer
@@ -567,20 +577,10 @@ fun QuizScreen(
                         )
                     }
                 }
+                //action when user presses back button
                 BackHandler {
                     viewModel.stopQuiz(homeViewModel)
                 }
-                /*ComposableLifecycle { _, event ->
-                    when (event) {
-                        Lifecycle.Event.ON_DESTROY -> {
-                            scope.launch {
-                                viewModel.quizOver()
-                            }
-                            Toast.makeText(context, "О ні, мене закрилиииии. Я помщусяяяяяя!!!", Toast.LENGTH_SHORT).show()
-                        }
-                        else -> {}
-                    }
-                }*/
             }
         }
     }

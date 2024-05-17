@@ -128,11 +128,25 @@ constructor(
             repository.saveRecord(leaderboardItem, _screenState.value.selectedType)
         }
     }
+
+    fun limitRecordsList(limit: Int = 20){
+        val currentLeaderboard = when(_screenState.value.selectedType){
+            QuizType.GuessRoman -> _screenState.value.romanLeaderboard
+            QuizType.GuessArabic -> _screenState.value.romanLeaderboard
+            QuizType.GuessBoth -> _screenState.value.romanLeaderboard
+        }
+        if(currentLeaderboard.size > limit){
+            val out = currentLeaderboard.subList(limit, currentLeaderboard.size)
+            out.forEach {
+                deleteRecord(it)
+            }
+        }
+    }
+
+
     fun restoreRecords(){
         viewModelScope.launch {
-            _screenState.value.lastDeletedItems.forEach{
-                repository.saveRecord(it, _screenState.value.selectedType)
-            }
+            repository.saveRecords(_screenState.value.lastDeletedItems, _screenState.value.selectedType)
         }
     }
 

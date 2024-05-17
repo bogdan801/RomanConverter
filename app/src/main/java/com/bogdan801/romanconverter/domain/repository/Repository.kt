@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     suspend fun saveRecord(item: LeaderboardItem, type: QuizType)
+    suspend fun saveRecords(items: List<LeaderboardItem>, type: QuizType)
+
     suspend fun updateLastRecord(item: LeaderboardItem)
     fun getRomanLeaderboardFlow(): Flow<List<LeaderboardItem>>
     fun getArabicLeaderboardFlow(): Flow<List<LeaderboardItem>>
