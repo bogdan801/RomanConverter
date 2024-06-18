@@ -82,6 +82,7 @@ import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizTyp
 import com.bogdan801.util_library.intSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -389,6 +390,9 @@ fun QuizScreen(
             }
             //quiz screen
             else {
+                LaunchedEffect(key1 = true) {
+                    viewModel.loadInterstitialAd(context)
+                }
                 var isPaused by rememberSaveable { mutableStateOf(false) }
                 var isQuizOver by rememberSaveable { mutableStateOf(false) }
                 Box(
@@ -478,6 +482,10 @@ fun QuizScreen(
                                     delay(1000)
                                 }
                                 if(screenState.currentTime == 0){
+                                    //ad logic
+                                    if(!viewModel.isNewRecordSet()) {
+                                        viewModel.showInterstitialAd(context)
+                                    }
                                     viewModel.quizOver()
                                     isQuizOver = true
                                     isKeyboardActive = false
@@ -556,6 +564,7 @@ fun QuizScreen(
                                 isPaused = false
                             },
                             onHomeClick = {
+                                viewModel.showInterstitialAd(context)
                                 viewModel.stopQuiz(homeViewModel)
                             }
                         )
@@ -579,6 +588,7 @@ fun QuizScreen(
                 }
                 //action when user presses back button
                 BackHandler {
+                    viewModel.showInterstitialAd(context)
                     viewModel.stopQuiz(homeViewModel)
                 }
             }

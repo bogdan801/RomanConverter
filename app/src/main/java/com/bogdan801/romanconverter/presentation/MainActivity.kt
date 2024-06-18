@@ -20,7 +20,10 @@ import androidx.lifecycle.lifecycleScope
 import com.bogdan801.romanconverter.presentation.screens.home.HomeScreen
 import com.bogdan801.romanconverter.presentation.theme.RomanCalculatorTheme
 import com.bogdan801.util_library.intSettings
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -36,9 +39,15 @@ class MainActivity : ComponentActivity() {
             )
         )
 
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            MobileAds.initialize(this@MainActivity) {}
+        }
+
+
         setContent {
-            RomanCalculatorTheme {
-                HomeScreen()
+            RomanCalculatorTheme { themeID ->
+                HomeScreen(themeID = themeID)
             }
         }
     }

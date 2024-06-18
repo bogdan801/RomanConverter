@@ -3,10 +3,14 @@ package com.bogdan801.romanconverter.presentation.screens.home
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,9 +44,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
@@ -70,7 +76,8 @@ import kotlin.math.sqrt
 @Composable
 fun HomeScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    themeID: Int? = null
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -81,7 +88,42 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent
     ) { systemPadding ->
-        Box(modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            //background texture
+            val widthInPx = with(LocalDensity.current) { maxWidth.toPx() }
+            val scale = 1.1f
+            val offset = ((scale - 1f) / 2f) * widthInPx
+            val offsetX by animateFloatAsState(
+                targetValue = when(navController.currentDestination?.route){
+                    Screen.Convert.route -> offset
+                    Screen.Quiz.route -> 0f
+                    Screen.Camera.route -> -offset
+                    else -> 0f
+                },
+                label = ""
+            )
+            Image(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offsetX
+                    ),
+                painter = painterResource(
+                    id = when(themeID){
+                        0 -> R.drawable.white_texture
+                        1 -> R.drawable.black_texture
+                        else -> {
+                            if (!isSystemInDarkTheme()) R.drawable.white_texture
+                            else R.drawable.black_texture
+                        }
+                    }
+                ),
+                contentDescription = "background",
+                contentScale = ContentScale.Crop
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -283,7 +325,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .clickable(
-                                onClick = {viewModel.blurBackground(false)},
+                                onClick = { viewModel.blurBackground(false) },
                                 indication = null,
                                 interactionSource = remember {
                                     MutableInteractionSource()

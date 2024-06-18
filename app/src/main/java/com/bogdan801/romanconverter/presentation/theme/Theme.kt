@@ -229,7 +229,7 @@ fun leaderboardItemGradientBrush(): Brush {
 @Composable
 fun RomanCalculatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable (theme: Int?) -> Unit
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -265,28 +265,11 @@ fun RomanCalculatorTheme(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
-                //background texture
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(
-                        id = when(currentTheme.value){
-                            0 -> R.drawable.white_texture
-                            1 -> R.drawable.black_texture
-                            else -> {
-                                if (!darkTheme) R.drawable.white_texture
-                                else R.drawable.black_texture
-                            }
-                        }
-                    ),
-                    contentDescription = "background",
-                    contentScale = ContentScale.Crop
-                )
-
                 //content
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ){
-                    content()
+                    content(currentTheme.value)
                 }
             }
         }

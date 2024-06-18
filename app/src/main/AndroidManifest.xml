@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RomanCalculator"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7610563481346603~4204512195" />
         <activity
             android:name=".presentation.MainActivity"
             android:screenOrientation="portrait"

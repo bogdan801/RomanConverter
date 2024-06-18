@@ -1,5 +1,9 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
+import android.app.Activity
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
@@ -8,12 +12,18 @@ import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.util.mapRange
+import com.bogdan801.util_library.intSettings
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -143,7 +153,6 @@ constructor(
         }
     }
 
-
     fun restoreRecords(){
         viewModelScope.launch {
             repository.saveRecords(_screenState.value.lastDeletedItems, _screenState.value.selectedType)
@@ -251,7 +260,7 @@ constructor(
                 },
                 currentCount = 0,
                 currentScore = 0,
-                currentTime = 60,
+                currentTime = 30,
                 currentInputValue = ""
             )
         }
@@ -270,7 +279,7 @@ constructor(
         val step = _screenState.value.levelStep
         when(_screenState.value.currentCount){
             in  0       until step * 1 -> {
-                timeToAdd = 0
+                timeToAdd = 5
                 minScore = 25
                 maxScore = 50
             }
@@ -341,6 +350,7 @@ constructor(
         time = _screenState.value.currentTime
     }
 
+
     fun quizOver() {
         updateLastRecord(
             LeaderboardItem(
@@ -348,6 +358,59 @@ constructor(
                 score = _screenState.value.currentScore
             )
         )
+    }
+
+    private var mInterstitialAd: InterstitialAd? = null
+    fun loadInterstitialAd(context: Context, adID: String = ""){
+        val testID = "ca-app-pub-3940256099942544/1033173712"
+        InterstitialAd.load(
+            context,
+            //testID,
+            adID,
+            AdRequest.Builder().build(),
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    adError.toString().let {
+                        Log.d("puk", it)
+                        //Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                    }
+                    mInterstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d("puk", "Ad was loaded.")
+                    //Toast.makeText(context, "Ad was loaded.", Toast.LENGTH_SHORT).show()
+                    mInterstitialAd = interstitialAd
+                }
+            }
+        )
+    }
+    fun showInterstitialAd(context: Context){
+        val egg: Int?
+        runBlocking {
+            egg = context.intSettings["egg"].first()
+        }
+        if(egg != 1){
+            if (mInterstitialAd != null) {
+                mInterstitialAd?.show(context as Activity)
+                loadInterstitialAd(context)
+            }
+            else {
+                Log.d("puk", "The interstitial ad wasn't ready yet.")
+            }
+        }
+    }
+
+    fun isNewRecordSet(): Boolean {
+        val record = _screenState.value.currentScore
+        val currentLeaderboard = when(_screenState.value.selectedType){
+            QuizType.GuessRoman -> _screenState.value.romanLeaderboard
+            QuizType.GuessArabic -> _screenState.value.arabicLeaderboard
+            QuizType.GuessBoth -> _screenState.value.bothLeaderboard
+        }
+
+        return if(currentLeaderboard.size >= 2) record > currentLeaderboard[1].score
+               else true
     }
 
     init {
