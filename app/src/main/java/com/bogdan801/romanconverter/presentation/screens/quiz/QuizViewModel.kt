@@ -14,9 +14,12 @@ import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.util.mapRange
 import com.bogdan801.util_library.intSettings
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -289,7 +292,7 @@ constructor(
                 maxScore = 100
             }
             in step * 2 until step * 3 -> {
-                timeToAdd = 10
+                timeToAdd = 5
                 minScore = 75
                 maxScore = 150
             }
@@ -304,12 +307,12 @@ constructor(
                 maxScore = 250
             }
             in step * 5 until step * 6 -> {
-                timeToAdd = 15
+                timeToAdd = 10
                 minScore = 150
                 maxScore = 300
             }
             in step * 6 until step * 7 -> {
-                timeToAdd = 15
+                timeToAdd = 10
                 minScore = 175
                 maxScore = 350
             }
@@ -319,7 +322,7 @@ constructor(
                 maxScore = 400
             }
             in step * 8 until step * 9 -> {
-                timeToAdd = 20
+                timeToAdd = 15
                 minScore = 225
                 maxScore = 450
             }
@@ -329,7 +332,7 @@ constructor(
                 maxScore = 500
             }
             else -> {
-                timeToAdd = 20
+                timeToAdd = 15
                 minScore = 275
                 maxScore = 550
             }
@@ -350,7 +353,6 @@ constructor(
         time = _screenState.value.currentTime
     }
 
-
     fun quizOver() {
         updateLastRecord(
             LeaderboardItem(
@@ -360,6 +362,7 @@ constructor(
         )
     }
 
+    //AD logic
     private var mInterstitialAd: InterstitialAd? = null
     fun loadInterstitialAd(context: Context, adID: String = ""){
         val testID = "ca-app-pub-3940256099942544/1033173712"
@@ -400,6 +403,55 @@ constructor(
             }
         }
     }
+
+    private var mRewardedAd: RewardedAd? = null
+    fun loadRewardedAd(context: Context, adID: String = ""){
+        val testID = "ca-app-pub-3940256099942544/5224354917"
+        RewardedAd.load(
+            context,
+            //testID,
+            adID,
+            AdRequest.Builder().build(),
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    adError.toString().let {
+                        Log.d("puk", it)
+                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                    }
+                    mRewardedAd = null
+                }
+
+                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                    mRewardedAd = rewardedAd
+                    Log.d("puk", "Ad was loaded.")
+                    //Toast.makeText(context, "Ad was loaded.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
+    fun isRewardedAdLoaded(): Boolean = mRewardedAd != null
+
+    fun showRewardedAd(context: Context, onRewardReceived: () -> Unit){
+        mRewardedAd?.let { ad ->
+            mRewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    onRewardReceived()
+                    mRewardedAd = null
+                    loadRewardedAd(context)
+                }
+            }
+            ad.show(context as  Activity) { _ ->
+                Log.d("puk", "User earned the reward.")
+                //Toast.makeText(context, "User earned the reward.", Toast.LENGTH_SHORT).show()
+            }
+        } ?: run {
+            Log.d("puk", "The rewarded ad wasn't ready yet.")
+            //Toast.makeText(context, "The rewarded ad wasn't ready yet", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
     fun isNewRecordSet(): Boolean {
         val record = _screenState.value.currentScore

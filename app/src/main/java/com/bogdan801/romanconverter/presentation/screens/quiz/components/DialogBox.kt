@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.presentation.components.ActionButton
 import com.bogdan801.romanconverter.presentation.theme.dialogBoxGradientBrush
+import com.bogdan801.romanconverter.presentation.theme.green100
 import com.bogdan801.util_library.intSettings
 
 @Composable
@@ -151,7 +152,8 @@ fun QuizOverDialogBox(
     score: Int = 0,
     count: Int = 0,
     onTryAgainClick: () -> Unit = {},
-    onHomeClick: () -> Unit = {onDismiss()}
+    onHomeClick: () -> Unit = { onDismiss() },
+    onWatchAdClick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val soundOn by context.intSettings["sound_on"].collectAsStateWithLifecycle(initialValue = 1)
@@ -161,7 +163,7 @@ fun QuizOverDialogBox(
         if(show && soundOn != 0) mediaPlayer.start()
     }
     BaseDialogBox(
-        modifier = modifier.size(300.dp, 322.dp),
+        modifier = modifier.size(300.dp, if(onWatchAdClick == null) 322.dp else 376.dp),
         show = show,
         onDismiss = onDismiss,
         usePlatformDefaultWidth = true
@@ -270,6 +272,18 @@ fun QuizOverDialogBox(
                 borderColor = MaterialTheme.colorScheme.outlineVariant,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
                 onClick = onHomeClick
+            )
+        }
+        if(onWatchAdClick != null){
+            Spacer(modifier = Modifier.height(16.dp))
+            ActionButton(
+                size = DpSize(236.dp, 38.dp),
+                label = "WATCH AD TO GET +20s",
+                maxTextSize = 14.sp,
+                borderColor = green100,
+                textStyle = MaterialTheme.typography.bodyMedium,
+                shadowColor = Color.Black.copy(alpha = 0.07f),
+                onClick = onWatchAdClick
             )
         }
     }

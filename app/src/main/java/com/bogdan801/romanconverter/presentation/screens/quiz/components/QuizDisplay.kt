@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.bogdan801.romanconverter.R
+import com.bogdan801.romanconverter.presentation.components.AutoSizeText
 import com.bogdan801.romanconverter.presentation.theme.green100
 import com.bogdan801.romanconverter.presentation.theme.green200
 import kotlinx.coroutines.delay
@@ -201,10 +202,11 @@ fun QuizDisplay(
             }
 
             if(startTimer == 0) {
-                Text(
+                AutoSizeText(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .offset(y = frameHeight / 3f + 8.dp)
+                        .padding(horizontal = 42.dp)
                         .then(
                             if (hideNumber) Modifier
                                 .clip(RoundedCornerShape(8.dp))
@@ -213,7 +215,8 @@ fun QuizDisplay(
                         ),
                     text = numberToGuess,
                     color = MaterialTheme.colorScheme.onTertiary,
-                    style = MaterialTheme.typography.displayMedium
+                    style = MaterialTheme.typography.displayMedium,
+                    maxTextSize = MaterialTheme.typography.displayMedium.fontSize
                 )
 
                 var showCursor by remember { mutableStateOf(true) }
@@ -227,10 +230,12 @@ fun QuizDisplay(
                 Row(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .offset(y = frameHeight * 0.77f),
-                    horizontalArrangement = Arrangement.Center
+                        .offset(y = frameHeight * 0.77f)
+                        .padding(horizontal = 42.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    Text(
+                    AutoSizeText(
                         text = inputValue,
                         style = MaterialTheme.typography.displaySmall.copy(
                             brush = Brush.verticalGradient(
@@ -240,7 +245,8 @@ fun QuizDisplay(
                                     MaterialTheme.colorScheme.primary,
                                 )
                             )
-                        )
+                        ),
+                        maxTextSize = MaterialTheme.typography.displaySmall.fontSize
                     )
                     Text(
                         modifier = Modifier.width(16.dp),
@@ -253,7 +259,8 @@ fun QuizDisplay(
                                     MaterialTheme.colorScheme.primary,
                                 )
                             )
-                        )
+                        ),
+                        //maxTextSize = MaterialTheme.typography.displaySmall.fontSize
                     )
 
                 }

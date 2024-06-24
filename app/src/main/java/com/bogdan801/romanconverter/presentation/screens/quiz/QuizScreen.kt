@@ -1,6 +1,7 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -392,6 +393,7 @@ fun QuizScreen(
             else {
                 LaunchedEffect(key1 = true) {
                     viewModel.loadInterstitialAd(context)
+                    viewModel.loadRewardedAd(context)
                 }
                 var isPaused by rememberSaveable { mutableStateOf(false) }
                 var isQuizOver by rememberSaveable { mutableStateOf(false) }
@@ -497,11 +499,13 @@ fun QuizScreen(
                         LaunchedEffect(key1 = screenState.currentInputValue) {
                             suspend fun onSuccess() {
                                 showSuccessfulGuessIcon = true
+                                isKeyboardActive = false
                                 if(soundOn != 0) mediaPlayer.start()
                                 viewModel.successfulGuess()
                                 delay(1500)
                                 viewModel.setValueToGuess(viewModel.nextValueToGuess())
                                 showSuccessfulGuessIcon = false
+                                isKeyboardActive = true
                             }
 
                             val inputValue = screenState.currentInputValue
@@ -568,6 +572,8 @@ fun QuizScreen(
                                 viewModel.stopQuiz(homeViewModel)
                             }
                         )
+                        var showAdOption by remember { mutableStateOf(true) }
+                        val egg by context.intSettings["egg"].collectAsStateWithLifecycle(initialValue = null)
                         QuizOverDialogBox(
                             show = isQuizOver,
                             onVisibilityChanged = {
@@ -580,7 +586,22 @@ fun QuizScreen(
                                 viewModel.setupTheQuiz()
                                 startTimer = 3
                                 isQuizOver = false
+                                showAdOption = true
                             },
+                            onWatchAdClick = if(showAdOption && viewModel.isRewardedAdLoaded() && egg != 1) {
+                                {
+                                    viewModel.showRewardedAd(
+                                        context = context,
+                                        onRewardReceived = {
+                                            isQuizOver = false
+                                            isKeyboardActive = true
+                                            startTimer = 3
+                                            viewModel.setGameTimer(20)
+                                        }
+                                    )
+                                    showAdOption = false
+                                }
+                            } else null,
                             score = screenState.currentScore,
                             count = screenState.currentCount
                         )

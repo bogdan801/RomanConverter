@@ -96,7 +96,7 @@ fun ConvertScreen(
     LaunchedEffect(key1 = screenState.arabicValue) {
         if(screenState.arabicValue == "787898"){
             mediaPlayer.start()
-            if(eggState == null) {
+            if(eggState != 1) {
                 Toast.makeText(
                     context,
                     "Hehehe. You found the Easter Egg\uD83D\uDC23.\nEnjoy the app without ads",
@@ -104,6 +104,19 @@ fun ConvertScreen(
                 ).show()
                 scope.launch {
                     context.intSettings.set("egg", 1)
+                }
+            }
+        }
+        if(screenState.arabicValue == "787899"){
+            if(eggState == 1) {
+                mediaPlayer.start()
+                Toast.makeText(
+                    context,
+                    "The Easter Egg was turned off, enjoy your ads",
+                    Toast.LENGTH_LONG
+                ).show()
+                scope.launch {
+                    context.intSettings.set("egg", 0)
                 }
             }
         }
