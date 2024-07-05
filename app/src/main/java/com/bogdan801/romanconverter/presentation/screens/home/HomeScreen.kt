@@ -1,5 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.home
 
+import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateDpAsState
@@ -270,6 +271,12 @@ fun HomeScreen(
                             buttonEnabled = true
                         }
                     }
+                },
+                onLongClick = {
+                    scope.launch {
+                        context.intSettings.set("theme", null)
+                        Toast.makeText(context, "System theme was set", Toast.LENGTH_SHORT).show()
+                    }
                 }
             ){
                 val primary = MaterialTheme.colorScheme.primary
@@ -293,7 +300,10 @@ fun HomeScreen(
                     imageVector = when(currentTheme.value){
                         0 -> Icons.Outlined.DarkMode
                         1 -> Icons.Outlined.LightMode
-                        else -> Icons.Outlined.DarkMode
+                        else -> {
+                            if(!isSystemInDarkTheme()) Icons.Outlined.DarkMode
+                            else Icons.Outlined.LightMode
+                        }
                     },
                     contentDescription = "Dark Mode Switch",
                 )

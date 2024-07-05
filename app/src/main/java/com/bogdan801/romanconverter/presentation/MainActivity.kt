@@ -6,8 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import com.bogdan801.romanconverter.presentation.components.AnimatedSplashScreen
 import com.bogdan801.romanconverter.presentation.screens.home.HomeScreen
 import com.bogdan801.romanconverter.presentation.theme.RomanCalculatorTheme
 import com.bogdan801.util_library.intSettings
@@ -44,10 +47,12 @@ class MainActivity : ComponentActivity() {
             MobileAds.initialize(this@MainActivity) {}
         }
 
-
         setContent {
             RomanCalculatorTheme { themeID ->
-                HomeScreen(themeID = themeID)
+                Box(modifier = Modifier.fillMaxSize()){
+                    HomeScreen(themeID = themeID)
+                    AnimatedSplashScreen()
+                }
             }
         }
     }

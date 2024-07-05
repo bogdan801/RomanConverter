@@ -50,11 +50,13 @@ import com.bogdan801.romanconverter.presentation.theme.iconButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.theme.inputButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.util.shadowCustom
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SmallIconButton(
     modifier: Modifier = Modifier,
     size: Dp = 42.dp,
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
     icon: @Composable () -> Unit ={}
 ) {
     Box(
@@ -69,8 +71,10 @@ fun SmallIconButton(
             .background(
                 brush = iconButtonGradientBrush(size)
             )
-            .clickable(onClick = onClick)
-
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
