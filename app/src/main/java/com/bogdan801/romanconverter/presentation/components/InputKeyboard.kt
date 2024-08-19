@@ -13,10 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.bogdan801.romanconverter.data.util.isRomanNumberValid
+import com.bogdan801.romanconverter.presentation.util.vibrateDevice
 
 private enum class KeyAction{
     Input, Backspace, ChangeType, ChangeCase
@@ -47,6 +49,7 @@ fun InputKeyboard(
     isActive: Boolean = true,
     onClear: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     var isRoman by remember { mutableStateOf(true) }
     LaunchedEffect(key1 = type) {
         isRoman = type == InputKeyboardType.Roman
@@ -555,6 +558,7 @@ fun InputKeyboard(
                         (isRoman && key.roman.action == KeyAction.Backspace) ||
                         (!isRoman && key.arabic.action == KeyAction.Backspace)
                     ){
+                        vibrateDevice(context, 10)
                         onClear()
                     }
                 }

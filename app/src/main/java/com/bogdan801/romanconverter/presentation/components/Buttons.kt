@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -49,6 +50,7 @@ import com.bogdan801.romanconverter.presentation.theme.actionButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.theme.iconButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.theme.inputButtonGradientBrush
 import com.bogdan801.romanconverter.presentation.util.shadowCustom
+import com.bogdan801.romanconverter.presentation.util.vibrateDevice
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -97,6 +99,7 @@ fun InputButton(
     isBackspace: Boolean = false,
     customIcon: @Composable (() -> Unit)? = null
 ) {
+    val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed = interactionSource.collectIsPressedAsState()
 
@@ -127,6 +130,7 @@ fun InputButton(
             .combinedClickable(
                 onClick = {
                     if (isEnabled) {
+                        vibrateDevice(context, 5)
                         onClick()
                     }
                 },

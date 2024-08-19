@@ -3,7 +3,6 @@ package com.bogdan801.romanconverter.presentation.screens.quiz
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
@@ -416,7 +415,7 @@ constructor(
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     adError.toString().let {
                         Log.d("puk", it)
-                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                     }
                     mRewardedAd = null
                 }
