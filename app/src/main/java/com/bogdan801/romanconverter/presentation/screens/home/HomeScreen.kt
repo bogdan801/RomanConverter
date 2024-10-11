@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.drawToBitmap
@@ -185,7 +186,7 @@ fun HomeScreen(
                         NavigationBar(
                             items = listOf(
                                 NavigationItem(
-                                    itemLabel = "Convert",
+                                    itemLabel = stringResource(id = R.string.nav_convert),
                                     route = Screen.Convert.route,
                                     isSelected = navController.currentDestination?.route == Screen.Convert.route,
                                     painter = convertIcon,
@@ -199,7 +200,7 @@ fun HomeScreen(
                                     }
                                 ),
                                 NavigationItem(
-                                    itemLabel = "Quiz",
+                                    itemLabel = stringResource(id = R.string.nav_quiz),
                                     route = Screen.Quiz.route,
                                     isSelected = navController.currentDestination?.route == Screen.Quiz.route,
                                     painter = quizIcon,
@@ -213,7 +214,7 @@ fun HomeScreen(
                                     }
                                 ),
                                 NavigationItem(
-                                    itemLabel = "Camera",
+                                    itemLabel = stringResource(id = R.string.nav_camera),
                                     route = Screen.Camera.route,
                                     isSelected = navController.currentDestination?.route == Screen.Camera.route,
                                     imageVector = cameraIcon,
@@ -275,7 +276,7 @@ fun HomeScreen(
                 onLongClick = {
                     scope.launch {
                         context.intSettings.set("theme", null)
-                        Toast.makeText(context, "System theme was set", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_sys_theme), Toast.LENGTH_SHORT).show()
                     }
                 }
             ){

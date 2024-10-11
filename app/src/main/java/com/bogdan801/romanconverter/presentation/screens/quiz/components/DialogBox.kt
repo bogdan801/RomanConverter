@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -109,7 +110,7 @@ fun PauseDialogBox(
     ){
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "PAUSED",
+            text = stringResource(id = R.string.dialog_paused),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onTertiary
         )
@@ -123,7 +124,7 @@ fun PauseDialogBox(
         Row {
             ActionButton(
                 size = DpSize(110.dp, 38.dp),
-                label = "CONTINUE",
+                label = stringResource(id = R.string.dialog_continue),
                 maxTextSize = 17.sp,
                 textStyle = MaterialTheme.typography.bodyMedium,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
@@ -132,7 +133,7 @@ fun PauseDialogBox(
             Spacer(modifier = Modifier.width(16.dp))
             ActionButton(
                 size = DpSize(110.dp, 38.dp),
-                label = "HOME",
+                label = stringResource(id = R.string.dialog_home),
                 maxTextSize = 15.sp,
                 textStyle = MaterialTheme.typography.bodyMedium,
                 borderColor = MaterialTheme.colorScheme.outlineVariant,
@@ -170,7 +171,7 @@ fun QuizOverDialogBox(
     ){
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "QUIZ IS OVER",
+            text = stringResource(id = R.string.dialog_over),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onTertiary
         )
@@ -212,7 +213,7 @@ fun QuizOverDialogBox(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "THE\nSCORE",
+                    text = stringResource(id = R.string.dialog_score),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onTertiary,
                     textAlign = TextAlign.Center
@@ -247,7 +248,7 @@ fun QuizOverDialogBox(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "NUMBERS\nGUESSED",
+                    text = stringResource(id = R.string.dialog_count),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onTertiary,
                     textAlign = TextAlign.Center
@@ -257,8 +258,9 @@ fun QuizOverDialogBox(
         Row {
             ActionButton(
                 size = DpSize(110.dp, 38.dp),
-                label = "TRY AGAIN",
+                label = stringResource(id = R.string.dialog_try_again),
                 maxTextSize = 17.sp,
+                insidePadding = 12.dp,
                 textStyle = MaterialTheme.typography.bodyMedium,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
                 onClick = onTryAgainClick
@@ -266,8 +268,9 @@ fun QuizOverDialogBox(
             Spacer(modifier = Modifier.width(16.dp))
             ActionButton(
                 size = DpSize(110.dp, 38.dp),
-                label = "HOME",
+                label = stringResource(id = R.string.dialog_home),
                 maxTextSize = 15.sp,
+                insidePadding = 12.dp,
                 textStyle = MaterialTheme.typography.bodyMedium,
                 borderColor = MaterialTheme.colorScheme.outlineVariant,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
@@ -278,7 +281,7 @@ fun QuizOverDialogBox(
             Spacer(modifier = Modifier.height(16.dp))
             ActionButton(
                 size = DpSize(236.dp, 38.dp),
-                label = "WATCH AD TO GET +20s",
+                label = stringResource(id = R.string.dialog_watch_ad),
                 maxTextSize = 14.sp,
                 borderColor = green100,
                 textStyle = MaterialTheme.typography.bodyMedium,
@@ -309,7 +312,7 @@ fun DeleteConfirmDialogBox(
     ){
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "DELETE?",
+            text = stringResource(id = R.string.dialog_delete_title),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onTertiary
         )
@@ -328,7 +331,7 @@ fun DeleteConfirmDialogBox(
         ){
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Are you sure you want to delete all the records?",
+                text = stringResource(id = R.string.dialog_delete_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onTertiary,
                 textAlign = TextAlign.Center
@@ -337,7 +340,7 @@ fun DeleteConfirmDialogBox(
         Row(modifier = Modifier.padding(bottom = 24.dp)) {
             ActionButton(
                 size = DpSize(110.dp, 38.dp),
-                label = "CANCEL",
+                label = stringResource(id = R.string.dialog_cancel),
                 textStyle = MaterialTheme.typography.bodyMedium,
                 borderColor = MaterialTheme.colorScheme.outlineVariant,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
@@ -346,7 +349,7 @@ fun DeleteConfirmDialogBox(
             Spacer(modifier = Modifier.width(16.dp))
             ActionButton(
                 size = DpSize(110.dp, 38.dp),
-                label = "CONFIRM",
+                label = stringResource(id = R.string.dialog_confirm),
                 textStyle = MaterialTheme.typography.bodyMedium,
                 shadowColor = Color.Black.copy(alpha = 0.07f),
                 onClick = onConfirmClick

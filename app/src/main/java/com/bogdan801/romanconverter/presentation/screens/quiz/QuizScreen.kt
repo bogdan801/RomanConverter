@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -202,7 +203,7 @@ fun QuizScreen(
 
                         AutoSizeText(
                             modifier = Modifier.padding(horizontal = 72.dp),
-                            text = "Choose the quiz type",
+                            text = stringResource(id = R.string.quiz_title),
                             maxLines = 1,
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onTertiary,
@@ -273,6 +274,9 @@ fun QuizScreen(
                                                         .copy(alpha = 0.33f)
                                                 )
                                         ) {
+                                            item {
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                            }
                                             itemsIndexed(
                                                 items = when (type) {
                                                     QuizType.GuessRoman -> screenState.romanLeaderboard
@@ -316,7 +320,7 @@ fun QuizScreen(
                                             Box(modifier = Modifier.fillMaxSize()){
                                                 Text(
                                                     modifier = Modifier.align(Alignment.Center),
-                                                    text = "The list is empty",
+                                                    text = stringResource(id = R.string.quiz_empty_list),
                                                     style = MaterialTheme.typography.bodyLarge,
                                                     textAlign = TextAlign.Center,
                                                     color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
@@ -366,8 +370,8 @@ fun QuizScreen(
                                     scope.launch {
                                         snackbarHostState.currentSnackbarData?.dismiss()
                                         snackbarHostState.showSnackbar(
-                                            message = "All records have been deleted",
-                                            actionLabel = "RESTORE",
+                                            message = context.getString(R.string.quiz_all_deleted),
+                                            actionLabel = context.getString(R.string.quiz_restore),
                                             duration = SnackbarDuration.Short
                                         )
                                     }
@@ -376,7 +380,7 @@ fun QuizScreen(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         ActionButton(
-                            label = "START THE QUIZ",
+                            label = stringResource(id = R.string.quiz_start),
                             onClick = {
                                 viewModel.startQuiz(homeViewModel)
                             }
@@ -445,13 +449,16 @@ fun QuizScreen(
                             contentAlignment = Alignment.Center
                         ){
                             val titleType = when(screenState.currentQuizType){
-                                QuizType.GuessRoman -> "Arabic"
-                                QuizType.GuessArabic -> "Roman"
+                                QuizType.GuessRoman -> stringResource(id = R.string.quiz_arabic)
+                                QuizType.GuessArabic -> stringResource(id = R.string.quiz_roman)
                                 QuizType.GuessBoth -> ""
                             }
                             AutoSizeText(
                                 modifier = Modifier.padding(horizontal = 72.dp),
-                                text = "Type the number using $titleType numerals",
+                                text =
+                                    stringResource(id = R.string.quiz_start_title_1) + " " +
+                                    titleType +
+                                    stringResource(id = R.string.quiz_start_title_2),
                                 maxLines = 2,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onTertiary,

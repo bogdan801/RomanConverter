@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -100,7 +101,11 @@ fun RecognizedTextDisplay(
                     if (recognizedText.isNotBlank()) {
                         clipboardManager.setText(AnnotatedString(convertedString))
                         Toast
-                            .makeText(context, "Copied to a clipboard", Toast.LENGTH_SHORT)
+                            .makeText(
+                                context,
+                                context.getString(R.string.clipboard),
+                                Toast.LENGTH_SHORT
+                            )
                             .show()
                     }
                 }
@@ -204,7 +209,7 @@ fun RecognizedTextDisplay(
         else {
             Text(
                 modifier = Modifier.offset(y = 8.dp),
-                text = "TEXT IS NOT DETECTED",
+                text = stringResource(id = R.string.camera_text_not_detected),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center

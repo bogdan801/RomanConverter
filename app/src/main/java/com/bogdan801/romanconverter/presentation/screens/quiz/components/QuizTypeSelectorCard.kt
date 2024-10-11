@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.presentation.theme.gray670
 import com.bogdan801.romanconverter.presentation.theme.gray850
@@ -45,6 +47,7 @@ fun QuizTypeSelectorCard(
     isSmall: Boolean = false,
     onSelected: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     val shadowAlpha by animateFloatAsState(
         targetValue = if (isSelected) 0.10f else 0f,
         label = ""
@@ -137,9 +140,9 @@ fun QuizTypeSelectorCard(
 
             val title = remember {
                 when (type) {
-                    QuizType.GuessRoman -> "Guess the\nRoman  numerals"
-                    QuizType.GuessArabic -> "Guess the\nArabic  numerals"
-                    QuizType.GuessBoth -> "Guess both"
+                    QuizType.GuessRoman -> context.getString(R.string.quiz_select_roman)
+                    QuizType.GuessArabic -> context.getString(R.string.quiz_select_arabic)
+                    QuizType.GuessBoth -> context.getString(R.string.quiz_select_both)
                 }
             }
             if(aspectRatio < 2f){

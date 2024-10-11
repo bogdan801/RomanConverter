@@ -26,12 +26,14 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.presentation.components.AutoSizeText
 import com.bogdan801.romanconverter.presentation.screens.camera.components.CameraTextRecognizer
 import com.bogdan801.romanconverter.presentation.screens.camera.components.RecognizedTextDisplay
@@ -109,7 +111,7 @@ fun CameraScreen(
         ) {
             AutoSizeText(
                 modifier = Modifier.padding(horizontal = 84.dp),
-                text = "Point the camera at the\nRoman numerals",
+                text = stringResource(id = R.string.camera_title),
                 maxLines = 2,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onTertiary,

@@ -25,13 +25,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.presentation.theme.leaderboardItemGradientBrush
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.time.LocalDate
 
 @Composable
 fun LeaderboardItemRow(
@@ -75,7 +76,7 @@ fun LeaderboardItemRow(
         ) {
             Text(
                 modifier = Modifier.weight(0.6f),
-                text = "$position. ${data.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.US))}",
+                text = "$position. ${convertToLocalDateString(date = data.date)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onTertiary
             )
@@ -132,3 +133,22 @@ fun LeaderboardItemRow(
     }
 }
 
+@Composable
+fun convertToLocalDateString(date: LocalDate): String {
+    val monthName = when(date.monthValue){
+        1 -> stringResource(id = R.string.month_jan)
+        2 -> stringResource(id = R.string.month_feb)
+        3 -> stringResource(id = R.string.month_mar)
+        4 -> stringResource(id = R.string.month_apr)
+        5 -> stringResource(id = R.string.month_may)
+        6 -> stringResource(id = R.string.month_jun)
+        7 -> stringResource(id = R.string.month_jul)
+        8 -> stringResource(id = R.string.month_aug)
+        9 -> stringResource(id = R.string.month_sep)
+        10 -> stringResource(id = R.string.month_oct)
+        11 -> stringResource(id = R.string.month_nov)
+        12 -> stringResource(id = R.string.month_dec)
+        else -> ""
+    }
+    return "${date.dayOfMonth} $monthName ${date.year}"
+}

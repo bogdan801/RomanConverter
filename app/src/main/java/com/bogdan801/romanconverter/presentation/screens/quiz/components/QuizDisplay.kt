@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -118,7 +119,7 @@ fun QuizDisplay(
                             .padding(top = 2.dp)
                             .width(counterRowWidth / 3f)
                             .align(Alignment.TopStart),
-                        text = "SCORE",
+                        text = stringResource(id = R.string.quiz_score),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onTertiary,
                         textAlign = TextAlign.Center
@@ -128,7 +129,7 @@ fun QuizDisplay(
                             .padding(top = 2.dp)
                             .width(counterRowWidth / 3f)
                             .align(Alignment.TopEnd),
-                        text = "TIME",
+                        text = stringResource(id = R.string.quiz_time),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onTertiary,
                         textAlign = TextAlign.Center

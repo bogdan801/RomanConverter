@@ -99,7 +99,7 @@ fun ConvertScreen(
             if(eggState != 1) {
                 Toast.makeText(
                     context,
-                    "Hehehe. You found the Easter Egg\uD83D\uDC23.\nEnjoy the app without ads",
+                    context.getString(R.string.egg_on),
                     Toast.LENGTH_LONG
                 ).show()
                 scope.launch {
@@ -112,7 +112,7 @@ fun ConvertScreen(
                 mediaPlayer.start()
                 Toast.makeText(
                     context,
-                    "The Easter Egg was turned off, enjoy your ads",
+                    context.getString(R.string.egg_off),
                     Toast.LENGTH_LONG
                 ).show()
                 scope.launch {

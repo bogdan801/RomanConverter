@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -92,7 +93,7 @@ fun CameraTextRecognizer(
                     contentAlignment = Alignment.Center
                 ){
                     Text(
-                        text = "Camera permission is not granted.",
+                        text = stringResource(id = R.string.camera_permission),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontFamily = FontFamily.Default,

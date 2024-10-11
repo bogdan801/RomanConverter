@@ -220,8 +220,9 @@ fun ActionButton(
     label: String = "",
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     useAutoSizeLabel: Boolean = true,
+    insidePadding: Dp = 16.dp,
     maxTextSize: TextUnit = textStyle.fontSize,
-    minTextSize: TextUnit = 12.sp,
+    minTextSize: TextUnit = 9.sp,
     borderColor: Color = MaterialTheme.colorScheme.outline,
     shadowColor: Color = Color.Black.copy(alpha = 0.15f),
     shadowBlurRadius: Dp = 6.dp,
@@ -256,7 +257,7 @@ fun ActionButton(
                 AutoSizeText(
                     modifier = Modifier
                         .offset(y = 1.dp)
-                        .padding(horizontal = 18.dp),
+                        .padding(horizontal = insidePadding),
                     text = label,
                     maxTextSize = maxTextSize,
                     minTextSize = minTextSize,
@@ -268,7 +269,7 @@ fun ActionButton(
                 Text(
                     modifier = Modifier
                         .offset(y = 1.dp)
-                        .padding(horizontal = 18.dp),
+                        .padding(horizontal = insidePadding),
                     text = label,
                     style = textStyle,
                     color = MaterialTheme.colorScheme.onTertiary

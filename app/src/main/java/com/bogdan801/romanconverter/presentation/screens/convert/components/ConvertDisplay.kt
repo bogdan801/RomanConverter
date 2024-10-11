@@ -111,7 +111,7 @@ fun ConvertDisplay(
                             Toast
                                 .makeText(
                                     context,
-                                    "$arabicValue copied to the clipboard",
+                                    arabicValue + " " + context.getString(R.string.clipboard).lowercase(),
                                     Toast.LENGTH_SHORT
                                 )
                                 .show()
@@ -176,7 +176,7 @@ fun ConvertDisplay(
                             Toast
                                 .makeText(
                                     context,
-                                    "$output copied to the clipboard",
+                                    output + " " + context.getString(R.string.clipboard).lowercase(),
                                     Toast.LENGTH_SHORT
                                 )
                                 .show()
