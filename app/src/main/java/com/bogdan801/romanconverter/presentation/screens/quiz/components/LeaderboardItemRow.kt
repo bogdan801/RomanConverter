@@ -40,7 +40,8 @@ fun LeaderboardItemRow(
     position: Int = 1,
     data: LeaderboardItem = LeaderboardItem(),
     onDeleteClick: () -> Unit = {},
-    onDeleteAllClick: () -> Unit = {}
+    onDeleteAllClick: () -> Unit = {},
+    showDropDownMenu: Boolean = true
 ) {
     var showDropDown by remember { mutableStateOf(false) }
     var longClickOffset by remember { mutableStateOf(DpOffset.Zero) }
@@ -57,8 +58,10 @@ fun LeaderboardItemRow(
                 .pointerInput(true) {
                     detectTapGestures(
                         onLongPress = { offset ->
-                            showDropDown = true
-                            longClickOffset = DpOffset(x = offset.x.toDp(), y = offset.y.toDp())
+                            if(showDropDownMenu){
+                                showDropDown = true
+                                longClickOffset = DpOffset(x = offset.x.toDp(), y = offset.y.toDp())
+                            }
                         },
                         onPress = {
                             val press = PressInteraction.Press(it)

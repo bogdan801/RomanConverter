@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -77,6 +79,8 @@ import com.bogdan801.romanconverter.presentation.navigation.Screen
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.DeleteConfirmDialogBox
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardItemRow
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardTitle
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.PageIndicator
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.PauseDialogBox
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizDisplay
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizOverDialogBox
@@ -224,160 +228,290 @@ fun QuizScreen(
                             }
                         )
                         //leaderboard panel
-                        BoxWithConstraints(
+                        val pagerState = rememberPagerState(pageCount = { 2 })
+                        HorizontalPager(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            val width = maxWidth
-                            val height = maxHeight
-                            var showDeleteDialogBox by remember { mutableStateOf(false) }
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                //leaderboard title
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(top = 12.dp)
-                                        .height(height * 0.25f),
-                                    painter = painterResource(
-                                        id = R.drawable.ornament_leaderboard_titlebox
-                                    ),
-                                    contentDescription = "Leaderboard",
-                                    tint = MaterialTheme.colorScheme.onTertiary
-                                )
-                                Spacer(modifier = Modifier.height(2.dp))
-                                //leaderboard list
+                                .weight(1f),
+                            state = pagerState
+                        ) { page ->
+                            //leaderboard
+                            if(page == 0){
                                 BoxWithConstraints(
                                     modifier = Modifier.fillMaxSize()
                                 ) {
-                                    val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
-                                    AnimatedContent(
-                                        targetState = screenState.selectedType,
-                                        label = "",
-                                        transitionSpec = {
-                                            slideInVertically(initialOffsetY = { -it }) togetherWith
-                                                    slideOutVertically(targetOffsetY = { it })
-                                        }
-                                    ) { type ->
-                                        LazyColumn(
+                                    val width = maxWidth
+                                    val height = maxHeight
+                                    Column(
+                                        modifier = Modifier.fillMaxSize(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        //leaderboard title
+                                        LeaderboardTitle(
                                             modifier = Modifier
-                                                .padding(horizontal = 26.dp)
-                                                .fillMaxSize()
-                                                .background(MaterialTheme.colorScheme.background)
-                                                .border(
-                                                    width = 1.dp,
-                                                    color = MaterialTheme
-                                                        .colorScheme
-                                                        .outlineVariant
-                                                        .copy(alpha = 0.33f)
-                                                )
+                                                .padding(top = 12.dp),
+                                            frameHeight = height * 0.25f,
+                                            title = "LEADERBOARD"
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        //leaderboard list
+                                        BoxWithConstraints(
+                                            modifier = Modifier.fillMaxSize()
                                         ) {
-                                            item {
-                                                Spacer(modifier = Modifier.height(4.dp))
-                                            }
-                                            itemsIndexed(
-                                                items = when (type) {
-                                                    QuizType.GuessRoman -> screenState.romanLeaderboard
-                                                    QuizType.GuessArabic -> screenState.arabicLeaderboard
-                                                    QuizType.GuessBoth -> screenState.bothLeaderboard
-                                                },
-                                                key = { _, item ->
-                                                    item.id
+                                            val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
+                                            AnimatedContent(
+                                                targetState = screenState.selectedType,
+                                                label = "",
+                                                transitionSpec = {
+                                                    slideInVertically(initialOffsetY = { -it }) togetherWith
+                                                            slideOutVertically(targetOffsetY = { it })
                                                 }
-                                            ) { id, item ->
-                                                LeaderboardItemRow(
+                                            ) { type ->
+                                                LazyColumn(
                                                     modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(itemHeight)
-                                                        .animateItemPlacement(),
-                                                    position = id + 1,
-                                                    data = item,
-                                                    onDeleteClick = {
-                                                        viewModel.deleteRecord(item)
-                                                        scope.launch {
-                                                            snackbarHostState.currentSnackbarData?.dismiss()
-                                                            snackbarHostState.showSnackbar(
-                                                                message = "The record has been deleted",
-                                                                actionLabel = "RESTORE",
-                                                                duration = SnackbarDuration.Short
-                                                            )
-                                                        }
-                                                    },
-                                                    onDeleteAllClick = {
-                                                        showDeleteDialogBox = true
+                                                        .padding(horizontal = 26.dp)
+                                                        .fillMaxSize()
+                                                        .background(MaterialTheme.colorScheme.background)
+                                                        .border(
+                                                            width = 1.dp,
+                                                            color = MaterialTheme
+                                                                .colorScheme
+                                                                .outlineVariant
+                                                                .copy(alpha = 0.33f)
+                                                        )
+                                                ) {
+                                                    item {
+                                                        Spacer(modifier = Modifier.height(4.dp))
                                                     }
-                                                )
+                                                    itemsIndexed(
+                                                        items = when (type) {
+                                                            QuizType.GuessRoman -> screenState.romanLeaderboard
+                                                            QuizType.GuessArabic -> screenState.arabicLeaderboard
+                                                            QuizType.GuessBoth -> screenState.bothLeaderboard
+                                                        },
+                                                        key = { _, item ->
+                                                            item.id
+                                                        }
+                                                    ) { id, item ->
+                                                        LeaderboardItemRow(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .height(itemHeight)
+                                                                .animateItemPlacement(),
+                                                            position = id + 1,
+                                                            data = item,
+                                                            showDropDownMenu = false
+                                                        )
+                                                    }
+                                                }
+                                                val isListEmpty = when (type) {
+                                                    QuizType.GuessRoman -> screenState.romanLeaderboard.isEmpty()
+                                                    QuizType.GuessArabic -> screenState.arabicLeaderboard.isEmpty()
+                                                    QuizType.GuessBoth -> screenState.bothLeaderboard.isEmpty()
+                                                }
+                                                if(isListEmpty){
+                                                    Box(modifier = Modifier.fillMaxSize()){
+                                                        Text(
+                                                            modifier = Modifier.align(Alignment.Center),
+                                                            text = stringResource(id = R.string.quiz_empty_list),
+                                                            style = MaterialTheme.typography.bodyLarge,
+                                                            textAlign = TextAlign.Center,
+                                                            color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
+                                                        )
+                                                    }
+                                                }
                                             }
-                                        }
-                                        val isListEmpty = when (type) {
-                                            QuizType.GuessRoman -> screenState.romanLeaderboard.isEmpty()
-                                            QuizType.GuessArabic -> screenState.arabicLeaderboard.isEmpty()
-                                            QuizType.GuessBoth -> screenState.bothLeaderboard.isEmpty()
-                                        }
-                                        if(isListEmpty){
-                                            Box(modifier = Modifier.fillMaxSize()){
-                                                Text(
-                                                    modifier = Modifier.align(Alignment.Center),
-                                                    text = stringResource(id = R.string.quiz_empty_list),
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    textAlign = TextAlign.Center,
-                                                    color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
-                                                )
-                                            }
+                                            Icon(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopCenter)
+                                                    .padding(horizontal = 12.dp)
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(22f)
+                                                    .offset(y = -((width - 24.dp) / 48f)),
+                                                painter = painterResource(
+                                                    id = R.drawable.ornament_leaderbard_list
+                                                ),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onTertiary
+                                            )
+                                            Icon(
+                                                modifier = Modifier
+                                                    .align(Alignment.BottomCenter)
+                                                    .padding(horizontal = 12.dp)
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(22f)
+                                                    .offset(y = (width - 24.dp) / 48f),
+                                                painter = painterResource(
+                                                    id = R.drawable.ornament_leaderbard_list
+                                                ),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onTertiary
+                                            )
                                         }
                                     }
-                                    Icon(
-                                        modifier = Modifier
-                                            .align(Alignment.TopCenter)
-                                            .padding(horizontal = 12.dp)
-                                            .fillMaxWidth()
-                                            .aspectRatio(22f)
-                                            .offset(y = -((width - 24.dp) / 48f)),
-                                        painter = painterResource(
-                                            id = R.drawable.ornament_leaderbard_list
-                                        ),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onTertiary
-                                    )
-                                    Icon(
-                                        modifier = Modifier
-                                            .align(Alignment.BottomCenter)
-                                            .padding(horizontal = 12.dp)
-                                            .fillMaxWidth()
-                                            .aspectRatio(22f)
-                                            .offset(y = (width - 24.dp) / 48f),
-                                        painter = painterResource(
-                                            id = R.drawable.ornament_leaderbard_list
-                                        ),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onTertiary
+                                }
+                            }
+                            //records
+                            else {
+                                BoxWithConstraints(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    val width = maxWidth
+                                    val height = maxHeight
+                                    var showDeleteDialogBox by remember { mutableStateOf(false) }
+                                    Column(
+                                        modifier = Modifier.fillMaxSize(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        //leaderboard title
+                                        LeaderboardTitle(
+                                            modifier = Modifier
+                                                .padding(top = 12.dp),
+                                            frameHeight = height * 0.25f,
+                                            title = "RECORDS"
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        //leaderboard list
+                                        BoxWithConstraints(
+                                            modifier = Modifier.fillMaxSize()
+                                        ) {
+                                            val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
+                                            AnimatedContent(
+                                                targetState = screenState.selectedType,
+                                                label = "",
+                                                transitionSpec = {
+                                                    slideInVertically(initialOffsetY = { -it }) togetherWith
+                                                            slideOutVertically(targetOffsetY = { it })
+                                                }
+                                            ) { type ->
+                                                LazyColumn(
+                                                    modifier = Modifier
+                                                        .padding(horizontal = 26.dp)
+                                                        .fillMaxSize()
+                                                        .background(MaterialTheme.colorScheme.background)
+                                                        .border(
+                                                            width = 1.dp,
+                                                            color = MaterialTheme
+                                                                .colorScheme
+                                                                .outlineVariant
+                                                                .copy(alpha = 0.33f)
+                                                        )
+                                                ) {
+                                                    item {
+                                                        Spacer(modifier = Modifier.height(4.dp))
+                                                    }
+                                                    itemsIndexed(
+                                                        items = when (type) {
+                                                            QuizType.GuessRoman -> screenState.romanLeaderboard
+                                                            QuizType.GuessArabic -> screenState.arabicLeaderboard
+                                                            QuizType.GuessBoth -> screenState.bothLeaderboard
+                                                        },
+                                                        key = { _, item ->
+                                                            item.id
+                                                        }
+                                                    ) { id, item ->
+                                                        LeaderboardItemRow(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .height(itemHeight)
+                                                                .animateItemPlacement(),
+                                                            position = id + 1,
+                                                            data = item,
+                                                            onDeleteClick = {
+                                                                viewModel.deleteRecord(item)
+                                                                scope.launch {
+                                                                    snackbarHostState.currentSnackbarData?.dismiss()
+                                                                    snackbarHostState.showSnackbar(
+                                                                        message = "The record has been deleted",
+                                                                        actionLabel = "RESTORE",
+                                                                        duration = SnackbarDuration.Short
+                                                                    )
+                                                                }
+                                                            },
+                                                            onDeleteAllClick = {
+                                                                showDeleteDialogBox = true
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                                val isListEmpty = when (type) {
+                                                    QuizType.GuessRoman -> screenState.romanLeaderboard.isEmpty()
+                                                    QuizType.GuessArabic -> screenState.arabicLeaderboard.isEmpty()
+                                                    QuizType.GuessBoth -> screenState.bothLeaderboard.isEmpty()
+                                                }
+                                                if(isListEmpty){
+                                                    Box(modifier = Modifier.fillMaxSize()){
+                                                        Text(
+                                                            modifier = Modifier.align(Alignment.Center),
+                                                            text = stringResource(id = R.string.quiz_empty_list),
+                                                            style = MaterialTheme.typography.bodyLarge,
+                                                            textAlign = TextAlign.Center,
+                                                            color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            Icon(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopCenter)
+                                                    .padding(horizontal = 12.dp)
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(22f)
+                                                    .offset(y = -((width - 24.dp) / 48f)),
+                                                painter = painterResource(
+                                                    id = R.drawable.ornament_leaderbard_list
+                                                ),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onTertiary
+                                            )
+                                            Icon(
+                                                modifier = Modifier
+                                                    .align(Alignment.BottomCenter)
+                                                    .padding(horizontal = 12.dp)
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(22f)
+                                                    .offset(y = (width - 24.dp) / 48f),
+                                                painter = painterResource(
+                                                    id = R.drawable.ornament_leaderbard_list
+                                                ),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onTertiary
+                                            )
+                                        }
+                                    }
+                                    DeleteConfirmDialogBox (
+                                        show = showDeleteDialogBox,
+                                        onVisibilityChanged = {
+                                            homeViewModel.blurBackground(it)
+                                        },
+                                        onCancelClick = {
+                                            showDeleteDialogBox = false
+                                        },
+                                        onConfirmClick = {
+                                            viewModel.clearLeaderboard()
+                                            showDeleteDialogBox = false
+                                            scope.launch {
+                                                snackbarHostState.currentSnackbarData?.dismiss()
+                                                snackbarHostState.showSnackbar(
+                                                    message = context.getString(R.string.quiz_all_deleted),
+                                                    actionLabel = context.getString(R.string.quiz_restore),
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
+                                        }
                                     )
                                 }
                             }
-                            DeleteConfirmDialogBox (
-                                show = showDeleteDialogBox,
-                                onVisibilityChanged = {
-                                    homeViewModel.blurBackground(it)
-                                },
-                                onCancelClick = {
-                                    showDeleteDialogBox = false
-                                },
-                                onConfirmClick = {
-                                    viewModel.clearLeaderboard()
-                                    showDeleteDialogBox = false
-                                    scope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        snackbarHostState.showSnackbar(
-                                            message = context.getString(R.string.quiz_all_deleted),
-                                            actionLabel = context.getString(R.string.quiz_restore),
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                }
-                            )
                         }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        PageIndicator(
+                            value = pagerState.currentPageOffsetFraction + pagerState.currentPage,
+                            onPageClick = { pageID ->
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pageID)
+                                }
+                            }
+                        )
                         Spacer(modifier = Modifier.height(12.dp))
                         ActionButton(
                             label = stringResource(id = R.string.quiz_start),
