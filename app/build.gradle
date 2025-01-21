@@ -112,4 +112,7 @@ dependencies {
     //admob
     implementation "com.google.android.gms:play-services-ads:23.1.0"
     implementation "com.google.guava:guava:31.1-android"
+
+    //play games services
+    implementation "com.google.android.gms:play-services-games-v2:20.1.2"
 }

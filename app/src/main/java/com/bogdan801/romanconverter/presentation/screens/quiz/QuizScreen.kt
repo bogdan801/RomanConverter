@@ -1,7 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import android.media.MediaPlayer
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -29,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -61,6 +61,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -78,7 +79,8 @@ import com.bogdan801.romanconverter.presentation.components.SmallIconButton
 import com.bogdan801.romanconverter.presentation.navigation.Screen
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.DeleteConfirmDialogBox
-import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardItemRow
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardList
+import com.bogdan801.romanconverter.presentation.screens.quiz.components.RecordsItemRow
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.LeaderboardTitle
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.PageIndicator
 import com.bogdan801.romanconverter.presentation.screens.quiz.components.PauseDialogBox
@@ -88,7 +90,6 @@ import com.bogdan801.romanconverter.presentation.screens.quiz.components.QuizTyp
 import com.bogdan801.util_library.intSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -259,68 +260,73 @@ fun QuizScreen(
                                             modifier = Modifier.fillMaxSize()
                                         ) {
                                             val itemHeight = if (maxHeight > 336.dp) 48.dp else 36.dp
-                                            AnimatedContent(
-                                                targetState = screenState.selectedType,
-                                                label = "",
-                                                transitionSpec = {
-                                                    slideInVertically(initialOffsetY = { -it }) togetherWith
-                                                            slideOutVertically(targetOffsetY = { it })
+                                            Box(modifier = Modifier
+                                                .padding(horizontal = 26.dp)
+                                                .fillMaxSize()
+                                                .background(MaterialTheme.colorScheme.background)
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = MaterialTheme
+                                                        .colorScheme
+                                                        .outlineVariant
+                                                        .copy(alpha = 0.33f)
+                                                )
+                                            ){
+                                                if(screenState.isLeaderboardLoading){
+                                                    CircularProgressIndicator(
+                                                        modifier = Modifier.align(Alignment.Center),
+                                                        color = MaterialTheme.colorScheme.onTertiary
+                                                    )
                                                 }
-                                            ) { type ->
-                                                LazyColumn(
-                                                    modifier = Modifier
-                                                        .padding(horizontal = 26.dp)
-                                                        .fillMaxSize()
-                                                        .background(MaterialTheme.colorScheme.background)
-                                                        .border(
-                                                            width = 1.dp,
-                                                            color = MaterialTheme
-                                                                .colorScheme
-                                                                .outlineVariant
-                                                                .copy(alpha = 0.33f)
-                                                        )
-                                                ) {
-                                                    item {
-                                                        Spacer(modifier = Modifier.height(4.dp))
-                                                    }
-                                                    itemsIndexed(
-                                                        items = when (type) {
-                                                            QuizType.GuessRoman -> screenState.romanLeaderboard
-                                                            QuizType.GuessArabic -> screenState.arabicLeaderboard
-                                                            QuizType.GuessBoth -> screenState.bothLeaderboard
-                                                        },
-                                                        key = { _, item ->
-                                                            item.id
-                                                        }
-                                                    ) { id, item ->
-                                                        LeaderboardItemRow(
-                                                            modifier = Modifier
-                                                                .fillMaxWidth()
-                                                                .height(itemHeight)
-                                                                .animateItemPlacement(),
-                                                            position = id + 1,
-                                                            data = item,
-                                                            showDropDownMenu = false
-                                                        )
-                                                    }
-                                                }
-                                                val isListEmpty = when (type) {
-                                                    QuizType.GuessRoman -> screenState.romanLeaderboard.isEmpty()
-                                                    QuizType.GuessArabic -> screenState.arabicLeaderboard.isEmpty()
-                                                    QuizType.GuessBoth -> screenState.bothLeaderboard.isEmpty()
-                                                }
-                                                if(isListEmpty){
-                                                    Box(modifier = Modifier.fillMaxSize()){
-                                                        Text(
+                                                else {
+                                                    if(!screenState.isUserLoggedIn){
+                                                        Column(
                                                             modifier = Modifier.align(Alignment.Center),
-                                                            text = stringResource(id = R.string.quiz_empty_list),
-                                                            style = MaterialTheme.typography.bodyLarge,
-                                                            textAlign = TextAlign.Center,
-                                                            color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
-                                                        )
+                                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                                            verticalArrangement = Arrangement.spacedBy(24.dp)
+                                                        ) {
+                                                            Text(
+                                                                text = "Log in to join the leaderboard and view\n other players' scores",
+                                                                color = MaterialTheme.colorScheme.onTertiary,
+                                                                style = MaterialTheme.typography.bodyMedium,
+                                                                textAlign = TextAlign.Center
+                                                            )
+                                                            ActionButton(
+                                                                size = DpSize(120.dp, 46.dp),
+                                                                label = "LOG IN",
+                                                                onClick = {
+                                                                    viewModel.logInToPlayServices(context)
+                                                                }
+                                                            )
+                                                        }
+                                                    }
+                                                    else{
+                                                        AnimatedContent(
+                                                            targetState = screenState.selectedType,
+                                                            label = "",
+                                                            transitionSpec = {
+                                                                slideInVertically(initialOffsetY = { -it }) togetherWith
+                                                                        slideOutVertically(targetOffsetY = { it })
+                                                            }
+                                                        ) { type ->
+
+                                                            /*
+                                                            *
+                                                            * Do checking for errors here
+                                                            *
+                                                            * */
+
+
+                                                            LeaderboardList(
+                                                                type = type,
+                                                                itemHeight = itemHeight
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
+
+
                                             Icon(
                                                 modifier = Modifier
                                                     .align(Alignment.TopCenter)
@@ -402,15 +408,15 @@ fun QuizScreen(
                                                     }
                                                     itemsIndexed(
                                                         items = when (type) {
-                                                            QuizType.GuessRoman -> screenState.romanLeaderboard
-                                                            QuizType.GuessArabic -> screenState.arabicLeaderboard
-                                                            QuizType.GuessBoth -> screenState.bothLeaderboard
+                                                            QuizType.GuessRoman -> screenState.romanRecords
+                                                            QuizType.GuessArabic -> screenState.arabicRecords
+                                                            QuizType.GuessBoth -> screenState.bothRecords
                                                         },
                                                         key = { _, item ->
                                                             item.id
                                                         }
                                                     ) { id, item ->
-                                                        LeaderboardItemRow(
+                                                        RecordsItemRow(
                                                             modifier = Modifier
                                                                 .fillMaxWidth()
                                                                 .height(itemHeight)
@@ -435,9 +441,9 @@ fun QuizScreen(
                                                     }
                                                 }
                                                 val isListEmpty = when (type) {
-                                                    QuizType.GuessRoman -> screenState.romanLeaderboard.isEmpty()
-                                                    QuizType.GuessArabic -> screenState.arabicLeaderboard.isEmpty()
-                                                    QuizType.GuessBoth -> screenState.bothLeaderboard.isEmpty()
+                                                    QuizType.GuessRoman -> screenState.romanRecords.isEmpty()
+                                                    QuizType.GuessArabic -> screenState.arabicRecords.isEmpty()
+                                                    QuizType.GuessBoth -> screenState.bothRecords.isEmpty()
                                                 }
                                                 if(isListEmpty){
                                                     Box(modifier = Modifier.fillMaxSize()){

@@ -2,7 +2,7 @@ package com.bogdan801.romanconverter.data.repository
 
 import com.bogdan801.romanconverter.data.local_db.realm.objects.Record
 import com.bogdan801.romanconverter.data.local_db.realm.objects.toRecordRealmObject
-import com.bogdan801.romanconverter.domain.model.LeaderboardItem
+import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
 import io.realm.kotlin.Realm
@@ -10,23 +10,18 @@ import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
-import org.mongodb.kbson.ObjectId
 
 class RepositoryImpl(
     private val realm: Realm
 ) : Repository {
-    override suspend fun saveRecord(item: LeaderboardItem, type: QuizType) {
+    override suspend fun saveRecord(item: RecordItem, type: QuizType) {
         realm.write {
             copyToRealm(item.toRecordRealmObject(type.ordinal), updatePolicy = UpdatePolicy.ALL)
         }
     }
 
-    override suspend fun saveRecords(items: List<LeaderboardItem>, type: QuizType) {
+    override suspend fun saveRecords(items: List<RecordItem>, type: QuizType) {
         realm.write {
             items.forEach { item ->
                 copyToRealm(item.toRecordRealmObject(type.ordinal))
@@ -35,7 +30,7 @@ class RepositoryImpl(
 
     }
 
-    override suspend fun updateLastRecord(item: LeaderboardItem) {
+    override suspend fun updateLastRecord(item: RecordItem) {
         realm.write {
             val lastRecord = this.query<Record>().sort("_id", Sort.DESCENDING).first().find()
 
@@ -56,7 +51,7 @@ class RepositoryImpl(
         }
     }
 
-    override fun getRomanLeaderboardFlow(): Flow<List<LeaderboardItem>> {
+    override fun getRomanRecordsFlow(): Flow<List<RecordItem>> {
         return realm.query<Record>(query = "quizType == ${QuizType.GuessRoman.ordinal}")
             .asFlow()
             .map { results ->
@@ -64,7 +59,7 @@ class RepositoryImpl(
             }
     }
 
-    override fun getArabicLeaderboardFlow(): Flow<List<LeaderboardItem>> {
+    override fun getArabicRecordsFlow(): Flow<List<RecordItem>> {
         return realm.query<Record>(query = "quizType == ${QuizType.GuessArabic.ordinal}")
             .asFlow()
             .map { results ->
@@ -72,7 +67,7 @@ class RepositoryImpl(
             }
     }
 
-    override fun getBothLeaderboardFlow(): Flow<List<LeaderboardItem>> {
+    override fun getBothRecordsFlow(): Flow<List<RecordItem>> {
         return realm.query<Record>(query = "quizType == ${QuizType.GuessBoth.ordinal}")
             .asFlow()
             .map { results ->
@@ -92,7 +87,7 @@ class RepositoryImpl(
         }
     }
 
-    override suspend fun clearLeaderboardOfAType(quizType: QuizType) {
+    override suspend fun clearRecordsOfAType(quizType: QuizType) {
         realm.write {
             delete(query<Record>("quizType == $0", quizType.ordinal).find())
         }

@@ -1,14 +1,26 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
-import com.bogdan801.romanconverter.domain.model.LeaderboardItem
+import com.bogdan801.romanconverter.domain.model.LeaderboardData
+import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 
 data class QuizScreenState(
     val selectedType: QuizType = QuizType.GuessRoman,
-    val romanLeaderboard: List<LeaderboardItem> = listOf(),
-    val arabicLeaderboard: List<LeaderboardItem> = listOf(),
-    val bothLeaderboard: List<LeaderboardItem> = listOf(),
-    val lastDeletedItems: List<LeaderboardItem> = listOf(),
+
+    //leaderboard
+    val isUserLoggedIn: Boolean = false,
+    val isLeaderboardLoading: Boolean = false,
+    val romanLeaderboard: LeaderboardData = LeaderboardData(),
+    val arabicLeaderboard: LeaderboardData = LeaderboardData(),
+    val bothLeaderboard: LeaderboardData = LeaderboardData(),
+
+    //records
+    val romanRecords: List<RecordItem> = listOf(),
+    val arabicRecords: List<RecordItem> = listOf(),
+    val bothRecords: List<RecordItem> = listOf(),
+    val lastDeletedItems: List<RecordItem> = listOf(),
+
+    //quiz
     val isQuizStarted: Boolean = false,
     val currentQuizType: QuizType = QuizType.GuessRoman,
     val currentValueToGuess: String = "",

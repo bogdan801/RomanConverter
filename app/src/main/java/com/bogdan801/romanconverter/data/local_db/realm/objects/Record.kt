@@ -1,6 +1,6 @@
 package com.bogdan801.romanconverter.data.local_db.realm.objects
 
-import com.bogdan801.romanconverter.domain.model.LeaderboardItem
+import com.bogdan801.romanconverter.domain.model.RecordItem
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
@@ -16,7 +16,7 @@ class Record: RealmObject {
     var count: Int = 0
     var score: Int = 0
 
-    fun toLeaderboardItem(): LeaderboardItem = LeaderboardItem(
+    fun toLeaderboardItem(): RecordItem = RecordItem(
         id = _id.hashCode(),
         date = LocalDate.of(year, month, day),
         count = count,
@@ -24,7 +24,7 @@ class Record: RealmObject {
     )
 }
 
-fun LeaderboardItem.toRecordRealmObject(quizType: Int = 0): Record {
+fun RecordItem.toRecordRealmObject(quizType: Int = 0): Record {
     val item = this
     return Record().apply {
         this.quizType = quizType

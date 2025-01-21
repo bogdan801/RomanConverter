@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
-import com.bogdan801.romanconverter.domain.model.LeaderboardItem
+import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
@@ -20,6 +20,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -105,47 +106,47 @@ constructor(
     }
 
     //leaderboard logic
-    private fun setupRomanLeaderboard(list: List<LeaderboardItem>){
+    private fun setupRomanLeaderboard(list: List<RecordItem>){
         _screenState.update {
             it.copy(
-                romanLeaderboard = list
+                romanRecords = list
             )
         }
     }
 
-    private fun setupArabicLeaderboard(list: List<LeaderboardItem>){
+    private fun setupArabicLeaderboard(list: List<RecordItem>){
         _screenState.update {
             it.copy(
-                arabicLeaderboard = list
+                arabicRecords = list
             )
         }
     }
 
-    private fun setupBothLeaderboard(list: List<LeaderboardItem>){
+    private fun setupBothLeaderboard(list: List<RecordItem>){
         _screenState.update {
             it.copy(
-                bothLeaderboard = list
+                bothRecords = list
             )
         }
     }
 
-    private fun updateLastRecord(leaderboardItem: LeaderboardItem){
+    private fun updateLastRecord(recordItem: RecordItem){
         viewModelScope.launch {
-            repository.updateLastRecord(leaderboardItem)
+            repository.updateLastRecord(recordItem)
         }
     }
 
-    private fun saveRecord(leaderboardItem: LeaderboardItem){
+    private fun saveRecord(recordItem: RecordItem){
         viewModelScope.launch {
-            repository.saveRecord(leaderboardItem, _screenState.value.selectedType)
+            repository.saveRecord(recordItem, _screenState.value.selectedType)
         }
     }
 
     fun limitRecordsList(limit: Int = 20){
         val currentLeaderboard = when(_screenState.value.selectedType){
-            QuizType.GuessRoman -> _screenState.value.romanLeaderboard
-            QuizType.GuessArabic -> _screenState.value.romanLeaderboard
-            QuizType.GuessBoth -> _screenState.value.romanLeaderboard
+            QuizType.GuessRoman -> _screenState.value.romanRecords
+            QuizType.GuessArabic -> _screenState.value.romanRecords
+            QuizType.GuessBoth -> _screenState.value.romanRecords
         }
         if(currentLeaderboard.size > limit){
             val out = currentLeaderboard.subList(limit, currentLeaderboard.size)
@@ -161,7 +162,7 @@ constructor(
         }
     }
 
-    private fun setLastDeletedRecords(items: List<LeaderboardItem>){
+    private fun setLastDeletedRecords(items: List<RecordItem>){
         _screenState.update {
             it.copy(
                 lastDeletedItems = items
@@ -169,23 +170,23 @@ constructor(
         }
     }
 
-    fun deleteRecord(leaderboardItem: LeaderboardItem){
-        setLastDeletedRecords(listOf(leaderboardItem))
+    fun deleteRecord(recordItem: RecordItem){
+        setLastDeletedRecords(listOf(recordItem))
         viewModelScope.launch {
-            repository.deleteRecord(leaderboardItem.id, _screenState.value.selectedType)
+            repository.deleteRecord(recordItem.id, _screenState.value.selectedType)
         }
     }
 
     fun clearLeaderboard(){
         setLastDeletedRecords(
             when(_screenState.value.selectedType){
-                QuizType.GuessRoman -> _screenState.value.romanLeaderboard
-                QuizType.GuessArabic -> _screenState.value.arabicLeaderboard
-                QuizType.GuessBoth -> _screenState.value.bothLeaderboard
+                QuizType.GuessRoman -> _screenState.value.romanRecords
+                QuizType.GuessArabic -> _screenState.value.arabicRecords
+                QuizType.GuessBoth -> _screenState.value.bothRecords
             }
         )
         viewModelScope.launch {
-            repository.clearLeaderboardOfAType(_screenState.value.selectedType)
+            repository.clearRecordsOfAType(_screenState.value.selectedType)
         }
     }
 
@@ -267,7 +268,7 @@ constructor(
             )
         }
         setValueToGuess(nextValueToGuess())
-        saveRecord(LeaderboardItem(count = 0, score = 0))
+        saveRecord(RecordItem(count = 0, score = 0))
         time = _screenState.value.currentTime
     }
 
@@ -343,7 +344,7 @@ constructor(
         incrementScore(scoreToAdd)
         incrementCurrentCount()
         updateLastRecord(
-            LeaderboardItem(
+            RecordItem(
                 count = _screenState.value.currentCount,
                 score = _screenState.value.currentScore
             )
@@ -354,7 +355,7 @@ constructor(
 
     fun quizOver() {
         updateLastRecord(
-            LeaderboardItem(
+            RecordItem(
                 count = _screenState.value.currentCount,
                 score = _screenState.value.currentScore
             )
@@ -455,28 +456,54 @@ constructor(
     fun isNewRecordSet(): Boolean {
         val record = _screenState.value.currentScore
         val currentLeaderboard = when(_screenState.value.selectedType){
-            QuizType.GuessRoman -> _screenState.value.romanLeaderboard
-            QuizType.GuessArabic -> _screenState.value.arabicLeaderboard
-            QuizType.GuessBoth -> _screenState.value.bothLeaderboard
+            QuizType.GuessRoman -> _screenState.value.romanRecords
+            QuizType.GuessArabic -> _screenState.value.arabicRecords
+            QuizType.GuessBoth -> _screenState.value.bothRecords
         }
 
         return if(currentLeaderboard.size >= 2) record > currentLeaderboard[1].score
                else true
     }
 
+    fun logInToPlayServices(context: Context) {
+        viewModelScope.launch {
+            setLeaderboardLoading(true)
+            delay(3000)
+            setLeaderboardLoading(false)
+            setIsLoggedIn(true)
+        }
+    }
+
+    private fun setLeaderboardLoading(isLoading: Boolean){
+        _screenState.update {
+            it.copy(
+                isLeaderboardLoading = isLoading
+            )
+        }
+    }
+
+    private fun setIsLoggedIn(isLoggedIn: Boolean){
+        _screenState.update {
+            it.copy(
+                isUserLoggedIn = isLoggedIn
+            )
+        }
+    }
+
+
     init {
         viewModelScope.launch {
-            repository.getRomanLeaderboardFlow().collect{
+            repository.getRomanRecordsFlow().collect{
                 setupRomanLeaderboard(it)
             }
         }
         viewModelScope.launch {
-            repository.getArabicLeaderboardFlow().collect{
+            repository.getArabicRecordsFlow().collect{
                 setupArabicLeaderboard(it)
             }
         }
         viewModelScope.launch {
-            repository.getBothLeaderboardFlow().collect{
+            repository.getBothRecordsFlow().collect{
                 setupBothLeaderboard(it)
             }
         }
