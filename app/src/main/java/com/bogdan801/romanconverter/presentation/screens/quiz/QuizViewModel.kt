@@ -3,11 +3,12 @@ package com.bogdan801.romanconverter.presentation.screens.quiz
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
-import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.model.QuizType
+import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.repository.Repository
 import com.bogdan801.romanconverter.presentation.screens.home.HomeViewModel
 import com.bogdan801.romanconverter.presentation.util.mapRange
@@ -19,8 +20,10 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.Player
+import com.google.android.gms.tasks.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -30,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextInt
+
 
 @HiltViewModel
 class QuizViewModel
@@ -210,7 +214,6 @@ constructor(
         }
         homeViewModel.showNavBar(true)
     }
-
 
     fun nextValueToGuess(): String {
         setInputValue("")
@@ -451,8 +454,6 @@ constructor(
         }
     }
 
-
-
     fun isNewRecordSet(): Boolean {
         val record = _screenState.value.currentScore
         val currentLeaderboard = when(_screenState.value.selectedType){
@@ -465,13 +466,57 @@ constructor(
                else true
     }
 
-    fun logInToPlayServices(context: Context) {
-        viewModelScope.launch {
-            setLeaderboardLoading(true)
-            delay(3000)
+
+    fun checkIsLoggedIn(activity: Activity) {
+        val gamesSignInClient = PlayGames.getGamesSignInClient(activity)
+
+        gamesSignInClient.isAuthenticated()
+            .addOnCompleteListener { isAuthenticatedTask ->
+                val isAuthenticated =
+                    (isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated)
+
+                if(isAuthenticated){
+                    setIsLoggedIn(true)
+                    PlayGames.getPlayersClient(activity).currentPlayer.addOnCompleteListener { mTask ->
+                        setUserID(mTask.result.playerId)
+                    }
+
+                }
+                else {
+                    setIsLoggedIn(false)
+                    Toast.makeText(
+                        activity,
+                        "Failed to log in:  ${isAuthenticatedTask.isSuccessful} ${isAuthenticatedTask.result.isAuthenticated}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+    }
+
+    fun logInToPlayServices(activity: Activity) {
+        val gamesSignInClient = PlayGames.getGamesSignInClient(activity)
+        setLeaderboardLoading(true)
+        gamesSignInClient.signIn().addOnCompleteListener { isAuthenticatedTask ->
+            val isAuthenticated =
+                (isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated)
+
+            if(isAuthenticated){
+                setIsLoggedIn(true)
+                PlayGames.getPlayersClient(activity).currentPlayer.addOnCompleteListener { mTask ->
+                    setUserID(mTask.result.playerId)
+                }
+            }
+            else {
+                setIsLoggedIn(false)
+                Toast.makeText(
+                    activity,
+                    "Failed to log in: ${isAuthenticatedTask.isSuccessful} ${isAuthenticatedTask.result.isAuthenticated}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
             setLeaderboardLoading(false)
-            setIsLoggedIn(true)
         }
+        setIsLoggedIn(true)
     }
 
     private fun setLeaderboardLoading(isLoading: Boolean){
@@ -489,6 +534,19 @@ constructor(
             )
         }
     }
+
+    private fun setUserID(userID: String){
+        _screenState.update {
+            it.copy(
+                userID = userID
+            )
+        }
+    }
+
+    fun refreshLeaderboard(context: Context) {
+
+    }
+
 
 
     init {

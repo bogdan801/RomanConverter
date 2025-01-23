@@ -1,5 +1,6 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
+import android.app.Activity
 import android.media.MediaPlayer
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -228,7 +229,13 @@ fun QuizScreen(
                                 snackbarHostState.currentSnackbarData?.dismiss()
                             }
                         )
+
+
                         //leaderboard panel
+                        LaunchedEffect(key1 = true) {
+                            viewModel.checkIsLoggedIn(context as Activity)
+                        }
+
                         val pagerState = rememberPagerState(pageCount = { 2 })
                         HorizontalPager(
                             modifier = Modifier
@@ -295,7 +302,7 @@ fun QuizScreen(
                                                                 size = DpSize(120.dp, 46.dp),
                                                                 label = "LOG IN",
                                                                 onClick = {
-                                                                    viewModel.logInToPlayServices(context)
+                                                                    viewModel.logInToPlayServices(context as Activity)
                                                                 }
                                                             )
                                                         }
@@ -309,18 +316,42 @@ fun QuizScreen(
                                                                         slideOutVertically(targetOffsetY = { it })
                                                             }
                                                         ) { type ->
+                                                            val data = when(type){
+                                                                QuizType.GuessRoman -> screenState.romanLeaderboard
+                                                                QuizType.GuessArabic -> screenState.arabicLeaderboard
+                                                                QuizType.GuessBoth -> screenState.bothLeaderboard
+                                                            }
 
-                                                            /*
-                                                            *
-                                                            * Do checking for errors here
-                                                            *
-                                                            * */
+                                                            if(data.error != null || data.records == null) {
+                                                                Column(
+                                                                    modifier = Modifier.fillMaxSize(),
+                                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                                    verticalArrangement = Arrangement.Center
+                                                                ) {
+                                                                    Text(
+                                                                        text = data.error ?: "Unknown error. Try again",
+                                                                        color = MaterialTheme.colorScheme.onTertiary,
+                                                                        style = MaterialTheme.typography.bodyLarge,
+                                                                        textAlign = TextAlign.Center
+                                                                    )
+                                                                    Spacer(modifier = Modifier.height(24.dp))
+                                                                    ActionButton(
+                                                                        size = DpSize(120.dp, 46.dp),
+                                                                        label = "REFRESH",
+                                                                        onClick = {
+                                                                            viewModel.refreshLeaderboard(context)
+                                                                        }
+                                                                    )
+                                                                }
+                                                            }
+                                                            else {
+                                                                LeaderboardList(
+                                                                    modifier = Modifier.fillMaxSize(),
+                                                                    records = data.records,
+                                                                    itemHeight = itemHeight
+                                                                )
+                                                            }
 
-
-                                                            LeaderboardList(
-                                                                type = type,
-                                                                itemHeight = itemHeight
-                                                            )
                                                         }
                                                     }
                                                 }

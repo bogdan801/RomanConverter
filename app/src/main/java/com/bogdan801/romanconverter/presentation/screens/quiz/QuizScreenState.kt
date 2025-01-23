@@ -1,6 +1,7 @@
 package com.bogdan801.romanconverter.presentation.screens.quiz
 
 import com.bogdan801.romanconverter.domain.model.LeaderboardData
+import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 
@@ -9,9 +10,49 @@ data class QuizScreenState(
 
     //leaderboard
     val isUserLoggedIn: Boolean = false,
+    val userID: String = "",
     val isLeaderboardLoading: Boolean = false,
     val romanLeaderboard: LeaderboardData = LeaderboardData(),
-    val arabicLeaderboard: LeaderboardData = LeaderboardData(),
+    val arabicLeaderboard: LeaderboardData = LeaderboardData(
+        records = listOf(
+            LeaderboardItem(
+                rank = 1,
+                username = "PrivateWolf 352",
+                score = 32342
+            ),
+            LeaderboardItem(
+                rank = 2,
+                username = "Palanquin3",
+                score = 31463
+            ),
+            LeaderboardItem(
+                rank = 3,
+                username = "Slaughterhaus23",
+                score = 26777
+            ),
+            LeaderboardItem(
+                rank = 4,
+                username = "Maradonner42",
+                score = 19032
+            ),
+            LeaderboardItem(
+                rank = 5,
+                username = "Palanquin3",
+                score = 31463
+            ),
+            LeaderboardItem(
+                rank = 6,
+                username = "Slaughterhaus23",
+                score = 26777
+            ),
+            LeaderboardItem(
+                rank = 7,
+                username = "Maradonner42",
+                score = 19032,
+                isUser = true
+            )
+        )
+    ),
     val bothLeaderboard: LeaderboardData = LeaderboardData(),
 
     //records

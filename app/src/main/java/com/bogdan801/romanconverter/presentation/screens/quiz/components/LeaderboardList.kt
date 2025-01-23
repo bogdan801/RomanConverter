@@ -31,45 +31,7 @@ import com.bogdan801.romanconverter.presentation.components.ActionButton
 @Composable
 fun LeaderboardList(
     modifier: Modifier = Modifier,
-    type: QuizType = QuizType.GuessRoman,
-    records: List<LeaderboardItem>? = listOf(
-        LeaderboardItem(
-            rank = 1,
-            username = "PrivateWolf 352",
-            score = 32342
-        ),
-        LeaderboardItem(
-            rank = 2,
-            username = "Palanquin3",
-            score = 31463
-        ),
-        LeaderboardItem(
-            rank = 3,
-            username = "Slaughterhaus23",
-            score = 26777
-        ),
-        LeaderboardItem(
-            rank = 4,
-            username = "Maradonner42",
-            score = 19032
-        ),
-        LeaderboardItem(
-            rank = 5,
-            username = "Palanquin3",
-            score = 31463
-        ),
-        LeaderboardItem(
-            rank = 6,
-            username = "Slaughterhaus23",
-            score = 26777
-        ),
-        LeaderboardItem(
-            rank = 7,
-            username = "Maradonner42",
-            score = 19032,
-            isUser = true
-        )
-    ),
+    records: List<LeaderboardItem>? = null,
     itemHeight: Dp = 48.dp,
     maxItemCount: Int = 20
 ) {
@@ -90,7 +52,7 @@ fun LeaderboardList(
         }
     }
 
-    Box(Modifier.fillMaxSize(), Alignment.Center){
+    Box(modifier.fillMaxSize(), Alignment.Center){
         if(displayList != null){
             if (displayList!!.isNotEmpty()){
                 LazyColumn(modifier = Modifier.fillMaxSize()) {

@@ -48,4 +48,6 @@
     <string name="camera_text_not_detected">TEXT IS NOT DETECTED</string>
     <string name="quiz_score">SCORE</string>
     <string name="quiz_time">TIME</string>
+
+    <string name="game_services_project_id" translatable="false">924554426615</string>
 </resources>

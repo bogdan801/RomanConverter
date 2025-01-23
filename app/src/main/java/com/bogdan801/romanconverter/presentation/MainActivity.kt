@@ -24,6 +24,7 @@ import com.bogdan801.romanconverter.presentation.screens.home.HomeScreen
 import com.bogdan801.romanconverter.presentation.theme.RomanCalculatorTheme
 import com.bogdan801.util_library.intSettings
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.games.PlayGamesSdk
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
