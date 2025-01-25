@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace 'com.bogdan801.romanconverter'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.bogdan801.romanconverter"
         minSdk 27
-        targetSdk 34
-        versionCode 6
-        versionName "1.12"
+        targetSdk 35
+        versionCode 7
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

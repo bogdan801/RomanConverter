@@ -49,4 +49,13 @@
     <string name="camera_text_not_detected">TEXTE NON DÉTECTÉ</string>
     <string name="quiz_score">SCORE</string>
     <string name="quiz_time">TEMPS</string>
+    <string name="unknown_error">Erreur inconnue. Réessayez</string>
+    <string name="refresh">REFRESH</string>
+    <string name="records">RECORDS</string>
+    <string name="record_deleted">L\'enregistrement a été supprimé</string>
+    <string name="quiz_log_in">Connectez-vous pour rejoindre le classement et voir les \nscores des autres joueurs.</string>
+    <string name="quiz_log_in_title">LOG IN</string>
+    <string name="quiz_leaderboard">CLASSEMENT</string>
+    <string name="quiz_leaderboard_empty">Le classement est vide - soyez le premier \nà établir le record !</string>
+    <string name="quiz_login_failed">Échec de la connexion. Vérifiez votre connexion internet et réessayez.</string>
 </resources>

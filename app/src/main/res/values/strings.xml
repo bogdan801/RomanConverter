@@ -1,4 +1,9 @@
 <resources>
+    <string name="game_services_project_id" translatable="false">924554426615</string>
+    <string name="leaderboard_id_roman" translatable="false">CgkI9_HznfQaEAIQAw</string>
+    <string name="leaderboard_id_arabic" translatable="false">CgkI9_HznfQaEAIQAg</string>
+    <string name="leaderboard_id_both" translatable="false">CgkI9_HznfQaEAIQBA</string>
+
     <string name="app_name">Roman Converter and Quiz</string>
     <string name="nav_convert">Convert</string>
     <string name="nav_quiz">Quiz</string>
@@ -48,6 +53,13 @@
     <string name="camera_text_not_detected">TEXT IS NOT DETECTED</string>
     <string name="quiz_score">SCORE</string>
     <string name="quiz_time">TIME</string>
-
-    <string name="game_services_project_id" translatable="false">924554426615</string>
+    <string name="unknown_error">Unknown error. Try again</string>
+    <string name="refresh">REFRESH</string>
+    <string name="records">RECORDS</string>
+    <string name="record_deleted">The record has been deleted</string>
+    <string name="quiz_log_in">Log in to join the leaderboard and view\n other players\' scores</string>
+    <string name="quiz_log_in_title">LOG IN</string>
+    <string name="quiz_leaderboard">LEADERBOARD</string>
+    <string name="quiz_leaderboard_empty">Leaderboard is empty, be the first one\n to set the record</string>
+    <string name="quiz_login_failed">Failed to log in. Check your internet connection an try again</string>
 </resources>

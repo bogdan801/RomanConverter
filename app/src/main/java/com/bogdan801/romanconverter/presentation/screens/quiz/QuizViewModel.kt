@@ -6,7 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bogdan801.romanconverter.R
 import com.bogdan801.romanconverter.data.util.convertArabicToRoman
+import com.bogdan801.romanconverter.domain.model.LeaderboardData
+import com.bogdan801.romanconverter.domain.model.LeaderboardItem
 import com.bogdan801.romanconverter.domain.model.QuizType
 import com.bogdan801.romanconverter.domain.model.RecordItem
 import com.bogdan801.romanconverter.domain.repository.Repository
@@ -21,9 +24,9 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.games.PlayGames
-import com.google.android.gms.games.Player
-import com.google.android.gms.tasks.Task
+import com.google.android.gms.games.leaderboard.LeaderboardVariant
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -109,7 +112,7 @@ constructor(
         }
     }
 
-    //leaderboard logic
+    //records logic
     private fun setupRomanLeaderboard(list: List<RecordItem>){
         _screenState.update {
             it.copy(
@@ -206,13 +209,14 @@ constructor(
         setupTheQuiz()
     }
 
-    fun stopQuiz(homeViewModel: HomeViewModel) {
+    fun stopQuiz(homeViewModel: HomeViewModel, activity: Activity) {
         _screenState.update {
             it.copy(
                 isQuizStarted = false
             )
         }
         homeViewModel.showNavBar(true)
+        synchronizeTopRecordWithLeaderboard(activity)
     }
 
     fun nextValueToGuess(): String {
@@ -456,18 +460,19 @@ constructor(
 
     fun isNewRecordSet(): Boolean {
         val record = _screenState.value.currentScore
-        val currentLeaderboard = when(_screenState.value.selectedType){
+        val currentRecords = when(_screenState.value.selectedType){
             QuizType.GuessRoman -> _screenState.value.romanRecords
             QuizType.GuessArabic -> _screenState.value.arabicRecords
             QuizType.GuessBoth -> _screenState.value.bothRecords
         }
 
-        return if(currentLeaderboard.size >= 2) record > currentLeaderboard[1].score
-               else true
+        return if(currentRecords.size >= 2) record > currentRecords[1].score
+        else true
     }
 
 
-    fun checkIsLoggedIn(activity: Activity) {
+    //leaderboard logic
+    fun initializeGamesServices(activity: Activity) {
         val gamesSignInClient = PlayGames.getGamesSignInClient(activity)
 
         gamesSignInClient.isAuthenticated()
@@ -477,53 +482,228 @@ constructor(
 
                 if(isAuthenticated){
                     setIsLoggedIn(true)
-                    PlayGames.getPlayersClient(activity).currentPlayer.addOnCompleteListener { mTask ->
-                        setUserID(mTask.result.playerId)
-                    }
-
+                    setUpLeaderboards(activity)
                 }
                 else {
                     setIsLoggedIn(false)
-                    Toast.makeText(
-                        activity,
-                        "Failed to log in:  ${isAuthenticatedTask.isSuccessful} ${isAuthenticatedTask.result.isAuthenticated}",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
     }
 
     fun logInToPlayServices(activity: Activity) {
         val gamesSignInClient = PlayGames.getGamesSignInClient(activity)
-        setLeaderboardLoading(true)
         gamesSignInClient.signIn().addOnCompleteListener { isAuthenticatedTask ->
             val isAuthenticated =
                 (isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated)
 
             if(isAuthenticated){
                 setIsLoggedIn(true)
-                PlayGames.getPlayersClient(activity).currentPlayer.addOnCompleteListener { mTask ->
-                    setUserID(mTask.result.playerId)
-                }
+                setUpLeaderboards(activity)
             }
             else {
                 setIsLoggedIn(false)
                 Toast.makeText(
                     activity,
-                    "Failed to log in: ${isAuthenticatedTask.isSuccessful} ${isAuthenticatedTask.result.isAuthenticated}",
+                    activity.getString(R.string.quiz_login_failed),
                     Toast.LENGTH_LONG
                 ).show()
             }
-            setLeaderboardLoading(false)
         }
-        setIsLoggedIn(true)
     }
 
-    private fun setLeaderboardLoading(isLoading: Boolean){
-        _screenState.update {
-            it.copy(
-                isLeaderboardLoading = isLoading
-            )
+    fun setUpLeaderboards(activity: Activity) {
+        viewModelScope.launch {
+            //getting userID
+            PlayGames.getPlayersClient(activity).currentPlayer.addOnCompleteListener { mTask ->
+                setUserID(mTask.result.playerId)
+            }
+            //getting leaderboard data
+            launch {
+                getLeaderboardDataForAType(QuizType.GuessRoman, activity)
+            }
+
+            launch {
+                getLeaderboardDataForAType(QuizType.GuessArabic, activity)
+            }
+
+            launch {
+                getLeaderboardDataForAType(QuizType.GuessBoth, activity)
+            }
+        }
+    }
+
+    private fun getLeaderboardDataForAType(type: QuizType, activity: Activity, count: Int = 20) {
+        if(_screenState.value.isUserLoggedIn){
+            val leaderboardClient = PlayGames.getLeaderboardsClient(activity)
+
+            val leaderboardID = when(type){
+                QuizType.GuessRoman -> activity.getString(R.string.leaderboard_id_roman)
+                QuizType.GuessArabic -> activity.getString(R.string.leaderboard_id_arabic)
+                QuizType.GuessBoth -> activity.getString(R.string.leaderboard_id_both)
+            }
+
+            setIsLeaderboardLoading(true, type)
+
+            //getting to scores
+            leaderboardClient.loadTopScores(
+                leaderboardID,
+                LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                LeaderboardVariant.COLLECTION_PUBLIC,
+                count
+            ).addOnCompleteListener { task ->
+                val playersList: MutableList<LeaderboardItem>?
+                //if data received successfully
+                if(task.isSuccessful){
+                    playersList = mutableListOf()
+                    task.result.get()?.scores?.forEach { score ->
+                        val rank = score.rank.toInt()
+                        val name = score.scoreHolderDisplayName
+
+                        playersList.add(
+                            LeaderboardItem(
+                                rank = score.rank.toInt(),
+                                username = score.scoreHolderDisplayName,
+                                score = score.rawScore.toInt(),
+                                isUser = score.scoreHolder!!.playerId == _screenState.value.userID
+                            )
+                        )
+                    }
+
+                    //if list doesn't contain player and is not empty
+                    if(playersList.isNotEmpty() && !playersList.any { it.isUser }){
+                        leaderboardClient.loadCurrentPlayerLeaderboardScore(
+                            leaderboardID,
+                            LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                            LeaderboardVariant.COLLECTION_PUBLIC
+                        ).addOnCompleteListener { getPlayerTask ->
+                            if(getPlayerTask.isSuccessful){
+                                getPlayerTask.result.get()?.let {
+                                    val playerData = LeaderboardItem(
+                                        rank = it.rank.toInt(),
+                                        username = it.scoreHolderDisplayName,
+                                        score = it.rawScore.toInt(),
+                                        isUser = true
+                                    )
+                                    playersList.add(playerData)
+                                }
+                            }
+
+                            val output = LeaderboardData(
+                                records = playersList
+                            )
+                            when(type){
+                                QuizType.GuessRoman -> setRomanLeaderboard(output)
+                                QuizType.GuessArabic -> setArabicLeaderboard(output)
+                                QuizType.GuessBoth -> setBothLeaderboard(output)
+                            }
+                        }
+                    }
+                    //if player is in the list or list is empty
+                    else {
+                        val output = LeaderboardData(
+                            records = playersList
+                        )
+                        when(type){
+                            QuizType.GuessRoman -> setRomanLeaderboard(output)
+                            QuizType.GuessArabic -> setArabicLeaderboard(output)
+                            QuizType.GuessBoth -> setBothLeaderboard(output)
+                        }
+                    }
+                }
+                //if error while loading
+                else {
+                    val output = LeaderboardData(
+                        error = "Could not load Leaderboard data. Check your connection and try again"
+                    )
+                    when(type){
+                        QuizType.GuessRoman -> setRomanLeaderboard(output)
+                        QuizType.GuessArabic -> setArabicLeaderboard(output)
+                        QuizType.GuessBoth -> setBothLeaderboard(output)
+                    }
+                }
+                setIsLeaderboardLoading(false, type)
+            }
+        }
+    }
+
+    private fun submitRecordToLeaderboard(activity: Activity, score: Int, type: QuizType = _screenState.value.currentQuizType){
+        if(_screenState.value.isUserLoggedIn && score > 40){
+            setIsLeaderboardLoading(true, type)
+            viewModelScope.launch {
+                val leaderboardClient = PlayGames.getLeaderboardsClient(activity)
+
+                val leaderboardID = when(type){
+                    QuizType.GuessRoman -> activity.getString(R.string.leaderboard_id_roman)
+                    QuizType.GuessArabic -> activity.getString(R.string.leaderboard_id_arabic)
+                    QuizType.GuessBoth -> activity.getString(R.string.leaderboard_id_both)
+                }
+
+                leaderboardClient.submitScoreImmediate(
+                    leaderboardID,
+                    score.toLong()
+                ).addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        viewModelScope.launch {
+                            delay(3000)
+                            getLeaderboardDataForAType(type, activity)
+                        }
+                    }
+                    else {
+                        Toast.makeText(
+                            activity,
+                            "Error while submitting score. Check your internet connection",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    setIsLeaderboardLoading(false, type)
+                }
+            }
+        }
+    }
+
+    fun synchronizeTopRecordWithLeaderboard(activity: Activity) {
+        if(_screenState.value.isUserLoggedIn){
+            viewModelScope.launch {
+                launch {
+                    synchronizeByType(activity, QuizType.GuessRoman)
+                }
+
+                launch {
+                    synchronizeByType(activity, QuizType.GuessArabic)
+                }
+
+                launch {
+                    synchronizeByType(activity, QuizType.GuessBoth)
+                }
+            }
+        }
+    }
+
+    private fun synchronizeByType(activity: Activity, type: QuizType){
+        val records = when(type){
+            QuizType.GuessRoman -> _screenState.value.romanRecords
+            QuizType.GuessArabic -> _screenState.value.arabicRecords
+            QuizType.GuessBoth -> _screenState.value.bothRecords
+        }
+
+        val leaderboard = when(type){
+            QuizType.GuessRoman -> _screenState.value.romanLeaderboard
+            QuizType.GuessArabic -> _screenState.value.arabicLeaderboard
+            QuizType.GuessBoth -> _screenState.value.bothLeaderboard
+        }
+
+        if(leaderboard.records != null && records.isNotEmpty()){
+            if(leaderboard.records.any { it.isUser }){
+                val userLeaderboardScore = leaderboard.records.find { it.isUser }!!.score
+                val userTopRecordScore = records.first().score
+                if(userTopRecordScore > userLeaderboardScore) {
+                    submitRecordToLeaderboard(activity, userTopRecordScore, type)
+                }
+            }
+            else {
+                val userTopRecordScore = records.first().score
+                submitRecordToLeaderboard(activity, userTopRecordScore, type)
+            }
         }
     }
 
@@ -535,6 +715,33 @@ constructor(
         }
     }
 
+    private fun setIsLeaderboardLoading(isLoading: Boolean, type: QuizType){
+        when(type){
+            QuizType.GuessRoman -> {
+                _screenState.update {
+                    it.copy(
+                        romanLeaderboardLoading = isLoading
+                    )
+                }
+            }
+            QuizType.GuessArabic -> {
+                _screenState.update {
+                    it.copy(
+                        arabicLeaderboardLoading = isLoading
+                    )
+                }
+            }
+            QuizType.GuessBoth -> {
+                _screenState.update {
+                    it.copy(
+                        bothLeaderboardLoading = isLoading
+                    )
+                }
+            }
+        }
+
+    }
+
     private fun setUserID(userID: String){
         _screenState.update {
             it.copy(
@@ -543,8 +750,28 @@ constructor(
         }
     }
 
-    fun refreshLeaderboard(context: Context) {
+    private fun setRomanLeaderboard(leaderboardData: LeaderboardData){
+        _screenState.update {
+            it.copy(
+                romanLeaderboard = leaderboardData
+            )
+        }
+    }
 
+    private fun setArabicLeaderboard(leaderboardData: LeaderboardData){
+        _screenState.update {
+            it.copy(
+                arabicLeaderboard = leaderboardData
+            )
+        }
+    }
+
+    private fun setBothLeaderboard(leaderboardData: LeaderboardData){
+        _screenState.update {
+            it.copy(
+                bothLeaderboard = leaderboardData
+            )
+        }
     }
 
 

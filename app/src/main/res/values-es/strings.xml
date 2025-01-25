@@ -49,4 +49,13 @@
     <string name="camera_text_not_detected">NO SE DETECTA EL TEXTO</string>
     <string name="quiz_score">PUNTUACIÓN</string>
     <string name="quiz_time">TIEMPO</string>
+    <string name="unknown_error">Error desconocido. Vuelva a intentarlo</string>
+    <string name="refresh">REFRESCAR</string>
+    <string name="records">REGISTROS</string>
+    <string name="record_deleted">Se ha eliminado el registro</string>
+    <string name="quiz_log_in">Inicia sesión para unirte a la clasificación y ver las \npuntuaciones de otros jugadores.</string>
+    <string name="quiz_log_in_title">INICIAR SESIÓN</string>
+    <string name="quiz_leaderboard">TABLERO LÍDER</string>
+    <string name="quiz_leaderboard_empty">La clasificación está vacía: ¡sé el primero \nen batir el récord!</string>
+    <string name="quiz_login_failed">No se ha podido iniciar sesión. Compruebe su conexión a Internet e inténtelo de nuevo</string>
 </resources>

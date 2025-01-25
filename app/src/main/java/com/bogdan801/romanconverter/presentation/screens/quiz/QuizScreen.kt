@@ -148,6 +148,24 @@ fun QuizScreen(
         },
         containerColor = Color.Transparent
     ) { defaultPadding ->
+        LaunchedEffect(key1 = true) {
+            viewModel.initializeGamesServices(context as Activity)
+        }
+        LaunchedEffect(
+            key1 = screenState.romanLeaderboard,
+            key2 = screenState.arabicLeaderboard,
+            key3 = screenState.bothLeaderboard,
+        ) {
+            if(
+                screenState.romanLeaderboard.records != null &&
+                screenState.arabicLeaderboard.records != null &&
+                screenState.bothLeaderboard.records != null
+            ) {
+                //sync first launch
+                viewModel.synchronizeTopRecordWithLeaderboard(context as Activity)
+            }
+        }
+
         AnimatedContent(
             targetState = screenState.isQuizStarted,
             label = ""
@@ -230,12 +248,7 @@ fun QuizScreen(
                             }
                         )
 
-
                         //leaderboard panel
-                        LaunchedEffect(key1 = true) {
-                            viewModel.checkIsLoggedIn(context as Activity)
-                        }
-
                         val pagerState = rememberPagerState(pageCount = { 2 })
                         HorizontalPager(
                             modifier = Modifier
@@ -259,7 +272,9 @@ fun QuizScreen(
                                             modifier = Modifier
                                                 .padding(top = 12.dp),
                                             frameHeight = height * 0.25f,
-                                            title = "LEADERBOARD"
+                                            title = stringResource(
+                                                id = R.string.quiz_leaderboard
+                                            )
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         //leaderboard list
@@ -279,49 +294,66 @@ fun QuizScreen(
                                                         .copy(alpha = 0.33f)
                                                 )
                                             ){
-                                                if(screenState.isLeaderboardLoading){
-                                                    CircularProgressIndicator(
+                                                if(!screenState.isUserLoggedIn){
+                                                    Column(
                                                         modifier = Modifier.align(Alignment.Center),
-                                                        color = MaterialTheme.colorScheme.onTertiary
-                                                    )
-                                                }
-                                                else {
-                                                    if(!screenState.isUserLoggedIn){
-                                                        Column(
-                                                            modifier = Modifier.align(Alignment.Center),
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            verticalArrangement = Arrangement.spacedBy(24.dp)
-                                                        ) {
-                                                            Text(
-                                                                text = "Log in to join the leaderboard and view\n other players' scores",
-                                                                color = MaterialTheme.colorScheme.onTertiary,
-                                                                style = MaterialTheme.typography.bodyMedium,
-                                                                textAlign = TextAlign.Center
-                                                            )
-                                                            ActionButton(
-                                                                size = DpSize(120.dp, 46.dp),
-                                                                label = "LOG IN",
-                                                                onClick = {
-                                                                    viewModel.logInToPlayServices(context as Activity)
-                                                                }
-                                                            )
-                                                        }
+                                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                                                    ) {
+                                                        Text(
+                                                            text = stringResource(
+                                                                id = R.string.quiz_log_in
+                                                            ),
+                                                            color = MaterialTheme.colorScheme.onTertiary,
+                                                            style = MaterialTheme.typography.bodyMedium,
+                                                            textAlign = TextAlign.Center
+                                                        )
+                                                        ActionButton(
+                                                            size = DpSize(120.dp, 46.dp),
+                                                            label = stringResource(
+                                                                id = R.string.quiz_log_in_title
+                                                            ),
+                                                            onClick = {
+                                                                viewModel.logInToPlayServices(context as Activity)
+                                                            }
+                                                        )
                                                     }
-                                                    else{
-                                                        AnimatedContent(
-                                                            targetState = screenState.selectedType,
-                                                            label = "",
-                                                            transitionSpec = {
-                                                                slideInVertically(initialOffsetY = { -it }) togetherWith
-                                                                        slideOutVertically(targetOffsetY = { it })
-                                                            }
-                                                        ) { type ->
-                                                            val data = when(type){
-                                                                QuizType.GuessRoman -> screenState.romanLeaderboard
-                                                                QuizType.GuessArabic -> screenState.arabicLeaderboard
-                                                                QuizType.GuessBoth -> screenState.bothLeaderboard
-                                                            }
+                                                }
+                                                else{
+                                                    AnimatedContent(
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        targetState = screenState.selectedType,
+                                                        label = "",
+                                                        transitionSpec = {
+                                                            slideInVertically(initialOffsetY = { -it }) togetherWith
+                                                                    slideOutVertically(targetOffsetY = { it })
+                                                        }
+                                                    ) { type ->
+                                                        val data = when(type){
+                                                            QuizType.GuessRoman -> screenState.romanLeaderboard
+                                                            QuizType.GuessArabic -> screenState.arabicLeaderboard
+                                                            QuizType.GuessBoth -> screenState.bothLeaderboard
+                                                        }
 
+                                                        val isLoading = when(type){
+                                                            QuizType.GuessRoman -> screenState.romanLeaderboardLoading
+                                                            QuizType.GuessArabic -> screenState.arabicLeaderboardLoading
+                                                            QuizType.GuessBoth -> screenState.bothLeaderboardLoading
+                                                        }
+
+                                                        if(isLoading){
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .fillMaxSize(),
+                                                                contentAlignment = Alignment.Center
+                                                            ){
+                                                                CircularProgressIndicator(
+                                                                    modifier = Modifier.align(Alignment.Center),
+                                                                    color = MaterialTheme.colorScheme.onTertiary
+                                                                )
+                                                            }
+                                                        }
+                                                        else {
                                                             if(data.error != null || data.records == null) {
                                                                 Column(
                                                                     modifier = Modifier.fillMaxSize(),
@@ -329,7 +361,9 @@ fun QuizScreen(
                                                                     verticalArrangement = Arrangement.Center
                                                                 ) {
                                                                     Text(
-                                                                        text = data.error ?: "Unknown error. Try again",
+                                                                        text = data.error ?: stringResource(
+                                                                            id = R.string.unknown_error
+                                                                        ),
                                                                         color = MaterialTheme.colorScheme.onTertiary,
                                                                         style = MaterialTheme.typography.bodyLarge,
                                                                         textAlign = TextAlign.Center
@@ -337,9 +371,11 @@ fun QuizScreen(
                                                                     Spacer(modifier = Modifier.height(24.dp))
                                                                     ActionButton(
                                                                         size = DpSize(120.dp, 46.dp),
-                                                                        label = "REFRESH",
+                                                                        label = stringResource(
+                                                                            id = R.string.refresh
+                                                                        ),
                                                                         onClick = {
-                                                                            viewModel.refreshLeaderboard(context)
+                                                                            viewModel.setUpLeaderboards(context as Activity)
                                                                         }
                                                                     )
                                                                 }
@@ -353,11 +389,11 @@ fun QuizScreen(
                                                             }
 
                                                         }
+
+
                                                     }
                                                 }
                                             }
-
-
                                             Icon(
                                                 modifier = Modifier
                                                     .align(Alignment.TopCenter)
@@ -405,7 +441,9 @@ fun QuizScreen(
                                             modifier = Modifier
                                                 .padding(top = 12.dp),
                                             frameHeight = height * 0.25f,
-                                            title = "RECORDS"
+                                            title = stringResource(
+                                                id = R.string.records
+                                            )
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         //leaderboard list
@@ -434,9 +472,9 @@ fun QuizScreen(
                                                                 .copy(alpha = 0.33f)
                                                         )
                                                 ) {
-                                                    item {
+                                                    /*item {
                                                         Spacer(modifier = Modifier.height(4.dp))
-                                                    }
+                                                    }*/
                                                     itemsIndexed(
                                                         items = when (type) {
                                                             QuizType.GuessRoman -> screenState.romanRecords
@@ -459,8 +497,8 @@ fun QuizScreen(
                                                                 scope.launch {
                                                                     snackbarHostState.currentSnackbarData?.dismiss()
                                                                     snackbarHostState.showSnackbar(
-                                                                        message = "The record has been deleted",
-                                                                        actionLabel = "RESTORE",
+                                                                        message = context.getString(R.string.record_deleted),
+                                                                        actionLabel = context.getString(R.string.quiz_restore),
                                                                         duration = SnackbarDuration.Short
                                                                     )
                                                                 }
@@ -746,8 +784,9 @@ fun QuizScreen(
                                 isPaused = false
                             },
                             onHomeClick = {
+                                homeViewModel.blurBackground(false)
                                 viewModel.showInterstitialAd(context)
-                                viewModel.stopQuiz(homeViewModel)
+                                viewModel.stopQuiz(homeViewModel, context as Activity)
                             }
                         )
                         var showAdOption by remember { mutableStateOf(true) }
@@ -758,7 +797,8 @@ fun QuizScreen(
                                 homeViewModel.blurBackground(it)
                             },
                             onDismiss = {
-                                viewModel.stopQuiz(homeViewModel)
+                                viewModel.stopQuiz(homeViewModel, context as Activity)
+                                homeViewModel.blurBackground(false)
                             },
                             onTryAgainClick = {
                                 viewModel.setupTheQuiz()
@@ -788,7 +828,7 @@ fun QuizScreen(
                 //action when user presses back button
                 BackHandler {
                     viewModel.showInterstitialAd(context)
-                    viewModel.stopQuiz(homeViewModel)
+                    viewModel.stopQuiz(homeViewModel, context as Activity)
                 }
             }
         }
