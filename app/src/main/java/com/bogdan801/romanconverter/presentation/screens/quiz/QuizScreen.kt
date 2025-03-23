@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
@@ -28,6 +30,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -268,14 +271,55 @@ fun QuizScreen(
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         //leaderboard title
-                                        LeaderboardTitle(
-                                            modifier = Modifier
-                                                .padding(top = 12.dp),
-                                            frameHeight = height * 0.25f,
-                                            title = stringResource(
-                                                id = R.string.quiz_leaderboard
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceEvenly,
+                                        ) {
+                                            SmallIconButton(
+                                                modifier = Modifier
+                                                    .offset(y = (height * 0.115f)),
+                                                isVisible = screenState.isUserLoggedIn,
+                                                onClick = {
+                                                    viewModel.showLeaderboard(
+                                                        context as Activity,
+                                                        screenState.selectedType
+                                                    )
+                                                },
+                                                icon = {
+                                                    val primary = MaterialTheme.colorScheme.primary
+                                                    val secondary = MaterialTheme.colorScheme.secondary
+                                                    Icon(
+                                                        modifier = Modifier
+                                                            .graphicsLayer(alpha = 0.99f)
+                                                            .drawWithCache {
+                                                                onDrawWithContent {
+                                                                    drawContent()
+                                                                    drawRect(
+                                                                        brush = Brush.verticalGradient(
+                                                                            colors = listOf(
+                                                                                primary, secondary, primary
+                                                                            )
+                                                                        ),
+                                                                        blendMode = BlendMode.SrcAtop
+                                                                    )
+                                                                }
+                                                            },
+                                                        imageVector = Icons.Default.Leaderboard,
+                                                        contentDescription = "Show leaderboard",
+                                                    )
+                                                }
                                             )
-                                        )
+                                            LeaderboardTitle(
+                                                modifier = Modifier
+                                                    .padding(top = 12.dp),
+                                                frameHeight = height * 0.25f,
+                                                title = stringResource(
+                                                    id = R.string.quiz_leaderboard
+                                                )
+                                            )
+                                            Box(modifier = Modifier.size(42.dp))
+                                        }
+
                                         Spacer(modifier = Modifier.height(2.dp))
                                         //leaderboard list
                                         BoxWithConstraints(

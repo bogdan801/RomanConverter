@@ -5,5 +5,6 @@ data class LeaderboardItem(
     val userID: Int? = null,
     val username: String,
     val score: Int,
-    val isUser: Boolean = false
+    val isUser: Boolean = false,
+    val isPrivate: Boolean = false
 )

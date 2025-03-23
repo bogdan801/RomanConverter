@@ -58,4 +58,6 @@
     <string name="quiz_leaderboard">TABLERO LÍDER</string>
     <string name="quiz_leaderboard_empty">La clasificación está vacía: ¡sé el primero \nen batir el récord!</string>
     <string name="quiz_login_failed">No se ha podido iniciar sesión. Compruebe su conexión a Internet e inténtelo de nuevo</string>
+    <string name="quiz_private_score_message">Tu puntuación no es visible para otros jugadores debido a la configuración de privacidad. \nPara cambiarla, ve a la configuración de Google Play Games</string>
+    <string name="quiz_score_private">(La puntuación es privada)</string>
 </resources>

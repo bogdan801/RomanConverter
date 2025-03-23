@@ -62,4 +62,6 @@
     <string name="quiz_leaderboard">LEADERBOARD</string>
     <string name="quiz_leaderboard_empty">Leaderboard is empty, be the first one\n to set the record</string>
     <string name="quiz_login_failed">Failed to log in. Check your internet connection an try again</string>
+    <string name="quiz_private_score_message">Your score is not visible for other players due to privacy settings.\nTo change it go to Google Play Games settings</string>
+    <string name="quiz_score_private">(The score is private)</string>
 </resources>

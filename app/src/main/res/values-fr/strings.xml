@@ -58,4 +58,6 @@
     <string name="quiz_leaderboard">CLASSEMENT</string>
     <string name="quiz_leaderboard_empty">Le classement est vide - soyez le premier \nà établir le record !</string>
     <string name="quiz_login_failed">Échec de la connexion. Vérifiez votre connexion internet et réessayez.</string>
+    <string name="quiz_private_score_message">Votre score n\'est pas visible pour les autres joueurs en raison des paramètres de confidentialité. \nPour les modifier, rendez-vous dans les paramètres de Google Play Games.</string>
+    <string name="quiz_score_private">(Le score est privé)</string>
 </resources>

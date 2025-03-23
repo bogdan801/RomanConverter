@@ -57,33 +57,39 @@ import com.bogdan801.romanconverter.presentation.util.vibrateDevice
 fun SmallIconButton(
     modifier: Modifier = Modifier,
     size: Dp = 42.dp,
+    isVisible: Boolean = true,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     icon: @Composable () -> Unit ={}
 ) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .shadowCustom(
-                color = Color.Black.copy(alpha = 0.25f),
-                blurRadius = 10.dp,
-                shapeRadius = 21.dp
-            )
-            .clip(CircleShape)
-            .background(
-                brush = iconButtonGradientBrush(size)
-            )
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-    ) {
+    if (isVisible){
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            icon()
+            modifier = modifier
+                .size(size)
+                .shadowCustom(
+                    color = Color.Black.copy(alpha = 0.25f),
+                    blurRadius = 10.dp,
+                    shapeRadius = 21.dp
+                )
+                .clip(CircleShape)
+                .background(
+                    brush = iconButtonGradientBrush(size)
+                )
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                )
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                icon()
+            }
         }
+    }
+    else {
+        Box(modifier = Modifier.size(size))
     }
 }
 

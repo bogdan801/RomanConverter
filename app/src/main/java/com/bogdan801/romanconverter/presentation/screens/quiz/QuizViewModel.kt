@@ -37,7 +37,6 @@ import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-
 @HiltViewModel
 class QuizViewModel
 @Inject
@@ -371,8 +370,8 @@ constructor(
 
     //AD logic
     private var mInterstitialAd: InterstitialAd? = null
-    fun loadInterstitialAd(context: Context, adID: String = ""){
-        val testID = "ca-app-pub-3940256099942544/1033173712"
+    fun loadInterstitialAd(context: Context, adID: String = "ca-app-pub-7610563481346603/3989723927"){
+        //val testID = "ca-app-pub-3940256099942544/1033173712"
         InterstitialAd.load(
             context,
             //testID,
@@ -412,8 +411,8 @@ constructor(
     }
 
     private var mRewardedAd: RewardedAd? = null
-    fun loadRewardedAd(context: Context, adID: String = ""){
-        val testID = "ca-app-pub-3940256099942544/5224354917"
+    fun loadRewardedAd(context: Context, adID: String = "ca-app-pub-7610563481346603/2245397419"){
+        //val testID = "ca-app-pub-3940256099942544/5224354917"
         RewardedAd.load(
             context,
             //testID,
@@ -556,9 +555,6 @@ constructor(
                 if(task.isSuccessful){
                     playersList = mutableListOf()
                     task.result.get()?.scores?.forEach { score ->
-                        val rank = score.rank.toInt()
-                        val name = score.scoreHolderDisplayName
-
                         playersList.add(
                             LeaderboardItem(
                                 rank = score.rank.toInt(),
@@ -705,6 +701,20 @@ constructor(
                 submitRecordToLeaderboard(activity, userTopRecordScore, type)
             }
         }
+    }
+
+    fun showLeaderboard(activity: Activity, type: QuizType) {
+        val id = when(type){
+            QuizType.GuessRoman -> R.string.leaderboard_id_roman
+            QuizType.GuessArabic -> R.string.leaderboard_id_arabic
+            QuizType.GuessBoth -> R.string.leaderboard_id_both
+        }
+
+        PlayGames.getLeaderboardsClient(activity)
+            .getLeaderboardIntent(activity.getString(id))
+            .addOnSuccessListener { intent ->
+                activity.startActivityForResult(intent, 9004)
+            }
     }
 
     private fun setIsLoggedIn(isLoggedIn: Boolean){

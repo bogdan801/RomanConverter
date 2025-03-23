@@ -58,4 +58,6 @@
     <string name="quiz_leaderboard">CLASSIFICA</string>
     <string name="quiz_leaderboard_empty">La classifica è vuota, sii il primo \na stabilire il record</string>
     <string name="quiz_login_failed">Accesso non riuscito. Controllare la connessione a Internet e riprovare</string>
+    <string name="quiz_private_score_message">Il punteggio non è visibile agli altri giocatori a causa delle impostazioni sulla privacy. \nPer modificarle, andate nelle impostazioni di Google Play Games</string>
+    <string name="quiz_score_private">(Il punteggio è privato)</string>
 </resources>

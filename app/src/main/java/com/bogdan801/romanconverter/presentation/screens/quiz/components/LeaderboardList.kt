@@ -30,7 +30,7 @@ fun LeaderboardList(
 ) {
     val displayList by remember {
         derivedStateOf {
-            records?.let { records ->
+            val unfiltered = records?.let { records ->
                 if (records.size > maxItemCount) {
                     val sublist = records.subList(0, maxItemCount)
                     val user = records.find { it.isUser }
@@ -42,6 +42,16 @@ fun LeaderboardList(
                 }
                 else records
             }
+
+            val filtered = unfiltered
+                ?.sortedByDescending {
+                    it?.score
+                }
+                ?.mapIndexed { i, item ->
+                     item?.copy(rank = i + 1, isPrivate = item.rank == -1)
+                }
+
+            filtered
         }
     }
 

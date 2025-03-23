@@ -58,4 +58,6 @@
     <string name="quiz_leaderboard">TABELA DE CLASSIFICAÇÃO</string>
     <string name="quiz_leaderboard_empty">A tabela de classificação está vazia - seja \no primeiro a bater o recorde!</string>
     <string name="quiz_login_failed">Falha ao fazer o login. Verifique sua conexão com a Internet e tente novamente</string>
+    <string name="quiz_private_score_message">Sua pontuação não é visível para outros jogadores devido às configurações de privacidade. \nPara alterá-las, vá para as configurações do Google Play Games</string>
+    <string name="quiz_score_private">(A pontuação é privada)</string>
 </resources>

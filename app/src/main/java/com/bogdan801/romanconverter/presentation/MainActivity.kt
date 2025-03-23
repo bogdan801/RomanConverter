@@ -7,24 +7,12 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import com.bogdan801.romanconverter.presentation.components.AnimatedSplashScreen
 import com.bogdan801.romanconverter.presentation.screens.home.HomeScreen
 import com.bogdan801.romanconverter.presentation.theme.RomanCalculatorTheme
-import com.bogdan801.util_library.intSettings
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.games.PlayGamesSdk
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RomanCalculatorTheme { themeID ->
-                Box(modifier = Modifier.fillMaxSize()){
+                Box(modifier = Modifier.fillMaxSize()) {
                     HomeScreen(themeID = themeID)
                     AnimatedSplashScreen()
                 }

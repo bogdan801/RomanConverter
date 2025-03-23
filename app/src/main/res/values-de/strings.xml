@@ -58,4 +58,6 @@
     <string name="quiz_leaderboard">RANGLISTE</string>
     <string name="quiz_leaderboard_empty">Die Rangliste ist leer, sei der Erste, der \nden Rekord aufstellt</string>
     <string name="quiz_login_failed">Sie konnten sich nicht anmelden. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
+    <string name="quiz_private_score_message">Ihr Punktestand ist für andere Spieler aufgrund der Datenschutzeinstellungen nicht sichtbar. \nUm dies zu ändern, gehe zu den Google Play Games-Einstellungen</string>
+    <string name="quiz_score_private">(Der Spielstand ist privat)</string>
 </resources>

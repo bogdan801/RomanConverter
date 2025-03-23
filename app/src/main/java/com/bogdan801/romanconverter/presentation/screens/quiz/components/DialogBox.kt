@@ -300,7 +300,6 @@ fun DeleteConfirmDialogBox(
     onCancelClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {}
 ) {
-    val context = LocalContext.current
     LaunchedEffect(key1 = show) {
         onVisibilityChanged(show)
     }
